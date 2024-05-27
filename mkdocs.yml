@@ -5,9 +5,9 @@ theme:
     tabs: true
 extra_css:
   - extra.css
-repo_url: https://github.com/genepi/cloudgene/
+repo_url: https://github.com/genepi/cloudgene3/
 google_analytics: ['UA-873221-12', 'docs.cloudgene.io']
-pages:
+nav:
 
 - Cloudgene:
     - Installation: index.md
@@ -15,7 +15,6 @@ pages:
     - Install Applications: daemon/install-apps.md
     - Configuration:
         - Settings File: daemon/configuration.md
-        - Enable Hadoop Support: daemon/hadoop.md
         - Customization: daemon/customization.md
     - Manage Permissions: daemon/permissions.md
     - Manage Jobs: daemon/jobs.md
@@ -39,11 +38,8 @@ pages:
     - Steps:
         - BashCommand: developers/steps/BashCommand.md
         - JavaJar: developers/steps/JavaJar.md
-        - HadoopMapReduce: developers/steps/HadoopMapReduce.md
-        - HadoopPig: developers/steps/HadoopPig.md
         - RMarkdown: developers/steps/RMarkdown.md
         - RMarkdown (Docker): developers/steps/RMarkdownDocker.md
-        - HTML-Widget: developers/steps/HtmlWidget.md
         - Docker: developers/steps/Docker.md
         - JavaInterface: developers/steps/JavaInterface.md
         - Groovy: developers/steps/Groovy.md

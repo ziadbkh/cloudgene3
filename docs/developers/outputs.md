@@ -56,17 +56,3 @@ At the moment the following types of output parameters are supported:
 ### `local_file`
 
 ### `local_folder`
-
-### `hdfs_file`
-
-| Property | Required | Description |
-| --- | --- | --- |
-| `zip` | no | If `zip` is set to true, all files in a hdfs-folder or local-folder are automatically compressed into a zip file (default: **true**). |
-
-### `hdfs_folder`
-
-| Property            | Required | Description |
-| ------------------- | --- | --- |
-| `mergeOutput`       | no | If `mergeOutput` is set to true, all files in a hdfs-folder are merged into a single file (default: **true**). |
-| `zip`               | no | If `zip` is set to true, all files in a hdfs-folder or local-folder are automatically compressed into a zip file (default: **true**). |
-| `removeHeader`      | no | If `removeHeader` is set to true, the header of each file is removed and the merged file has a single header. default: **true**). |

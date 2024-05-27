@@ -34,37 +34,8 @@ Creates a file-upload field where multiple files can be selected and uploaded.
 - contains absolute path to the folder which contains all uploaded files
 - all input files will be deleted after job run
 
-## HDFS (Apache Hadoop)
 
-### File
-
-Creates a file-upload field where file can be selected and uploaded.
-
-```yaml
-- id: image
-  description: Images
-  type: hdfs_file
-```
-
-- uploaded file will be imported into HDFS
-- contains path to the imported file into the HDFS filesystem
-- all input files will be deleted after job run
-
-### Folder
-
-Creates a file-upload field where one or multiple files can be selected and uploaded.
-
-```yaml
-- id: image
-  description: Images
-  type: hdfs_folder
-```
-
-- uploaded files will be imported into HDFS
-- contains path to the HDFS folder where all imported files were stored
-- all input files will be deleted after job run
-
-## Filetypes
+### Filetypes
 
 The `accept` attribute specifies the types of files that the server accepts. Per default all files can be selected and uploaded.
 
