@@ -1,19 +1,18 @@
 Cloudgene
 =========
 
-[![Build Status](https://travis-ci.org/genepi/cloudgene.svg?branch=master)](https://travis-ci.org/genepi/cloudgene)
-[![codecov](https://codecov.io/gh/genepi/cloudgene/branch/master/graph/badge.svg)](https://codecov.io/gh/genepi/cloudgene)
-[![GitHub release](https://img.shields.io/github/release/genepi/cloudgene.svg)](https://GitHub.com/genepi/cloudgene/releases/)
+[![Tests](https://github.com/genepi/cloudgene3/actions/workflows/maven-test.yml/badge.svg?branch=main)](https://github.com/genepi/cloudgene3/actions/workflows/maven-test.yml)
+[![GitHub release](https://img.shields.io/github/release/genepi/cloudgene3.svg)](https://GitHub.com/genepi/cloudgene/releases/)
 
 
 A framework to build Software As A Service (SaaS) platforms for data analysis pipelines.
 
 ## Features
 
-- :wrench: **Build** your analysis pipeline in your favorite language or use Hadoop based technologies (MapReduce, Spark, Pig)
+- :wrench: **Build** your analysis pipeline in your favorite language or use Nextflow
 - :page_facing_up: **Integrate** your analysis pipeline into Cloudgene by writing a simple [configuration file](http://docs.cloudgene.io/developers/introduction/)
 - :bulb: **Get** a powerful web application with user management, data transfer, error handling and more
-- :star: **Deploy** your application with one click to any Hadoop cluster or to public Clouds like Amazon AWS
+- :star: **Deploy** your application with one click to any SLURM cluster or to public Clouds like Amazon AWS
 - :cloud: **Provide** your application as SaaS to other scientists and handle thousands of jobs like a pro
 - :earth_americas: **Share** your application and enable everyone to clone your service to its own hardware or private cloud instance
 
@@ -22,8 +21,6 @@ A framework to build Software As A Service (SaaS) platforms for data analysis pi
 You will need the following things properly installed on your computer.
 
 * [Java 8 or higher](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
-* [Hadoop](http://hadoop.apache.org/) (Optional)
-* [Docker](https://www.docker.com/) (Optional)
 * MySQL Server (Optional)
 
 
@@ -42,9 +39,6 @@ Test the installation with the following command:
 ```sh
 ./cloudgene version
 ```
-
-We provide a [Docker image](https://github.com/genepi/cloudgene-docker) to get a full-working Cloudgene instance in minutes without any installation.
-
 
 ## Getting started
 
