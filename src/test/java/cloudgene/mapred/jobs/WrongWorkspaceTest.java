@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.HashMap;
 import java.util.Map;
 
+import cloudgene.mapred.jobs.workspace.IWorkspace;
 import org.junit.jupiter.api.Test;
 
 import cloudgene.mapred.TestApplication;
@@ -66,10 +67,15 @@ public class WrongWorkspaceTest {
 		String localWorkspace = FileUtil.path("/gsfgdfgdf/vdadsadwa", id);
 		FileUtil.createDirectory(localWorkspace);
 
+		// setup workspace
+		IWorkspace workspace = workspaceFactory.getDefault();
+		workspace.setJob(id);
+		workspace.setup();
+
 		CloudgeneJob job = new CloudgeneJob(user, id, app, inputs);
 		job.setId(id);
 		job.setName(id);
-		job.setWorkspace(workspaceFactory.getDefault());
+		job.setWorkspace(workspace);
 		job.setLocalWorkspace(localWorkspace);
 		job.setSettings(settings);
 		job.setApplication(app.getName() + " " + app.getVersion());
