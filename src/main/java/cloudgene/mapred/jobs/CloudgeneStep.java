@@ -11,13 +11,7 @@ import cloudgene.mapred.wdl.WdlStep;
 
 public abstract class CloudgeneStep {
 
-	private int id;
-
-	private String name;
-
 	private CloudgeneJob job;
-
-	private List<Message> logMessages;
 
 	protected Process process;
 
@@ -31,22 +25,6 @@ public abstract class CloudgeneStep {
 
 	public String getFolder(Class clazz) {
 		return new File(clazz.getProtectionDomain().getCodeSource().getLocation().getPath()).getParent();
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getName() {
-		return name;
 	}
 
 	public CloudgeneJob getJob() {
@@ -67,14 +45,6 @@ public abstract class CloudgeneStep {
 
 	public void updateProgress() {
 
-	}
-
-	public List<Message> getLogMessages() {
-		return logMessages;
-	}
-
-	public void setLogMessages(List<Message> logMessages) {
-		this.logMessages = logMessages;
 	}
 
 	public String[] getRequirements() {

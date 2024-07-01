@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Vector;
 
+import cloudgene.mapred.jobs.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,9 +13,7 @@ import cloudgene.mapred.database.util.Database;
 import cloudgene.mapred.database.util.IRowMapper;
 import cloudgene.mapred.database.util.JdbcDataAccessObject;
 import cloudgene.mapred.jobs.CloudgeneJob;
-import cloudgene.mapred.jobs.CloudgeneStep;
 import cloudgene.mapred.jobs.Message;
-import cloudgene.mapred.steps.EmptyStep;
 
 public class StepDao extends JdbcDataAccessObject {
 
@@ -24,7 +23,7 @@ public class StepDao extends JdbcDataAccessObject {
 		super(database);
 	}
 
-	public boolean insert(CloudgeneStep step) {
+	public boolean insert(Step step) {
 		StringBuilder sql = new StringBuilder();
 		sql.append("insert into steps (state, name, start_time, end_time, job_id) ");
 		sql.append("values (?,?,?,?,?)");
@@ -52,7 +51,7 @@ public class StepDao extends JdbcDataAccessObject {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<CloudgeneStep> findAllByJob(CloudgeneJob job) {
+	public List<Step> findAllByJob(CloudgeneJob job) {
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * ");
@@ -63,7 +62,7 @@ public class StepDao extends JdbcDataAccessObject {
 		Object[] params = new Object[1];
 		params[0] = job.getId();
 
-		List<CloudgeneStep> result = new Vector<CloudgeneStep>();
+		List<Step> result = new Vector<Step>();
 
 		try {
 
@@ -71,7 +70,7 @@ public class StepDao extends JdbcDataAccessObject {
 
 			// load messages for all steps
 			MessageDao messageDao = new MessageDao(database);
-			for (CloudgeneStep step : result) {
+			for (Step step : result) {
 				List<Message> logMessages = messageDao.findAllByStep(step);
 				step.setLogMessages(logMessages);
 				step.setJob(job);
@@ -91,7 +90,7 @@ public class StepDao extends JdbcDataAccessObject {
 		@Override
 		public Object mapRow(ResultSet rs, int row) throws SQLException {
 
-			CloudgeneStep step = new EmptyStep();
+			Step step = new Step();
 			step.setId(rs.getInt("id"));
 			step.setName(rs.getString("name"));
 			return step;

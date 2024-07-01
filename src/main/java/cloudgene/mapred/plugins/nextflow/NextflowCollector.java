@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import cloudgene.mapred.jobs.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +23,8 @@ public class NextflowCollector {
 
 	private Map<String, CloudgeneContext> contexts;
 
+	private Map<String, Map<String, NextflowProcessConfig>> configs;
+
 	private static final Logger log = LoggerFactory.getLogger(NextflowCollector.class);
 
 	public static NextflowCollector getInstance() {
@@ -35,10 +38,12 @@ public class NextflowCollector {
 	private NextflowCollector() {
 		contexts = new HashMap<String, CloudgeneContext>();
 		data = new HashMap<String, List<NextflowProcess>>();
+		configs = new HashMap<String, Map<String, NextflowProcessConfig>>();
 	}
 
-	public String addContext(CloudgeneContext context) {
+	public String addContext(CloudgeneContext context, Map<String, NextflowProcessConfig> config) {
 		contexts.put(context.getPublicJobId(), context);
+		configs.put(context.getPublicJobId(), config);
 		Settings settings = context.getSettings();
 		log.info("[Job {}] Register collector for public job id '{}'", context.getJobId(), context.getPublicJobId());
 		return settings.getServerUrl() + settings.getBaseUrl() + COLLECTOR_ENDPOINT + context.getPublicJobId();
@@ -75,7 +80,13 @@ public class NextflowCollector {
 				return;
 			}
 		}
-		NextflowProcess process = new NextflowProcess(context, trace);
+
+		Step step = null;
+		NextflowProcessConfig config = configs.get(job).get(processName);
+		if (config != null) {
+			step = config.getStep();
+		}
+		NextflowProcess process = new NextflowProcess(context, trace, step);
 		processes.add(process);
 	}
 

@@ -16,7 +16,7 @@ public class Message {
 
 	private int type;
 
-	private CloudgeneStep step;
+	private Step step;
 
 	private long time;
 
@@ -24,7 +24,7 @@ public class Message {
 
 	}
 
-	public Message(CloudgeneStep step, int type, String message) {
+	public Message(Step step, int type, String message) {
 		this.type = type;
 		this.message = message;
 		this.step = step;
@@ -50,11 +50,11 @@ public class Message {
 		this.type = type;
 	}
 
-	public CloudgeneStep getStep() {
+	public Step getStep() {
 		return step;
 	}
 
-	public void setStep(CloudgeneStep step) {
+	public void setStep(Step step) {
 		this.step = step;
 	}
 

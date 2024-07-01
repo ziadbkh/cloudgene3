@@ -8,13 +8,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
+import cloudgene.mapred.jobs.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cloudgene.mapred.jobs.CloudgeneContext;
-import cloudgene.mapred.jobs.CloudgeneJob;
-import cloudgene.mapred.jobs.CloudgeneStep;
-import cloudgene.mapred.jobs.CloudgeneStepFactory;
 import cloudgene.mapred.jobs.sdk.WorkflowStep;
 import cloudgene.mapred.plugins.PluginManager;
 import cloudgene.mapred.steps.ErrorStep;
@@ -120,15 +117,11 @@ public class ExecutableStep implements Runnable {
 
 		}
 
-		instance.setName(step.getName());
 		instance.setJob(job);
 	}
 
 	@Override
 	public void run() {
-
-		context.setCurrentStep(instance);
-		job.getSteps().add(instance);
 
 		job.writeLog("------------------------------------------------------");
 		job.writeLog(step.getName());

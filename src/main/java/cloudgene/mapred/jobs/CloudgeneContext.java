@@ -1,6 +1,7 @@
 package cloudgene.mapred.jobs;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -9,10 +10,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import cloudgene.mapred.apps.Application;
+import cloudgene.mapred.apps.ApplicationRepository;
 import cloudgene.mapred.core.User;
 import cloudgene.mapred.jobs.sdk.WorkflowContext;
 import cloudgene.mapred.util.MailUtil;
 import cloudgene.mapred.util.Settings;
+import cloudgene.mapred.wdl.WdlParameterInputType;
 import genepi.io.FileUtil;
 
 public class CloudgeneContext extends WorkflowContext {
@@ -25,7 +29,7 @@ public class CloudgeneContext extends WorkflowContext {
 
 	private Settings settings;
 
-	private CloudgeneStep step;
+	//private StepOutput step;
 
 	private User user;
 
@@ -72,12 +76,48 @@ public class CloudgeneContext extends WorkflowContext {
 
 	}
 
-	public void setCurrentStep(CloudgeneStep currentStep) {
-		this.step = currentStep;
-	}
 
-	public CloudgeneStep getCurrentStep() {
-		return step;
+	public boolean resolveAppLinks() throws IOException {
+
+		Settings settings = getSettings();
+		ApplicationRepository repository = settings.getApplicationRepository();
+
+		// resolve application links
+		for (CloudgeneParameterInput input : inputParameters.values()) {
+			if (input.getType() != WdlParameterInputType.APP_LIST) {
+				continue;
+			}
+			String value = input.getValue();
+			String linkedAppId = value;
+			if (value.startsWith("apps@")) {
+				linkedAppId = value.replaceAll("apps@", "");
+			}
+
+			if (value.isEmpty()) {
+				continue;
+			}
+			Application linkedApp = repository.getByIdAndUser(linkedAppId, getUser());
+			if (linkedApp == null) {
+				throw new IOException("Application " + linkedAppId + " is not installed or wrong permissions.");
+			}
+			// update environment variables
+			Environment environment = settings.buildEnvironment().addApplication(linkedApp.getWdlApp())
+					.addContext(this);
+			Map<String, Object> properties = linkedApp.getWdlApp().getProperties();
+			for (String property : properties.keySet()) {
+				Object propertyValue = properties.get(property);
+				if (propertyValue instanceof String) {
+					propertyValue = environment.resolve(propertyValue.toString());
+				}
+				properties.put(property, propertyValue);
+			}
+
+			setData(input.getName(), properties);
+
+		}
+
+		return true;
+
 	}
 
 	public String getInput(String param) {
@@ -280,7 +320,18 @@ public class CloudgeneContext extends WorkflowContext {
 
 	}
 
+	public Step getCurrentStep() {
+		if (job.getSteps().isEmpty()) {
+			return createStep("Steps");
+		}
+		return job.getSteps().get(job.getSteps().size() -1);
+	}
+
 	public void message(String message, int type) {
+		message(getCurrentStep(), message, type);
+	}
+
+	public void message(Step step, String message, int type) {
 		Message status = new Message(step, type, message);
 
 		List<Message> logs = step.getLogMessages();
@@ -293,6 +344,10 @@ public class CloudgeneContext extends WorkflowContext {
 	}
 
 	public void beginTask(String name) {
+		beginTask(getCurrentStep(), name);
+	}
+
+	public void beginTask(Step step, String name) {
 		Message status = new Message(step, Message.RUNNING, name);
 
 		List<Message> logs = step.getLogMessages();
@@ -304,6 +359,10 @@ public class CloudgeneContext extends WorkflowContext {
 	}
 
 	public Message createTask(String name) {
+		return createTask(getCurrentStep(), name);
+	}
+
+	public Message createTask(Step step, String name) {
 		Message status = new Message(step, Message.RUNNING, name);
 
 		List<Message> logs = step.getLogMessages();
@@ -316,30 +375,59 @@ public class CloudgeneContext extends WorkflowContext {
 	}
 
 	public void beginTask(String name, int totalWork) {
-		beginTask(name);
+		beginTask(getCurrentStep(), name);
+	}
+
+	public void beginTask(Step step, String name, int totalWork) {
+		beginTask(step, name);
 	}
 
 	public void endTask(String message, int type) {
+		endTask(getCurrentStep(), message, type);
+	}
+
+	public void endTask(Step step, String message, int type) {
 		Message status = step.getLogMessages().get(step.getLogMessages().size() - 1);
 		status.setType(type);
 		status.setMessage(message);
 	}
 
 	public void updateTask(String message, int type) {
+		updateTask(getCurrentStep(), message, type);
+	}
+
+	public void updateTask(Step step, String message, int type) {
 		Message status = step.getLogMessages().get(step.getLogMessages().size() - 1);
 		status.setType(type);
 		status.setMessage(message);
 	}
 
 	public void updateTask(String message) {
+		updateTask(getCurrentStep(), message);
+	}
+
+	public void updateTask(Step step, String message) {
 		Message status = step.getLogMessages().get(step.getLogMessages().size() - 1);
 		status.setMessage(message);
 	}
 
 	public void endTask(int type) {
+		endTask(getCurrentStep(), type);
+	}
+
+	public void endTask(Step step, int type) {
 		Message status = step.getLogMessages().get(step.getLogMessages().size() - 1);
 		status.setType(type);
 	}
+
+	public Step createStep(String name) {
+		Step outputStep = new Step();
+		outputStep.setJob(job);
+		outputStep.setName(name);
+		job.getSteps().add(outputStep);
+		return outputStep;
+	}
+
 
 	public Object getData(String key) {
 		return data.get(key);
@@ -379,4 +467,7 @@ public class CloudgeneContext extends WorkflowContext {
 		throw new RuntimeException("Not support in cg3");
 	}
 
+	public Map<String, Object> getData() {
+		return data;
+	}
 }

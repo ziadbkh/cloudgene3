@@ -4,18 +4,15 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
+import cloudgene.mapred.jobs.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cloudgene.mapred.jobs.AbstractJob;
-import cloudgene.mapred.jobs.CloudgeneContext;
-import cloudgene.mapred.jobs.CloudgeneStep;
-import cloudgene.mapred.jobs.Message;
 import cloudgene.mapred.jobs.workspace.IWorkspace;
 import cloudgene.mapred.plugins.nextflow.report.Report;
 import cloudgene.mapred.plugins.nextflow.report.ReportEvent;
@@ -29,11 +26,16 @@ public class NextflowStep extends CloudgeneStep {
 
 	private static final String PROPERTY_PROCESS_CONFIG = "processes";
 
+	private static final String PROPERTY_GROUPS_CONFIG = "groups";
+
+
 	private CloudgeneContext context;
 
 	private Map<String, Message> messages = new HashMap<String, Message>();
 
 	private Map<String, NextflowProcessConfig> configs = new HashMap<String, NextflowProcessConfig>();
+
+	//private Map<String, Step> groups = new HashMap<String, Step>();
 
 	private NextflowCollector collector = NextflowCollector.getInstance();
 
@@ -53,7 +55,10 @@ public class NextflowStep extends CloudgeneStep {
 			script = "main.nf";
 		}
 
-		String scriptPath = FileUtil.path(context.getWorkingDirectory(), script);
+		String scriptPath = script;
+		if (!script.startsWith("/")) {
+			scriptPath = FileUtil.path(context.getWorkingDirectory(), script);
+		}
 		if (!new File(scriptPath).exists()) {
 			context.error(
 					"Nextflow script '" + scriptPath + "' not found. Please use 'script' to define your nf file.");
@@ -61,6 +66,12 @@ public class NextflowStep extends CloudgeneStep {
 
 		// load process styling
 		loadProcessConfigs(step.get(PROPERTY_PROCESS_CONFIG));
+		Map<String, Step> groups = loadGroups(step.get(PROPERTY_GROUPS_CONFIG));
+		for (NextflowProcessConfig config: configs.values()) {
+			if (config.getGroup() != null) {
+				config.setStep(groups.get(config.getGroup()));
+			}
+		}
 
 		NextflowBinary nextflow = NextflowBinary.build(settings);
 		nextflow.setScript(scriptPath);
@@ -115,7 +126,7 @@ public class NextflowStep extends CloudgeneStep {
 		nextflow.setParamsFile(paramsFile);
 
 		// register job in webcollector and set created url
-		String collectorUrl = collector.addContext(context);
+		String collectorUrl = collector.addContext(context, configs);
 		nextflow.setWeblog(collectorUrl);
 
 		// log files and reports
@@ -182,7 +193,7 @@ public class NextflowStep extends CloudgeneStep {
 		context.log("Execute " + report.getEvents().size() + " events.");
 		for (ReportEvent event : report.getEvents()) {
 			context.log("Event: " + event);
-			ReportEventExecutor.execute(event, context);
+			ReportEventExecutor.execute(event, context, context.getCurrentStep());
 		}
 	}
 	
@@ -197,7 +208,12 @@ public class NextflowStep extends CloudgeneStep {
 
 			Message message = messages.get(process.getName());
 			if (message == null) {
-				message = context.createTask("<b>" + process.getName() + "</b>");
+				Step step = config.getStep();
+				if (step == null) {
+					message = context.createTask("<b>" + process.getName() + "</b>");
+				} else {
+					message = context.createTask(step, "<b>" + process.getName() + "</b>");
+				}
 				messages.put(process.getName(), message);
 			}
 
@@ -219,9 +235,26 @@ public class NextflowStep extends CloudgeneStep {
 				if (processConfig.get("label") != null) {
 					config.setLabel(processConfig.get("label").toString());
 				}
+				if (processConfig.get("group") != null) {
+					config.setGroup(processConfig.get("group").toString());
+				}
 				configs.put(process, config);
 			}
 		}
+	}
+
+	private Map<String, Step> loadGroups(Object map) {
+		Map<String, Step> groups = new HashMap<String, Step>();
+		if (map != null) {
+			List<Map<String, Object>> groupConfigs = (List<Map<String, Object>>) map;
+			for (Map<String, Object> groupConfig : groupConfigs) {
+				String id = groupConfig.get("id").toString();
+				String label = groupConfig.get("label").toString();
+				Step step = context.createStep(label);
+				groups.put(id, step);
+			}
+		}
+		return groups;
 	}
 
 	private NextflowProcessConfig getNextflowProcessConfig(NextflowProcess process) {

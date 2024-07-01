@@ -5,13 +5,13 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Vector;
 
+import cloudgene.mapred.jobs.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cloudgene.mapred.database.util.Database;
 import cloudgene.mapred.database.util.IRowMapper;
 import cloudgene.mapred.database.util.JdbcDataAccessObject;
-import cloudgene.mapred.jobs.CloudgeneStep;
 import cloudgene.mapred.jobs.Message;
 
 public class MessageDao extends JdbcDataAccessObject {
@@ -48,7 +48,7 @@ public class MessageDao extends JdbcDataAccessObject {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Message> findAllByStep(CloudgeneStep step) {
+	public List<Message> findAllByStep(Step step) {
 
 		StringBuilder sql = new StringBuilder();
 		sql.append("select * ");
@@ -77,9 +77,9 @@ public class MessageDao extends JdbcDataAccessObject {
 
 	class MessageMapper implements IRowMapper {
 
-		private CloudgeneStep step;
+		private Step step;
 
-		public MessageMapper(CloudgeneStep step) {
+		public MessageMapper(Step step) {
 			this.step = step;
 		}
 

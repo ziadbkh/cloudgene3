@@ -89,7 +89,7 @@ public class PersistentWorkflowEngine extends WorkflowEngine {
 
 		if (job.getSteps() != null) {
 			StepDao dao2 = new StepDao(database);
-			for (CloudgeneStep step : job.getSteps()) {
+			for (Step step : job.getSteps()) {
 				dao2.insert(step);
 
 				MessageDao messageDao = new MessageDao(database);

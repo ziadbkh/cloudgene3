@@ -2,11 +2,17 @@ package cloudgene.mapred.plugins.nextflow.report;
 
 import java.io.IOException;
 
+import cloudgene.mapred.jobs.CloudgeneContext;
+import cloudgene.mapred.jobs.Step;
 import cloudgene.mapred.jobs.sdk.WorkflowContext;
 
 public class ReportEventExecutor {
 
-	public static void execute(ReportEvent event, WorkflowContext context) throws IOException {
+	public static void execute(ReportEvent event, CloudgeneContext context, Step step) throws IOException {
+
+		if (step == null) {
+			step = context.getCurrentStep();
+		}
 
 		switch (event.getCommand()) {
 		case SUBMIT_COUNTER: {
@@ -17,18 +23,18 @@ public class ReportEventExecutor {
 		case MESSAGE: {
 			String message = (String) event.getParams()[0];
 			int type = ((Double) event.getParams()[1]).intValue();
-			context.message(message, type);
+			context.message(step, message, type);
 			break;
 		}
 		case BEGIN_TASK: {
 			String name = (String) event.getParams()[0];
-			context.beginTask(name);
+			context.beginTask(step, name);
 			break;
 		}
 		case UPDATE_TASK: {
 			String name = (String) event.getParams()[0];
 			int type = ((Double) event.getParams()[1]).intValue();
-			context.updateTask(name, type);
+			context.updateTask(step, name, type);
 			break;
 		}
 		case LOG: {
@@ -39,7 +45,7 @@ public class ReportEventExecutor {
 		case END_TASK: {
 			String name = (String) event.getParams()[0];
 			int type = ((Double) event.getParams()[1]).intValue();
-			context.endTask(name, type);
+			context.endTask(step, name, type);
 			break;
 		}
 		case INC_COUNTER: {
