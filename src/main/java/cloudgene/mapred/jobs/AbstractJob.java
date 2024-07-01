@@ -236,7 +236,6 @@ abstract public class AbstractJob extends PriorityRunnable {
 			initStdOutFiles();
 
 			setup();
-
 			return true;
 
 		} catch (Exception e1) {
@@ -532,7 +531,7 @@ abstract public class AbstractJob extends PriorityRunnable {
 
 	abstract public boolean execute();
 
-	abstract public boolean setup();
+	abstract public boolean setup() throws Exception;
 
 	abstract public boolean after();
 

@@ -21,6 +21,7 @@ public class GroovyStep extends CloudgeneStep {
 	
 	@Override
 	public boolean run(WdlStep step, CloudgeneContext context) {
+		context.createStep(step.getName());
 		context.setConfig(step);
 
 		String script = step.getString("script");

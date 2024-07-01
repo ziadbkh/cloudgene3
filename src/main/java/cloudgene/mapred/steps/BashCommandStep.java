@@ -14,6 +14,8 @@ public class BashCommandStep extends CloudgeneStep {
 	@Override
 	public boolean run(WdlStep step, CloudgeneContext context) {
 
+		context.createStep(step.getName());
+
 		String cmd = step.getString("exec");
 		if (cmd == null) {
 			cmd = step.getString("cmd");

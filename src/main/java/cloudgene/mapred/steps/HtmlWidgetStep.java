@@ -20,7 +20,7 @@ public class HtmlWidgetStep extends CloudgeneStep {
 
 	@Override
 	public boolean run(WdlStep step, CloudgeneContext context) {
-
+		context.createStep(step.getName());
 		String workingDirectory = context.getWorkingDirectory();
 
 		String template = step.getString("template");

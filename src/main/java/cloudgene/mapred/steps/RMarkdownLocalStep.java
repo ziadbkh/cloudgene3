@@ -17,7 +17,7 @@ public class RMarkdownLocalStep extends CloudgeneStep {
 
 	@Override
 	public boolean run(WdlStep step, CloudgeneContext context) {
-
+		context.createStep(step.getName());
 		context.beginTask("Running Report Script...");
 
 		String workingDirectory = context.getWorkingDirectory();

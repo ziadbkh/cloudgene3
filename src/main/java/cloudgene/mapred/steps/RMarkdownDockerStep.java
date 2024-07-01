@@ -15,7 +15,7 @@ public class RMarkdownDockerStep extends DockerStep {
 
 	@Override
 	public boolean run(WdlStep step, CloudgeneContext context) {
-
+		context.createStep(step.getName());
 		String workingDirectory = context.getWorkingDirectory();
 
 		String rmd = step.getString("rmd");

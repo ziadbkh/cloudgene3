@@ -98,13 +98,12 @@ public class CloudgeneJob extends AbstractJob {
 	}
 
 	@Override
-	public boolean setup() {
+	public boolean setup() throws Exception {
 
 		context = new CloudgeneContext(this);
+		context.resolveAppLinks();
 
 		try {
-			context.resolveAppLinks();
-
 			log.info("[Job {}] Setup workspace {}'", getId(), workspace.getName());
 			context.log("Setup External Workspace on " + workspace.getName());
 			workspace.setup();

@@ -616,8 +616,6 @@ public class WorkflowEngineTest {
 			Thread.sleep(500);
 		}
 		assertTrue(job.getSubmittedOn() > 0);
-		assertTrue(job.getStartTime() > 0);
-		assertTrue(job.getEndTime() > 0);
 		assertEquals(AbstractJob.STATE_FAILED, job.getState());
 
 	}
@@ -638,8 +636,6 @@ public class WorkflowEngineTest {
 			Thread.sleep(500);
 		}
 		assertTrue(job.getSubmittedOn() > 0);
-		assertTrue(job.getStartTime() > 0);
-		assertTrue(job.getEndTime() > 0);
 		assertEquals(AbstractJob.STATE_FAILED, job.getState());
 
 	}

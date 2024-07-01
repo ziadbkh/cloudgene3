@@ -10,7 +10,7 @@ public class RMarkdownStep extends CloudgeneStep {
 
 	@Override
 	public boolean run(WdlStep step, CloudgeneContext context) {
-
+		context.createStep(step.getName());
 		boolean useDocker = false;
 
 		String dockerImage = RMarkdownDockerStep.DOCKER_R_BASE_IMAGE;
