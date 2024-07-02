@@ -88,7 +88,11 @@ public class JobCleanUpService {
 				String body = application.getTemplate(Template.RETIRE_JOB_MAIL, job.getUser().getFullName(), days,
 						job.getId());
 
-				MailUtil.send(settings, job.getUser().getMail(), subject, body);
+				String mail = job.getUser().getMail();
+				boolean mailProvided = (mail != null && !mail.trim().isEmpty());
+				if (mailProvided) {
+					MailUtil.send(settings, mail, subject, body);
+				}
 
 				job.setState(AbstractJob.STATE_SUCESS_AND_NOTIFICATION_SEND);
 				job.setDeletedOn(System.currentTimeMillis() + daysInMilliSeconds);
@@ -140,10 +144,10 @@ public class JobCleanUpService {
 				String body = application.getTemplate(Template.RETIRE_JOB_MAIL, job.getUser().getFullName(), days,
 						job.getId());
 
-				if (!job.getUser().getUsername().equals("public")) {
-
-					MailUtil.send(settings, job.getUser().getMail(), subject, body);
-
+				String mail = job.getUser().getMail();
+				boolean mailProvided = (mail != null && !mail.trim().isEmpty());
+				if (mailProvided) {
+					MailUtil.send(settings, mail, subject, body);
 				}
 
 				job.setState(AbstractJob.STATE_SUCESS_AND_NOTIFICATION_SEND);
