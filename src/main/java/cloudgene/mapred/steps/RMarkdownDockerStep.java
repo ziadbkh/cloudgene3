@@ -95,7 +95,7 @@ public class RMarkdownDockerStep extends DockerStep {
 		new File(outputHtml + ".md").delete();
 		new File(scriptFilename).delete();
 
-		RMarkdownLocalStep.deleteFolder(new File(folder));
+		RMarkdownDockerStep.deleteFolder(new File(folder));
 
 		return result;
 

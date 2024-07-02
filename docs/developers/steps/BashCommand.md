@@ -2,16 +2,14 @@
 
 Cloudgene supports the execution of executable binaries.
 
-!!! tip
-    All HDFS inputs are automatically exported to the local filesystem and can be used without manual exportation in any executable binary.
-
 ## Parameters
 
-| Parameter | Required | Description |
-| --- | --- | --- |
-| `cmd` | yes | The command that should be executed |
+| Parameter | Required | Description                                                                         |
+| --- | --- |-------------------------------------------------------------------------------------|
+| `type` | yes | Type has to be `dcommand`                                                           |
+| `cmd` | yes | The command that should be executed                                                 |
 | `bash` | no | Enables or disable Bash specific features like pipes and loops (default: **false**) |
-| `stdout` | no | Use stdout as step's output (default: **false**) |
+| `stdout` | no | Use stdout as step's output (default: **false**)                                    |
 
 ## Examples
 
@@ -27,6 +25,7 @@ version: 1.0
 workflow:
   steps:
     - name: Print text to terminal
+      type: command
       cmd: /bin/echo $message
       stdout: true
   inputs:
@@ -47,6 +46,7 @@ version: 1.0
 workflow:
   steps:
     - name: Write text to file using pipes
+      type: command
       cmd: /bin/echo $message > $output
       bash: true
   inputs:
@@ -70,6 +70,7 @@ version: 1.0
 workflow:
   steps:
     - name: Print text to file using pipes
+      type: command
       cmd: /bin/cat $input
       stdout: true
   inputs:

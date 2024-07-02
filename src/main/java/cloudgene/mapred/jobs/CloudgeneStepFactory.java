@@ -5,17 +5,15 @@ import java.util.Map;
 
 import cloudgene.mapred.steps.BashCommandStep;
 import cloudgene.mapred.steps.GroovyStep;
-import cloudgene.mapred.steps.HtmlWidgetStep;
 import cloudgene.mapred.steps.JavaExternalStep;
 import cloudgene.mapred.steps.RMarkdownDockerStep;
-import cloudgene.mapred.steps.RMarkdownStep;
 import cloudgene.mapred.wdl.WdlStep;
 
 public class CloudgeneStepFactory {
 
 	private static CloudgeneStepFactory instance = null;
 	
-	private Map<String, String> registeredClasses;
+	private Map<String, Class> registeredClasses;
 
 	public static CloudgeneStepFactory getInstance() {
 		if (instance == null) {
@@ -25,72 +23,39 @@ public class CloudgeneStepFactory {
 	}
 	
 	private CloudgeneStepFactory() {
-		registeredClasses = new HashMap<String, String>();
+		registeredClasses = new HashMap<String, Class>();
+		register("java", JavaExternalStep.class);
+		register("rmd_docker", RMarkdownDockerStep.class);
+		register("groovy", GroovyStep.class);
+		register("command", BashCommandStep.class);
 	}
 	
 	public void register(String type, Class clazz) {
-		registeredClasses.put(type, clazz.getName());
+		registeredClasses.put(type, clazz);
 	}
 	
-	public String getClassname(WdlStep step) {
+	public Class getClassname(WdlStep step) {
+
+		if (step.getClassname() != null) {
+			try {
+				return Class.forName(step.getClassname());
+			} catch (ClassNotFoundException e) {
+				throw new RuntimeException("Class '" + step.getClassname() + "' not found.");
+			}
+		}
 
 		String type = step.getString("type");
-
-		if (type != null) {
-			
-			String clazz = registeredClasses.get(type);
-			if (clazz != null) {
-				return clazz;
-			}
-			
-			switch (type.toLowerCase()) {
-			case "java":
-				return JavaExternalStep.class.getName();
-			case "rmd_docker":
-				return RMarkdownDockerStep.class.getName();
-			case "groovy":
-				return GroovyStep.class.getName();
-			case "html_widget":
-				return HtmlWidgetStep.class.getName();
-			}
+		if (type == null) {
+			throw new RuntimeException("Not property type found");
 		}
 
-		if (step.getString("pig") != null) {
-			throw new RuntimeException("Hadoop support was removed in Cloudgene 3");
-		}
-		if (step.getString("spark") != null) {
-			throw new RuntimeException("Hadoop support was removed in Cloudgene 3");
-		} else if (step.getString("rmd") != null) {
-
-			// rscript
-			return RMarkdownStep.class.getName();
-
-		} else if (step.getString("rmd2") != null) {
-
-			// rscript
-			return RMarkdownStep.class.getName();
-
-		} else if (step.getClassname() != null) {
-
-			// custom class
-			return step.getClassname();
-
-		} else if (step.getString("exec") != null || step.getString("cmd") != null) {
-
-			// command
-			return BashCommandStep.class.getName();
-
-		} else {
-			String runtime = step.getString("runtime");
-			if (runtime == null || runtime.isEmpty() || runtime.toLowerCase().equals("hadoop")) {
-				throw new RuntimeException("Hadoop support was removed in Cloudgene 3");
-			} else if (runtime != null && runtime.toLowerCase().equals("java")) {
-				// normal java when no Hadoop suppport
-				return JavaExternalStep.class.getName();
-			}
+		Class clazz = registeredClasses.get(type);
+		if (clazz != null) {
+			return clazz;
 		}
 
-		return null;
+		throw new RuntimeException("Unknown type: '" + type + "'");
+
 	}
 
 }

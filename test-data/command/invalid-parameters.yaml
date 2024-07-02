@@ -9,6 +9,7 @@ mapred:
 
   steps:
     - name: Execute ls
+      type: command
       exec: /bin/ls --dsa
     
   inputs:

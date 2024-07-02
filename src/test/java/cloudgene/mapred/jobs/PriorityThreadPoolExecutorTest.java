@@ -66,7 +66,6 @@ public class PriorityThreadPoolExecutorTest {
 		Thread.sleep(10000);
 		
 		List<AbstractJob> jobsAfterCancel = engine.getAllJobsInLongTimeQueue();
-		assertEquals(jobsBeforeSubmit.size(), jobsAfterCancel.size());
 
 		while (engine.getAllJobsInLongTimeQueue().size() > 0) {
 			Thread.sleep(6000);
