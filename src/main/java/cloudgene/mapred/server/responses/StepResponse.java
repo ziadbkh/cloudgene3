@@ -16,6 +16,8 @@ public class StepResponse {
 	
 	private String name;
 
+	private boolean empty = true;
+
 	@JsonProperty("logMessages")
 	private List<MessageResponse> messages;
 
@@ -35,10 +37,19 @@ public class StepResponse {
 		this.name = name;
 	}
 
+	public boolean isEmpty() {
+		return empty;
+	}
+
+	public void setEmpty(boolean empty) {
+		this.empty = empty;
+	}
+
 	public static StepResponse build(Step step) {
 		StepResponse response = new StepResponse();
 		response.setId(step.getId());
 		response.setName(step.getName());
+		response.setEmpty(step.getLogMessages() == null || step.getLogMessages().isEmpty());
 		List<MessageResponse> responses = MessageResponse.build(step.getLogMessages());
 		response.setMessages(responses);
 		return response;

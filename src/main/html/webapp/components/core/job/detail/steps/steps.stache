@@ -2,6 +2,7 @@
 
   <div class="list-group">
 
+    {{^empty}}
     <div class="list-group-item bg-light  flex-column align-items-start">
       <div class="d-flex w-100 justify-content-between">
         <h5 class="mb-1">{{name}}</h5>
@@ -9,6 +10,7 @@
         <!-- <i class="far fa-check-circle text-success"></i> -->
       </div>
     </div>
+    {{/empty}}
 
     {{#logMessages}}
 
