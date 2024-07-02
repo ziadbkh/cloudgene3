@@ -39,6 +39,12 @@
             </td>
             <td>
                {{wdlApp.name}}<br>
+                {{#changed}}
+                    <small class="text-danger">Warning: File <b>{{filename}}</b> changed on disk. Reload Apps to solve this issue.</small>
+                {{/changed}}
+                {{#errorMessage}}
+                    <small class="text-danger">{{errorMessage}}</small>
+                {{/errorMessage}}
             </td>
             <td>{{wdlApp.version}}</td>
             <td>
@@ -47,12 +53,6 @@
               </button>
             </td>
             <td class="text-right">
-                {{#changed}}
-                    <small class="text-danger">Warning: File <b>{{filename}}</b> changed on disk. Reload Apps to solve this issue.</small>
-                {{/changed}}
-                {{#errorMessage}}
-                    <small class="text-danger">{{errorMessage}}</small>
-                {{/errorMessage}}
 
                 {{#if wdlApp.workflow}}
                     <a class="btn edit-settings-btn btn btn-sm btn-outline-secondary" href="#!pages/admin-apps/{{id}}">
