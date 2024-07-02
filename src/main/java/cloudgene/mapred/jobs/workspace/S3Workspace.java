@@ -7,6 +7,9 @@ import java.net.URL;
 import java.util.List;
 import java.util.Vector;
 
+import cloudgene.mapred.plugins.nextflow.NextflowProcess;
+import cloudgene.mapred.plugins.nextflow.NextflowTask;
+import cloudgene.mapred.plugins.nextflow.report.Report;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -250,6 +253,9 @@ public class S3Workspace implements IWorkspace {
 			String filename = summary.getKey().replaceAll(baseKey + "/", "");
 			String size = FileUtils.byteCountToDisplaySize(summary.getSize());
 			String hash = HashUtil.getSha256(filename + size + (Math.random() * 100000));
+			if (filename.equals(Report.DEFAULT_FILENAME)){
+				continue;
+			}
 			Download download = new Download();
 			download.setName(filename);
 			download.setPath("s3://" + summary.getBucketName() + "/" + summary.getKey());

@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Vector;
 
+import cloudgene.mapred.plugins.nextflow.report.Report;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -213,6 +214,9 @@ public class LocalWorkspace implements IWorkspace {
 
 		for (File file : files) {
 			if (file.isFile()) {
+				if (file.getName().equals(Report.DEFAULT_FILENAME)){
+					continue;
+				}
 				Download download = createDownload(prefix, file);
 				downloads.add(download);
 			} else {
