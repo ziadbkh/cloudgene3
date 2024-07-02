@@ -123,7 +123,7 @@ export default Control.extend({
   },
 
   '.enable-disable-btn click': function (el, ev) {
-    var card = $(el).closest('.card');
+    var card = $(el).closest('tr');
     var application = domData.get.call(card[0], 'application');
 
     var enabled = !application.attr('enabled')
@@ -158,7 +158,7 @@ export default Control.extend({
 
   '.delete-app-btn click': function (el, ev) {
 
-    var card = $(el).closest('.card');
+    var card = $(el).closest('tr');
     var application = domData.get.call(card[0], 'application');
 
     bootbox.confirm("Are you sure you want to delete <b>" + application.attr('id') + "</b>?", function (result) {
@@ -194,7 +194,7 @@ export default Control.extend({
 
   '.edit-permission-btn click': function(el, ev) {
 
-    var card = $(el).closest('.card');
+    var card = $(el).closest('tr');
     var application = domData.get.call(card[0], 'application');
 
     Group.findAll({},

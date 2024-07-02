@@ -23,6 +23,10 @@ public class NextflowProcessRenderer {
 
 	private static final String TEMPLATES_LIST = "/templates/list.html";
 
+	private static final String TEMPLATES_LABEL = "/templates/label.html";
+
+	private static final String TEMPLATES_STATUS = "/templates/status.html";
+
 	private static final String TEMPLATES_PROGRESSBAR = "/templates/progressbar.html";
 
 	private static final String FAILED = "FAILED";
@@ -30,6 +34,10 @@ public class NextflowProcessRenderer {
 	private static final String KILLED = "KILLED";
 
 	private static final String VIEW_PROGRESSBAR = "progressbar";
+
+	private static final String VIEW_LABEL = "label";
+
+	private static final String VIEW_STATUS = "status";
 
 	private static final String TRACE_STATUS = "status";
 
@@ -51,13 +59,27 @@ public class NextflowProcessRenderer {
 		case VIEW_PROGRESSBAR:
 			NextflowProcessRenderer.renderAsProgressbar(label, process, message);
 			break;
+		case VIEW_LABEL:
+			NextflowProcessRenderer.renderAsLabel(label, process, message);
+			break;
+		case VIEW_STATUS:
+			NextflowProcessRenderer.renderAsStatus(label, process, message);
+			break;
 		default:
 			NextflowProcessRenderer.renderAsList(label, process, message);
 		}
 	}
 
+	public static void renderAsLabel(String label, NextflowProcess process, Message message) {
+		render(label, TEMPLATES_LABEL, process, message);
+	}
+
 	public static void renderAsList(String label, NextflowProcess process, Message message) {
 		render(label, TEMPLATES_LIST, process, message);
+	}
+
+	public static void renderAsStatus(String label, NextflowProcess process, Message message) {
+		render(label, TEMPLATES_STATUS, process, message);
 	}
 
 	public static void renderAsProgressbar(String label, NextflowProcess process, Message message) {

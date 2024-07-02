@@ -9,6 +9,7 @@ mapred:
 
   steps:
     - name: Execute /bin/lukas/forer
+      type: command
       exec: /bin/lukas/forer
     
   inputs:

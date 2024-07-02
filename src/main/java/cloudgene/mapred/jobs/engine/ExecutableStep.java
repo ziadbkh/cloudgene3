@@ -8,13 +8,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
+import cloudgene.mapred.jobs.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cloudgene.mapred.jobs.CloudgeneContext;
-import cloudgene.mapred.jobs.CloudgeneJob;
-import cloudgene.mapred.jobs.CloudgeneStep;
-import cloudgene.mapred.jobs.CloudgeneStepFactory;
 import cloudgene.mapred.jobs.sdk.WorkflowStep;
 import cloudgene.mapred.plugins.PluginManager;
 import cloudgene.mapred.steps.ErrorStep;
@@ -64,52 +61,34 @@ public class ExecutableStep implements Runnable {
 		// find step implementation
 
 		CloudgeneStepFactory factory = CloudgeneStepFactory.getInstance();
-		String classname = factory.getClassname(step);
-		step.setClassname(classname);
+		Class myClass = factory.getClassname(step);
 
 		// create instance
-
-		String path = new File(context.getWorkingDirectory()).getAbsolutePath();
-		final String jar = FileUtil.path(path, step.getJar());
-
 		try {
 
-			File file = new File(jar);
 
-			if (file.exists()) {
+			Object object = myClass.newInstance();
 
-				URL url = file.toURL();
-
-				URLClassLoader urlCl = new URLClassLoader(new URL[] { url }, CloudgeneJob.class.getClassLoader());
-				Class myClass = urlCl.loadClass(step.getClassname());
-
-				Object object = myClass.newInstance();
-
-				if (object instanceof CloudgeneStep) {
-					instance = (CloudgeneStep) object;
-				} else if (object instanceof WorkflowStep) {
-					instance = new JavaInternalStep((WorkflowStep) object);
-				} else {
-					instance = new ErrorStep("Error during initialization: class " + step.getClassname() + " ( "
-							+ object.getClass().getSuperclass().getCanonicalName() + ") "
-							+ " has to extend CloudgeneStep or WorkflowStep. ");
-
-				}
-
-				// check requirements
-				PluginManager pluginManager = PluginManager.getInstance();
-				for (String plugin : instance.getRequirements()) {
-					if (!pluginManager.isEnabled(plugin)) {
-						instance = new ErrorStep(
-								"Requirements not fullfilled. This steps needs plugin '" + plugin + "'");
-					}
-				}
-
+			if (object instanceof CloudgeneStep) {
+				instance = (CloudgeneStep) object;
+			} else if (object instanceof WorkflowStep) {
+				instance = new JavaInternalStep((WorkflowStep) object);
 			} else {
-
-				instance = new ErrorStep("Error during initialization: Jar file '" + jar + "' not found.");
+				instance = new ErrorStep("Error during initialization: class " + step.getClassname() + " ( "
+						+ object.getClass().getSuperclass().getCanonicalName() + ") "
+						+ " has to extend CloudgeneStep or WorkflowStep. ");
 
 			}
+
+			// check requirements
+			PluginManager pluginManager = PluginManager.getInstance();
+			for (String plugin : instance.getRequirements()) {
+				if (!pluginManager.isEnabled(plugin)) {
+					instance = new ErrorStep(
+							"Requirements not fullfilled. This steps needs plugin '" + plugin + "'");
+				}
+			}
+
 
 		} catch (Exception e) {
 			Writer writer = new StringWriter();
@@ -120,15 +99,11 @@ public class ExecutableStep implements Runnable {
 
 		}
 
-		instance.setName(step.getName());
 		instance.setJob(job);
 	}
 
 	@Override
 	public void run() {
-
-		context.setCurrentStep(instance);
-		job.getSteps().add(instance);
 
 		job.writeLog("------------------------------------------------------");
 		job.writeLog(step.getName());

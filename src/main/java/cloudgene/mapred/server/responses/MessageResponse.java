@@ -70,7 +70,9 @@ public class MessageResponse {
 
 		if (messages != null) {
 			for (Message message : messages) {
-				response.add(MessageResponse.build(message));
+				if (!message.getMessage().trim().isEmpty()) {
+					response.add(MessageResponse.build(message));
+				}
 			}
 		}
 		return response;

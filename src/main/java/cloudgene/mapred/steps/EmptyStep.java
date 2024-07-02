@@ -8,6 +8,9 @@ public class EmptyStep extends CloudgeneStep{
 
 	@Override
 	public boolean run(WdlStep step, CloudgeneContext context) {
+
+		context.createStep(step.getName());
+
 		return false;
 	}
 

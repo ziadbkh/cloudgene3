@@ -3,11 +3,10 @@ package cloudgene.mapred.server.responses;
 import java.util.List;
 import java.util.Vector;
 
+import cloudgene.mapred.jobs.Step;
 import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import cloudgene.mapred.jobs.CloudgeneStep;
 
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @JsonClassDescription
@@ -36,7 +35,7 @@ public class StepResponse {
 		this.name = name;
 	}
 
-	public static StepResponse build(CloudgeneStep step) {
+	public static StepResponse build(Step step) {
 		StepResponse response = new StepResponse();
 		response.setId(step.getId());
 		response.setName(step.getName());
@@ -45,9 +44,9 @@ public class StepResponse {
 		return response;
 	}
 
-	public static List<StepResponse> build(List<CloudgeneStep> steps) {
+	public static List<StepResponse> build(List<Step> steps) {
 		List<StepResponse> response = new Vector<StepResponse>();
-		for (CloudgeneStep step : steps) {
+		for (Step step : steps) {
 			response.add(StepResponse.build(step));
 		}
 		return response;

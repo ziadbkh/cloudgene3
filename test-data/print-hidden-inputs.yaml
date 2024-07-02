@@ -5,26 +5,32 @@ workflow:
 
   steps:
     - name: text1
+      type: command
       cmd: "/bin/echo \"text1: ${text1}\""
       bash: true
       stdout: true
     - name: checkbox1
+      type: command
       cmd: "/bin/echo checkbox1: ${checkbox1}"
       bash: true
       stdout: true
     - name: list1
+      type: command
       cmd: "/bin/echo list1: ${list1}"
       bash: true
       stdout: true
     - name: text2
+      type: command
       cmd: "/bin/echo text2: ${text2}"
       bash: true
       stdout: true
     - name: checkbox2
+      type: command
       cmd: "/bin/echo checkbox2: ${checkbox2}"
       bash: true
       stdout: true
     - name: list2
+      type: command
       cmd: "/bin/echo list2: ${list2}"
       bash: true
       stdout: true

@@ -27,10 +27,10 @@ micronaut:
         bearer:
           header-name: "X-Auth-Token"
           prefix: ""
+        generator:
+          access-token:
+            expiration: 86400
         jwt:
-          generator:
-            access-token:
-              expiration: 86400
           signatures:
             secret:
               generator:

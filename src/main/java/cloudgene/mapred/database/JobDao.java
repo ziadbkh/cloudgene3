@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Vector;
 
+import cloudgene.mapred.jobs.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,11 +14,6 @@ import cloudgene.mapred.database.UserDao.UserMapper;
 import cloudgene.mapred.database.util.Database;
 import cloudgene.mapred.database.util.IRowMapper;
 import cloudgene.mapred.database.util.JdbcDataAccessObject;
-import cloudgene.mapred.jobs.AbstractJob;
-import cloudgene.mapred.jobs.CloudgeneJob;
-import cloudgene.mapred.jobs.CloudgeneParameterInput;
-import cloudgene.mapred.jobs.CloudgeneParameterOutput;
-import cloudgene.mapred.jobs.CloudgeneStep;
 
 public class JobDao extends JdbcDataAccessObject {
 
@@ -446,7 +442,7 @@ public class JobDao extends JdbcDataAccessObject {
 				if (job instanceof CloudgeneJob) {
 
 					StepDao stepDao = new StepDao(database);
-					List<CloudgeneStep> steps = stepDao.findAllByJob((CloudgeneJob) job);
+					List<Step> steps = stepDao.findAllByJob((CloudgeneJob) job);
 					job.setSteps(steps);
 
 				}

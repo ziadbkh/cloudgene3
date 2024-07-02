@@ -18,7 +18,7 @@ public class JavaExternalStep extends CloudgeneStep {
 	protected static final Logger log = LoggerFactory.getLogger(JavaExternalStep.class);
 
 	public boolean run(WdlStep step, CloudgeneContext context) {
-
+		context.createStep(step.getName());
 		String javaPath = System.getProperty("java.home");
 
 		File path = new File(javaPath);

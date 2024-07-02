@@ -14,6 +14,7 @@ public class ErrorStep extends CloudgeneStep{
 	
 	@Override
 	public boolean run(WdlStep step, CloudgeneContext context) {
+		context.createStep(step.getName());
 		context.error(errorMessage);
 		return false;
 	}

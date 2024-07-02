@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
+import cloudgene.mapred.jobs.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,12 +25,15 @@ public class NextflowTask {
 
 	private CloudgeneContext context;
 
+	private Step step;
+
 	private static final Logger log = LoggerFactory.getLogger(NextflowTask.class);
 	
-	public NextflowTask(CloudgeneContext context, Map<String, Object> trace) {
+	public NextflowTask(CloudgeneContext context, Map<String, Object> trace, Step step) {
 		id = (Integer) trace.get("task_id");
 		this.trace = trace;
 		this.context = context;
+		this.step = step;
 	}
 
 	public void update(Map<String, Object> trace) throws IOException {
@@ -66,7 +70,7 @@ public class NextflowTask {
 		InputStream stream = context.getWorkspace().download(reportFilename);
 		Report report = new Report(stream);
 		for (ReportEvent event : report.getEvents()) {
-			ReportEventExecutor.execute(event, context);
+			ReportEventExecutor.execute(event, context, step);
 		}
 	}
 

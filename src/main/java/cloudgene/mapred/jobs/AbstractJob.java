@@ -12,21 +12,17 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cloudgene.mapred.apps.Application;
-import cloudgene.mapred.apps.ApplicationRepository;
 import cloudgene.mapred.core.User;
 import cloudgene.mapred.jobs.queue.PriorityRunnable;
 import cloudgene.mapred.jobs.workspace.IWorkspace;
 import cloudgene.mapred.util.HashUtil;
 import cloudgene.mapred.util.Settings;
-import cloudgene.mapred.wdl.WdlParameterInputType;
 import genepi.io.FileUtil;
 
 abstract public class AbstractJob extends PriorityRunnable {
@@ -97,7 +93,7 @@ abstract public class AbstractJob extends PriorityRunnable {
 
 	protected CloudgeneParameterOutput logOutput = null;
 
-	protected List<CloudgeneStep> steps = new Vector<CloudgeneStep>();
+	protected List<Step> steps = new Vector<Step>();
 
 	protected BufferedOutputStream stdOutStream;
 
@@ -240,7 +236,6 @@ abstract public class AbstractJob extends PriorityRunnable {
 			initStdOutFiles();
 
 			setup();
-
 			return true;
 
 		} catch (Exception e1) {
@@ -251,53 +246,6 @@ abstract public class AbstractJob extends PriorityRunnable {
 			return false;
 
 		}
-	}
-
-	public boolean runInstallationAndResolveAppLinks() {
-
-		Settings settings = getSettings();
-		ApplicationRepository repository = settings.getApplicationRepository();
-
-		// resolve application links
-		for (CloudgeneParameterInput input : getInputParams()) {
-			if (input.getType() != WdlParameterInputType.APP_LIST) {
-				continue;
-			}
-			String value = input.getValue();
-			String linkedAppId = value;
-			if (value.startsWith("apps@")) {
-				linkedAppId = value.replaceAll("apps@", "");
-			}
-
-			if (value.isEmpty()) {
-				continue;
-			}
-			Application linkedApp = repository.getByIdAndUser(linkedAppId, getUser());
-			if (linkedApp == null) {
-				String error = "Application " + linkedAppId + " is not installed or wrong permissions.";
-				log.info(error);
-				writeOutput(error);
-				setError(error);
-				return false;
-			}
-			// update environment variables
-			Environment environment = settings.buildEnvironment().addApplication(linkedApp.getWdlApp())
-					.addContext(context);
-			Map<String, Object> properties = linkedApp.getWdlApp().getProperties();
-			for (String property : properties.keySet()) {
-				Object propertyValue = properties.get(property);
-				if (propertyValue instanceof String) {
-					propertyValue = environment.resolve(propertyValue.toString());
-				}
-				properties.put(property, propertyValue);
-			}
-
-			getContext().setData(input.getName(), properties);
-
-		}
-
-		return true;
-
 	}
 
 	@Override
@@ -311,12 +259,12 @@ abstract public class AbstractJob extends PriorityRunnable {
 		setState(AbstractJob.STATE_RUNNING);
 		setStartTime(System.currentTimeMillis());
 
-		if (!runInstallationAndResolveAppLinks()) {
+		/*if (!runInstallationAndResolveAppLinks()) {
 			log.info("[Job {}] Setup failed.", getId());
 			setEndTime(System.currentTimeMillis());
 			setState(AbstractJob.STATE_FAILED);
 			return;
-		}
+		}*/
 
 		log.info("[Job {}] Running job...", getId());
 		setStartTime(System.currentTimeMillis());
@@ -500,11 +448,11 @@ abstract public class AbstractJob extends PriorityRunnable {
 
 	}
 
-	public List<CloudgeneStep> getSteps() {
+	public List<Step> getSteps() {
 		return steps;
 	}
 
-	public void setSteps(List<CloudgeneStep> steps) {
+	public void setSteps(List<Step> steps) {
 		this.steps = steps;
 	}
 
@@ -583,7 +531,7 @@ abstract public class AbstractJob extends PriorityRunnable {
 
 	abstract public boolean execute();
 
-	abstract public boolean setup();
+	abstract public boolean setup() throws Exception;
 
 	abstract public boolean after();
 
