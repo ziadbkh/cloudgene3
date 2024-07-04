@@ -49,7 +49,7 @@
 		<java.version>17</java.version>
 		<micronaut.version>4.1.6</micronaut.version>
 		<micronaut.runtime>netty</micronaut.runtime>
-		<exec.mainClass>cloudgene.mapred.server.Application</exec.mainClass>
+		<exec.mainClass>cloudgene.mapred.CommandLineInterface</exec.mainClass>
 		<micronaut.runtime>netty</micronaut.runtime>
 		<micronaut.aot.enabled>false</micronaut.aot.enabled>
 
