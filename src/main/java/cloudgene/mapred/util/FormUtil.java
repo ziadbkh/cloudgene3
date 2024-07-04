@@ -52,7 +52,7 @@ public class FormUtil {
 				@Override
 				public void onNext(CompletedPart completedPart) {
 					log.debug("Parse parameter " + completedPart.getName() + "...");
-					Parameter formParameter = proessCompletedPart(completedPart);
+					Parameter formParameter = processCompletedPart(completedPart);
 					if (formParameter != null) {
 						form.add(formParameter);
 					}
@@ -75,7 +75,7 @@ public class FormUtil {
 
 	}
 
-	public Parameter proessCompletedPart(CompletedPart completedPart) {
+	public Parameter processCompletedPart(CompletedPart completedPart) {
 
 		String partName = completedPart.getName();
 
@@ -101,7 +101,9 @@ public class FormUtil {
 
 			try {
 				log.debug("Write data to string...");
-				String value = FileUtil.readFileAsString(completedPart.getInputStream());
+				InputStream stream = completedPart.getInputStream();
+				String value = FileUtil.readFileAsString(stream);
+				stream.close();
 				log.debug("Data written to string.");
 				return new Parameter(partName, value);
 			} catch (IOException e) {
