@@ -102,9 +102,6 @@ public class JobController {
 
 					blockInMaintenanceMode(user);
 
-					log.debug("Start submit job");
-					long start = System.currentTimeMillis();
-
 					AbstractJob job = jobService.submitJob(app, form, user);
 
 					log.debug("Job " + job.getId() + " submitted in " + (System.currentTimeMillis() - start) + " ms.");
