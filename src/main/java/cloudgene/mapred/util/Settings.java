@@ -1,9 +1,8 @@
 package cloudgene.mapred.util;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -329,6 +328,10 @@ public class Settings {
 		String path = getTempPath();
 		String name = FileUtil.getFilename(filename);
 		return FileUtil.path(path, name);
+	}
+
+	public File getTempFolder(String name) throws IOException {
+		return Files.createTempDirectory(Path.of(getTempPath()), name).toFile();
 	}
 
 	public void setNotificationAfter(int notificationAfter) {

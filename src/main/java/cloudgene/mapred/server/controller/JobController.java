@@ -1,5 +1,9 @@
 package cloudgene.mapred.server.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Function;
 
@@ -83,12 +87,14 @@ public class JobController {
 	@Post("/submit/{app}")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Secured(SecurityRule.IS_AUTHENTICATED)
-	public Publisher<HttpResponse<Object>> submit(Authentication authentication, String app, @Body MultipartBody body) {
+	public Publisher<HttpResponse<Object>> submit(Authentication authentication, String app, @Body MultipartBody body) throws IOException {
 
 		long start = System.currentTimeMillis();
-		log.debug("Start submit process and parse multipary body");
+		File folder = application.getSettings().getTempFolder("upload_");
 
-		return formUtil.processMultipartBody(body, new Function<List<Parameter>, HttpResponse<Object>>() {
+		log.debug("Start submit process and parse multipary body. Folder for request: " + folder.getAbsolutePath());
+
+		return formUtil.processMultipartBody(body, folder, new Function<List<Parameter>, HttpResponse<Object>>() {
 
 			@Override
 			public HttpResponse<Object> apply(List<Parameter> form) {
@@ -117,6 +123,9 @@ public class JobController {
 					return HttpResponse.ok(ResponseObject.build(job.getId(), message, true));
 				} catch (JsonHttpStatusException e) {
 					return HttpResponse.status(e.getStatus()).body(e.getObject());
+				} finally {
+					folder.delete();
+					log.debug("Deletes folder " + folder.getAbsolutePath() + ".");
 				}
 			}
 		});

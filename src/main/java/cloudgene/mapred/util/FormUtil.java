@@ -3,6 +3,8 @@ package cloudgene.mapred.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Vector;
 import java.util.function.Function;
@@ -32,7 +34,7 @@ public class FormUtil {
 	@Inject
 	protected cloudgene.mapred.server.Application application;
 
-	public Publisher<HttpResponse<Object>> processMultipartBody(MultipartBody body,
+	public Publisher<HttpResponse<Object>> processMultipartBody(MultipartBody body, File folder,
 			Function<List<Parameter>, HttpResponse<Object>> callback) {
 
 		return Mono.<HttpResponse<Object>>create(emitter -> {
@@ -52,7 +54,7 @@ public class FormUtil {
 				@Override
 				public void onNext(CompletedPart completedPart) {
 					log.debug("Parse parameter " + completedPart.getName() + "...");
-					Parameter formParameter = processCompletedPart(completedPart);
+					Parameter formParameter = processCompletedPart(completedPart, folder);
 					if (formParameter != null) {
 						form.add(formParameter);
 					}
@@ -75,17 +77,17 @@ public class FormUtil {
 
 	}
 
-	public Parameter processCompletedPart(CompletedPart completedPart) {
+	public Parameter processCompletedPart(CompletedPart completedPart, File folder) {
 
 		String partName = completedPart.getName();
 
 		if (completedPart instanceof CompletedFileUpload) {
 
 			String originalFileName = ((CompletedFileUpload) completedPart).getFilename();
-			String tmpFile = application.getSettings().getTempFilename(originalFileName);
-			File file = new File(tmpFile);
+			File file = new File(folder, originalFileName);
 
 			try {
+
 				long start = System.currentTimeMillis();
 				log.debug("Write data to " + file.getAbsolutePath() + "...");
 				InputStream stream = completedPart.getInputStream();
