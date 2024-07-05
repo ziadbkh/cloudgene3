@@ -77,7 +77,6 @@ public class PropertyResponse {
 
 		for (Map object : values) {
 			if (object.containsKey("id") && object.containsKey("name")) {
-				System.out.println(object);
 				response.add(PropertyResponse.build(object.get("id").toString(), object.get("name").toString()));
 			}
 		}
