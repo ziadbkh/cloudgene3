@@ -160,9 +160,9 @@ public class CloudgeneJob extends AbstractJob {
 
 			// execute steps
 			executor = new Executor();
-			boolean successful = executor.execute(steps, context);
+			ExecutionResult result = executor.execute(steps, context);
 
-			if (!successful) {
+			if (result != ExecutionResult.SUCCESS) {
 				setError("Job Execution failed.");
 				ExecutableStep failedNode = executor.getCurrentNode();
 				executeFailureStep(failedNode.getStep());
@@ -205,9 +205,8 @@ public class CloudgeneJob extends AbstractJob {
 			ExecutableStep node = new ExecutableStep(step, context);
 			context.setData("cloudgene.failedStep", failedStep);
 			context.setData("cloudgene.failedStep.classname", failedStep.getClassname());
-			node.run();
-			boolean result = node.isSuccessful();
-			if (result) {
+			ExecutionResult result = node.run();
+			if (result == ExecutionResult.SUCCESS) {
 				writeLog("onFailure execution successful.");
 				return true;
 			} else {

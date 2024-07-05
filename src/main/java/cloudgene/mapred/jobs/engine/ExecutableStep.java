@@ -20,7 +20,7 @@ import cloudgene.mapred.util.TimeUtil;
 import cloudgene.mapred.wdl.WdlStep;
 import genepi.io.FileUtil;
 
-public class ExecutableStep implements Runnable {
+public class ExecutableStep {
 
 	private WdlStep step;
 
@@ -32,7 +32,7 @@ public class ExecutableStep implements Runnable {
 
 	private static final Logger log = LoggerFactory.getLogger(CloudgeneJob.class);
 
-	private boolean successful = false;
+	private boolean killed = false;
 
 	private long time;
 
@@ -102,8 +102,7 @@ public class ExecutableStep implements Runnable {
 		instance.setJob(job);
 	}
 
-	@Override
-	public void run() {
+	public ExecutionResult run() {
 
 		job.writeLog("------------------------------------------------------");
 		job.writeLog(step.getName());
@@ -118,12 +117,11 @@ public class ExecutableStep implements Runnable {
 
 			if (!successful) {
 				job.writeLog("  " + step.getName() + " [ERROR]");
-				successful = false;
 
 				context.incCounter("steps.failure." + id, 1);
 				context.submitCounter("steps.failure." + id);
+				return killed ? ExecutionResult.CANCELED : ExecutionResult.FAILED;
 
-				return;
 			} else {
 				long end = System.currentTimeMillis();
 				long time = end - start;
@@ -138,22 +136,18 @@ public class ExecutableStep implements Runnable {
 			context.incCounter("steps.failure." + id, 1);
 			context.submitCounter("steps.failure." + id);
 
-			successful = false;
-			return;
+			return killed ? ExecutionResult.CANCELED : ExecutionResult.FAILED;
 		}
 
 		context.incCounter("steps.success." + id, 1);
 		context.submitCounter("steps.success." + id);
 
-		successful = true;
+		return ExecutionResult.SUCCESS;
 
-	}
-
-	public boolean isSuccessful() {
-		return successful;
 	}
 
 	public void kill() {
+		killed = true;
 		if (instance != null) {
 			log.info("Get kill signal for job " + job.getId());
 			instance.kill();

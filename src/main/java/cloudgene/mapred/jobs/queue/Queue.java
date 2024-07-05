@@ -72,14 +72,14 @@ public abstract class Queue implements Runnable {
 
 	}
 
-	public void cancel(AbstractJob job) {
+	public synchronized void cancel(AbstractJob job) {
 		
 		if (job.getState() == AbstractJob.STATE_RUNNING || job.getState() == AbstractJob.STATE_EXPORTING) {
 
 			log.info(name + ": Cancel running job " + job.getId() + "...");
-			
-			job.kill();
+
 			job.cancel();
+			job.kill();
 
 			log.info(name + ": Job " + job.getId() + " canceled.");
 

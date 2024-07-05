@@ -120,6 +120,7 @@ public abstract class CloudgeneStep {
 	}
 
 	public void kill() {
+		context.log("Process killed by used.");
 		if (process != null && process.isAlive()) {
 			process.destroy();
 			while (process.isAlive()) {
@@ -131,7 +132,6 @@ public abstract class CloudgeneStep {
 				}
 			}
 			killed = true;
-			context.log("Process killed by used.");
 		}
 	}
 

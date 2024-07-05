@@ -2,6 +2,7 @@ package cloudgene.mapred.jobs.engine;
 
 import java.util.List;
 
+import cloudgene.mapred.jobs.ExecutionResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,23 +15,25 @@ public class Executor {
 
 	private static Logger log = LoggerFactory.getLogger(Executor.class);
 
-	public boolean execute(List<WdlStep> steps, CloudgeneContext context) throws Exception {
+	public ExecutionResult execute(List<WdlStep> steps, CloudgeneContext context) throws Exception {
 
 		context.log("Execute " + steps.size() + " steps...");
 		for (WdlStep step : steps) {
 			executableNode = new ExecutableStep(step, context);
 			log.info("[Job {}] Executor: execute step '{}'...", context.getJobId(), step.getName());
-			executableNode.run();
-			if (!executableNode.isSuccessful()) {
-				return false;
+			ExecutionResult result = executableNode.run();
+			if (result != ExecutionResult.SUCCESS) {
+				return result;
 			}
 		}
 
-		return true;
+		return ExecutionResult.SUCCESS;
 	}
 
 	public void kill() {
-		executableNode.kill();
+		if (executableNode != null) {
+			executableNode.kill();
+		}
 	}
 
 	public void updateProgress() {
