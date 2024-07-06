@@ -2,8 +2,7 @@ package cloudgene.mapred.plugins.nextflow;
 
 import cloudgene.mapred.jobs.CloudgeneStepFactory;
 import cloudgene.mapred.plugins.IPlugin;
-import cloudgene.mapred.server.Application;
-import cloudgene.mapred.util.Config;
+import cloudgene.mapred.util.Configuration;
 import cloudgene.mapred.util.Settings;
 import cloudgene.mapred.wdl.WdlApp;
 import com.esotericsoftware.yamlbeans.YamlReader;
@@ -117,6 +116,10 @@ public class NextflowPlugin implements IPlugin {
 
 		return config;
 
+	}
+
+	public String getNextflowConfig() {
+		return FileUtil.path(Configuration.getConfigDirectory(), "nextflow.config");
 	}
 
 }

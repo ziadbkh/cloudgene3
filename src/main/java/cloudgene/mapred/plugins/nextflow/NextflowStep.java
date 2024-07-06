@@ -93,7 +93,7 @@ public class NextflowStep extends CloudgeneStep {
 		nextflow.setProfile(profile);
 
 		// set global configuration
-		String globalConfig = settings.getNextflowConfig();
+		String globalConfig = plugin.getNextflowConfig();
 		nextflow.addConfig(globalConfig);
 
 		// set application specific configuration

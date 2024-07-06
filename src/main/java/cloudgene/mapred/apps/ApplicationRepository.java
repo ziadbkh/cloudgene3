@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import cloudgene.mapred.util.Configuration;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,9 @@ public class ApplicationRepository {
 
 	private Map<String, Application> indexApps;
 
-	private String appsFolder = "apps";
+	public static final String CONFIG_PATH = Configuration.getConfigDirectory();
+
+	private String appsFolder = Configuration.getAppsDirectory();;
 
 	private static final Logger log = LoggerFactory.getLogger(ApplicationRepository.class);
 
@@ -528,7 +531,7 @@ public class ApplicationRepository {
 	}
 
 	public String getConfigDirectory(WdlApp app) {
-		return FileUtil.path("config", app.getId().split("@")[0]);
+		return FileUtil.path(CONFIG_PATH, app.getId().split("@")[0]);
 	}
 
 	public boolean hasAccess(User user, Application application) {

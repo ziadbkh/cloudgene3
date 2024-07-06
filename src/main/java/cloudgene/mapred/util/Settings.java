@@ -86,11 +86,7 @@ public class Settings {
 
 	private int maxDownloads = 10;
 
-	protected Config config;
-
 	private String port = "8082";
-
-	private String nextflowConfig = FileUtil.path("config", "nextflow.config");
 
 	public static final String DEFAULT_SECURITY_KEY = "default-key-change-me-immediately";
 
@@ -99,25 +95,19 @@ public class Settings {
 
 	private ApplicationRepository repository;
 
-	private Settings() {
+	public Settings() {
 
 		repository = new ApplicationRepository();
+		repository.setAppsFolder(Configuration.getAppsDirectory());
 
 		// read default settings from env variables when set
-		String name = System.getenv().get("CLOUDGENE_SERVICE_NAME");
-		if (name != null) {
-			this.name = name;
-		}
+		this.name = Configuration.get("CG_SERVICE_NAME", this.name);
 
 		MenuItem helpMenuItem = new MenuItem();
 		helpMenuItem.setId("help");
 		helpMenuItem.setName("Help");
-		String helpLink = System.getenv().get("CLOUDGENE_HELP_PAGE");
-		if (helpLink != null) {
-			helpMenuItem.setLink(helpLink);
-		} else {
-			helpMenuItem.setLink("http://docs.cloudgene.io");
-		}
+		String helpLink = Configuration.get("CG_HELP_PAGE", "http://docs.cloudgene.io");
+		helpMenuItem.setLink(helpLink);
 		navigation.add(helpMenuItem);
 
 		database = new HashMap<String, String>();
@@ -127,92 +117,31 @@ public class Settings {
 
 	}
 
-	public Settings(Config config) {
+	public static Settings load() throws IOException {
 
-		this();
-		this.config = config;
+		String filename = Configuration.getSettingsFilename();
 
-		// workspace in config has higher priority
-		if (config.getWorkspace() != null) {
-			setLocalWorkspace(config.getWorkspace());
-		}
-
-		if (config.getPort() != null && !config.getPort().trim().isEmpty()) {
-			setPort(config.getPort());
-		}
-
-		if (config.getApps() != null) {
-			repository.setAppsFolder(config.getApps());
-		}
-
-		// database in config has higher priority
-		if (config.getDatabase() != null) {
-			Map<String, String> database = getDatabase();
-			if (database != null) {
-				if (database.get("driver") != null && database.get("driver").equals("h2")) {
-					database.put("database", config.getDatabase());
-					// check file and create parent folders
-					File databaseFile = new File(config.getDatabase());
-					if (!databaseFile.exists()) {
-						databaseFile.getParentFile().mkdirs();
-					}
-				}
-			} else {
-				database = new HashMap<String, String>();
-				initDefaultDatabase(database, config.getDatabase());
-			}
-		}
-
-	}
-
-	public static Settings load(Config config) throws FileNotFoundException, YamlException {
-
-		if (config.getSettings() == null) {
+		if (!new File(filename).exists()){
+			log.info("Loading default settings. File '" + filename + "' not found.");
 			return new Settings();
 		}
+
+		log.info("Loading settings from " + filename + "...");
 
 		YamlConfig yamlConfig = new YamlConfig();
 		yamlConfig.setPropertyElementType(Settings.class, "apps", Application.class);
 		yamlConfig.setClassTag("cloudgene.mapred.util.Application", Application.class);
-		YamlReader reader = new YamlReader(new FileReader(config.getSettings()), yamlConfig);
+		YamlReader reader = new YamlReader(new FileReader(filename), yamlConfig);
 		Settings settings = reader.read(Settings.class);
+		log.info("Settings loaded.");
 
 		log.info("Auto retire: " + settings.isAutoRetire());
 		log.info("Retire jobs after " + settings.retireAfter + " days.");
 		log.info("Notify user after " + settings.notificationAfter + " days.");
 		log.info("Write statistics: " + settings.writeStatistics);
 
-		settings.config = config;
-
-		// workspace in config has higher priority
-		if (config.getWorkspace() != null) {
-			settings.setLocalWorkspace(config.getWorkspace());
-		}
-
-		if (config.getPort() != null && !config.getPort().trim().isEmpty()) {
-			settings.setPort(config.getPort());
-		}
-
-		if (config.getApps() != null) {
-			settings.getApplicationRepository().setAppsFolder(config.getApps());
-		}
-
-		// database in config has higher priority
-		if (config.getDatabase() != null) {
-			Map<String, String> database = settings.getDatabase();
-			if (database != null) {
-				if (database.get("driver") != null && database.get("driver").equals("h2")) {
-					database.put("database", config.getDatabase());
-					// check file and create parent folders
-					File databaseFile = new File(config.getDatabase());
-					if (!databaseFile.exists()) {
-						databaseFile.getParentFile().mkdirs();
-					}
-				}
-			} else {
-				database = new HashMap<String, String>();
-				initDefaultDatabase(database, config.getDatabase());
-			}
+		if (settings.getServerUrl() == null || settings.getServerUrl().trim().isEmpty()) {
+			throw new IOException("Error: serverUrl not set. Please set serverUrl in file '" + filename + "'");
 		}
 
 		return settings;
@@ -243,33 +172,25 @@ public class Settings {
 	}
 
 	public void save() {
-		String filename = config.getSettings();
-		save(filename);
-	}
-
-	public void save(String filename) {
+		String filename = Configuration.getSettingsFilename();
 		try {
 
-			if (filename != null) {
-
-				File file = new File(filename);
-				if (!file.exists()) {
-					file.getParentFile().mkdirs();
-				}
-
-				log.info("Storing settings to file " + filename + " (" + getApps().size() + " apps installed)");
-				apps = repository.getAll();
-
-				YamlConfig yamlConfig = new YamlConfig();
-				yamlConfig.setPropertyElementType(Settings.class, "apps", Application.class);
-				yamlConfig.setClassTag("cloudgene.mapred.util.Application", Application.class);
-
-				YamlWriter writer = new YamlWriter(new FileWriter(filename), yamlConfig);
-				writer.write(this);
-				writer.close();
-			} else {
-				log.warn("No settings filename setting.");
+			File file = new File(filename);
+			if (!file.exists()) {
+				file.getParentFile().mkdirs();
 			}
+
+			log.info("Storing settings to file " + filename + " (" + getApps().size() + " apps installed)");
+			apps = repository.getAll();
+
+			YamlConfig yamlConfig = new YamlConfig();
+			yamlConfig.setPropertyElementType(Settings.class, "apps", Application.class);
+			yamlConfig.setClassTag("cloudgene.mapred.util.Application", Application.class);
+
+			YamlWriter writer = new YamlWriter(new FileWriter(filename), yamlConfig);
+			writer.write(this);
+			writer.close();
+
 		} catch (Exception e) {
 			log.error("Storing settings failed.", e);
 		}
@@ -578,14 +499,6 @@ public class Settings {
 
 	public void setBaseUrl(String baseUrl) {
 		this.baseUrl = baseUrl;
-	}
-
-	public void setNextflowConfig(String nextflowConfig) {
-		this.nextflowConfig = nextflowConfig;
-	}
-
-	public String getNextflowConfig() {
-		return nextflowConfig;
 	}
 
 	public Environment buildEnvironment() {

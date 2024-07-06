@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Vector;
 
+import cloudgene.mapred.plugins.PluginManager;
+import cloudgene.mapred.plugins.nextflow.NextflowPlugin;
 import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -20,8 +22,11 @@ public class NextflowConfigResponse {
 	private List<Variable> variables = new Vector<Variable>();
 
 	public static NextflowConfigResponse build(Settings settings) {
+
+		NextflowPlugin plugin = (NextflowPlugin) PluginManager.getInstance().getPlugin(NextflowPlugin.ID);
+
 		NextflowConfigResponse response = new NextflowConfigResponse();
-		String configFilename = settings.getNextflowConfig();
+		String configFilename = plugin.getNextflowConfig();
 		File configFile = new File(configFilename);
 		if (!configFile.exists()) {
 			return response;
