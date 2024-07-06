@@ -2,11 +2,26 @@ package cloudgene.mapred.plugins.nextflow;
 
 import cloudgene.mapred.jobs.CloudgeneStepFactory;
 import cloudgene.mapred.plugins.IPlugin;
+import cloudgene.mapred.server.Application;
+import cloudgene.mapred.util.Config;
 import cloudgene.mapred.util.Settings;
+import cloudgene.mapred.wdl.WdlApp;
+import com.esotericsoftware.yamlbeans.YamlReader;
+import com.esotericsoftware.yamlbeans.YamlWriter;
+import genepi.io.FileUtil;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class NextflowPlugin implements IPlugin {
 
 	public static final String ID = "nextflow";
+	public static final String NEXTFLOW_CONFIG = "nextflow.config";
+	public static final String NEXTFLOW_YAML = "nextflow.yaml";
 
 	private Settings settings;
 
@@ -46,6 +61,62 @@ public class NextflowPlugin implements IPlugin {
 		} else {
 			return "Nextflow Binary not found. Nextflow support disabled.";
 		}
+	}
+
+	@Override
+	public void updateConfig(WdlApp app, Map<String, String> config) throws IOException {
+
+		String appFolder = settings.getApplicationRepository().getConfigDirectory(app);
+		FileUtil.createDirectory(appFolder);
+
+		String nextflowConfig = FileUtil.path(appFolder, NEXTFLOW_CONFIG);
+		String content = config.get("nextflow.config");
+		StringBuffer contentNextflowConfig = new StringBuffer(content == null ? "" : content);
+		FileUtil.writeStringBufferToFile(nextflowConfig, contentNextflowConfig);
+
+		String nextflowProperties = FileUtil.path(appFolder, NEXTFLOW_YAML);
+		Map<String, String> properties = new HashMap<String, String>();
+		properties.put("profile", config.get("nextflow.profile"));
+		properties.put("work", config.get("nextflow.work"));
+
+		YamlWriter writer = new YamlWriter(new FileWriter(nextflowProperties));
+		writer.write(properties);
+		writer.close();
+
+	}
+
+	@Override
+	public Map<String, String> getConfig(WdlApp app) throws IOException {
+
+		String appFolder = settings.getApplicationRepository().getConfigDirectory(app);
+
+		Map<String, String> config = new HashMap<String, String>();
+
+		String nextflowConfig = FileUtil.path(appFolder, NEXTFLOW_CONFIG);
+		if (new File(nextflowConfig).exists()) {
+			String content = FileUtil.readFileAsString(nextflowConfig);
+			config.put("nextflow.config", content);
+		}
+
+		String nextflowProperties = FileUtil.path(appFolder, NEXTFLOW_YAML);
+		File file = new File(nextflowProperties);
+		if (!file.exists()) {
+			return config;
+		}
+
+		YamlReader reader = new YamlReader(new FileReader(nextflowProperties));
+		Map properties = reader.read(Map.class);
+		reader.close();
+
+		if (properties.get("profile") != null) {
+			config.put("nextflow.profile", properties.get("profile").toString());
+		}
+		if (properties.get("work") != null) {
+			config.put("nextflow.work", properties.get("work").toString());
+		}
+
+		return config;
+
 	}
 
 }

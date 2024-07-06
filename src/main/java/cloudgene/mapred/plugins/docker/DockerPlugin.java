@@ -3,6 +3,9 @@ package cloudgene.mapred.plugins.docker;
 import cloudgene.mapred.jobs.CloudgeneStepFactory;
 import cloudgene.mapred.plugins.IPlugin;
 import cloudgene.mapred.util.Settings;
+import cloudgene.mapred.wdl.WdlApp;
+
+import java.util.Map;
 
 public class DockerPlugin implements IPlugin {
 
@@ -46,6 +49,16 @@ public class DockerPlugin implements IPlugin {
 		} else {
 			return "Docker Binary not found. Docker support disabled.";
 		}
+	}
+
+	@Override
+	public Map<String, String> getConfig(WdlApp app) {
+		return null;
+	}
+
+	@Override
+	public void updateConfig(WdlApp app, Map<String, String> config) {
+
 	}
 
 }

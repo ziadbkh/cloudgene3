@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import cloudgene.mapred.jobs.*;
+import cloudgene.mapred.plugins.PluginManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,12 +80,16 @@ public class NextflowStep extends CloudgeneStep {
 		AbstractJob job = context.getJob();
 		String appFolder = settings.getApplicationRepository().getConfigDirectory(job.getApplicationId());
 
-		// set profile
-		String profile = "";
-		String nextflowProfile = FileUtil.path(appFolder, "nextflow.profile");
-		if (new File(nextflowProfile).exists()) {
-			profile = FileUtil.readFileAsString(nextflowProfile);
+		NextflowPlugin plugin = (NextflowPlugin) PluginManager.getInstance().getPlugin(NextflowPlugin.ID);
+
+		Map<String, String> nextflowSettings = null;
+		try {
+			nextflowSettings = plugin.getConfig(context.getJob().getApp());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		// set profile
+		String profile = nextflowSettings.get("nextflow.profile");
 		nextflow.setProfile(profile);
 
 		// set global configuration
@@ -96,16 +101,11 @@ public class NextflowStep extends CloudgeneStep {
 		nextflow.addConfig(appConfig);
 
 		// set work directory
-		String work = "";
-		String nextflowWork = FileUtil.path(appFolder, "nextflow.work");
-		if (new File(nextflowWork).exists()) {
-			work = FileUtil.readFileAsString(nextflowWork);
-		}
-
 		IWorkspace workspace = job.getWorkspace();
 
 		// use workdir if set in settings
-		if (!work.trim().isEmpty()) {
+		String work = nextflowSettings.get("nextflow.work");
+		if (work != null && !work.trim().isEmpty()) {
 			nextflow.setWork(work);
 		} else {
 			String workDir = workspace.createTempFolder("nextflow");

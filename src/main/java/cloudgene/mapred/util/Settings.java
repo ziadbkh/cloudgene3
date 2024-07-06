@@ -167,56 +167,56 @@ public class Settings {
 
 	public static Settings load(Config config) throws FileNotFoundException, YamlException {
 
-		if (config.getSettings() != null) {
-
-			YamlConfig yamlConfig = new YamlConfig();
-			yamlConfig.setPropertyElementType(Settings.class, "apps", Application.class);
-			yamlConfig.setClassTag("cloudgene.mapred.util.Application", Application.class);
-			YamlReader reader = new YamlReader(new FileReader(config.getSettings()), yamlConfig);
-			Settings settings = reader.read(Settings.class);
-
-			log.info("Auto retire: " + settings.isAutoRetire());
-			log.info("Retire jobs after " + settings.retireAfter + " days.");
-			log.info("Notify user after " + settings.notificationAfter + " days.");
-			log.info("Write statistics: " + settings.writeStatistics);
-
-			settings.config = config;
-
-			// workspace in config has higher priority
-			if (config.getWorkspace() != null) {
-				settings.setLocalWorkspace(config.getWorkspace());
-			}
-
-			if (config.getPort() != null && !config.getPort().trim().isEmpty()) {
-				settings.setPort(config.getPort());
-			}
-
-			if (config.getApps() != null) {
-				settings.getApplicationRepository().setAppsFolder(config.getApps());
-			}
-
-			// database in config has higher priority
-			if (config.getDatabase() != null) {
-				Map<String, String> database = settings.getDatabase();
-				if (database != null) {
-					if (database.get("driver") != null && database.get("driver").equals("h2")) {
-						database.put("database", config.getDatabase());
-						// check file and create parent folders
-						File databaseFile = new File(config.getDatabase());
-						if (!databaseFile.exists()) {
-							databaseFile.getParentFile().mkdirs();
-						}
-					}
-				} else {
-					database = new HashMap<String, String>();
-					initDefaultDatabase(database, config.getDatabase());
-				}
-			}
-
-			return settings;
-		} else {
+		if (config.getSettings() == null) {
 			return new Settings();
 		}
+
+		YamlConfig yamlConfig = new YamlConfig();
+		yamlConfig.setPropertyElementType(Settings.class, "apps", Application.class);
+		yamlConfig.setClassTag("cloudgene.mapred.util.Application", Application.class);
+		YamlReader reader = new YamlReader(new FileReader(config.getSettings()), yamlConfig);
+		Settings settings = reader.read(Settings.class);
+
+		log.info("Auto retire: " + settings.isAutoRetire());
+		log.info("Retire jobs after " + settings.retireAfter + " days.");
+		log.info("Notify user after " + settings.notificationAfter + " days.");
+		log.info("Write statistics: " + settings.writeStatistics);
+
+		settings.config = config;
+
+		// workspace in config has higher priority
+		if (config.getWorkspace() != null) {
+			settings.setLocalWorkspace(config.getWorkspace());
+		}
+
+		if (config.getPort() != null && !config.getPort().trim().isEmpty()) {
+			settings.setPort(config.getPort());
+		}
+
+		if (config.getApps() != null) {
+			settings.getApplicationRepository().setAppsFolder(config.getApps());
+		}
+
+		// database in config has higher priority
+		if (config.getDatabase() != null) {
+			Map<String, String> database = settings.getDatabase();
+			if (database != null) {
+				if (database.get("driver") != null && database.get("driver").equals("h2")) {
+					database.put("database", config.getDatabase());
+					// check file and create parent folders
+					File databaseFile = new File(config.getDatabase());
+					if (!databaseFile.exists()) {
+						databaseFile.getParentFile().mkdirs();
+					}
+				}
+			} else {
+				database = new HashMap<String, String>();
+				initDefaultDatabase(database, config.getDatabase());
+			}
+		}
+
+		return settings;
+
 	}
 
 	public List<Application> getApps() {

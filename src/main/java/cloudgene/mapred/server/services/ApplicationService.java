@@ -1,10 +1,13 @@
 package cloudgene.mapred.server.services;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import cloudgene.mapred.plugins.IPlugin;
+import cloudgene.mapred.plugins.PluginManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,7 +125,7 @@ public class ApplicationService {
 
 	}
 
-	public void updateConfig(Application app, Map<String, String> config) {
+	public void updateConfig(Application app, Map<String, String> config) throws IOException {
 
 		ApplicationRepository repository = this.application.getSettings().getApplicationRepository();
 		WdlApp wdlApp = app.getWdlApp();
@@ -131,11 +134,16 @@ public class ApplicationService {
 			return;
 		}
 
-		Map<String, String> updatedConfig = repository.getConfig(wdlApp);
-		updatedConfig.put("nextflow.config", config.get("nextflow.config"));
-		updatedConfig.put("nextflow.profile", config.get("nextflow.profile"));
-		updatedConfig.put("nextflow.work", config.get("nextflow.work"));
-		repository.updateConfig(wdlApp, updatedConfig);
+		for (IPlugin plugin: PluginManager.getInstance().getPlugins()) {
+			Map<String, String> updatedConfig = plugin.getConfig(wdlApp);
+			if (updatedConfig == null) {
+				continue;
+			}
+			for (String key: config.keySet()){
+				updatedConfig.put(key, config.get(key));
+			}
+			plugin.updateConfig(wdlApp, updatedConfig);
+		}
 
 	}
 
@@ -146,14 +154,7 @@ public class ApplicationService {
 		if (reload) {
 			repository.reload();
 		}
-
-		List<Application> apps = new Vector<Application>(repository.getAll());
-		Collections.sort(apps);
-		for (Application app : apps) {
-			app.checkForChanges();
-
-		}
-		return apps;
+		return new Vector<Application>(repository.getAll());
 	}
 
 	public Application installApp(String url) {
