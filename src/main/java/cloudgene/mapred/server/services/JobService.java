@@ -408,12 +408,6 @@ public class JobService {
 						}
 					}
 
-					if (inputParam.isHdfs()) {
-
-						throw new Exception("HDFS support was removed in Cloudgene 3");
-
-					}
-
 					// copy to workspace in input directory
 					long start = System.currentTimeMillis();
 					log.debug("Upload file " + inputFile.getAbsolutePath() + " to workspace...");

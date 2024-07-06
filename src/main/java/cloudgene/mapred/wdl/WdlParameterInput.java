@@ -115,16 +115,11 @@ public class WdlParameterInput implements WdlParameter {
 	}
 
 	public boolean isFileOrFolder() {
-		return (typeEnum == WdlParameterInputType.HDFS_FILE || typeEnum == WdlParameterInputType.HDFS_FOLDER
-				|| typeEnum == WdlParameterInputType.LOCAL_FILE || typeEnum == WdlParameterInputType.LOCAL_FOLDER);
-	}
-
-	public boolean isHdfs() {
-		return (typeEnum == WdlParameterInputType.HDFS_FOLDER || typeEnum == WdlParameterInputType.HDFS_FILE);
+		return typeEnum == WdlParameterInputType.LOCAL_FILE || typeEnum == WdlParameterInputType.LOCAL_FOLDER;
 	}
 
 	public boolean isFolder() {
-		return (typeEnum == WdlParameterInputType.HDFS_FOLDER || typeEnum == WdlParameterInputType.LOCAL_FOLDER);
+		return typeEnum == WdlParameterInputType.LOCAL_FOLDER;
 	}
 
 	public void setHelp(String help) {

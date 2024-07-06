@@ -123,16 +123,11 @@ public class WdlParameterOutput implements WdlParameter {
 	}
 
 	public boolean isFileOrFolder() {
-		return (typeEnum == WdlParameterOutputType.HDFS_FILE || typeEnum == WdlParameterOutputType.HDFS_FOLDER
-				|| typeEnum == WdlParameterOutputType.LOCAL_FILE || typeEnum == WdlParameterOutputType.LOCAL_FOLDER);
-	}
-
-	public boolean isHdfs() {
-		return (typeEnum == WdlParameterOutputType.HDFS_FOLDER || typeEnum == WdlParameterOutputType.HDFS_FILE);
+		return (typeEnum == WdlParameterOutputType.LOCAL_FILE || typeEnum == WdlParameterOutputType.LOCAL_FOLDER);
 	}
 
 	public boolean isFolder() {
-		return (typeEnum == WdlParameterOutputType.HDFS_FOLDER || typeEnum == WdlParameterOutputType.LOCAL_FOLDER);
+		return (typeEnum == WdlParameterOutputType.LOCAL_FOLDER);
 	}
 
 }

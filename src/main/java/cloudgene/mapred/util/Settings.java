@@ -34,8 +34,6 @@ public class Settings {
 
 	private String localWorkspace = "workspace";
 
-	private String version;
-
 	private String name = "Cloudgene";
 
 	private Map<String, String> colors;
@@ -62,11 +60,7 @@ public class Settings {
 
 	private boolean autoRetire = false;
 
-	private boolean streaming = true;
-
 	private boolean writeStatistics = true;
-
-	private boolean https = false;
 
 	private boolean maintenance = false;
 
@@ -213,22 +207,6 @@ public class Settings {
 		this.localWorkspace = localWorkspace;
 	}
 
-	public boolean isStreaming() {
-		return streaming;
-	}
-
-	public void setStreaming(boolean streaming) {
-		this.streaming = streaming;
-	}
-
-	public String getVersion() {
-		return version;
-	}
-
-	public void setVersion(String version) {
-		this.version = version;
-	}
-
 	public Map<String, String> getMail() {
 		return mail;
 	}
@@ -293,14 +271,6 @@ public class Settings {
 
 	public boolean isWriteStatistics() {
 		return writeStatistics;
-	}
-
-	public void setHttps(boolean https) {
-		this.https = https;
-	}
-
-	public boolean isHttps() {
-		return https;
 	}
 
 	public void setMaintenance(boolean maintenance) {

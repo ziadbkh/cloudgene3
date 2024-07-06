@@ -1,6 +1,5 @@
 package cloudgene.mapred.wdl;
 
-import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonClassDescription;
@@ -9,8 +8,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @JsonClassDescription
 public class WdlApp implements Comparable<WdlApp> {
-
-	private String source = "";
 
 	private String description = "";
 
@@ -33,27 +30,12 @@ public class WdlApp implements Comparable<WdlApp> {
 	private String submitButton = "Submit Job";
 
 	private WdlWorkflow workflow;
-	
-	//needed, because yamlbeans expects property AND getter/setter methods.
-	private WdlWorkflow mapred;
-
-	private List<Map<String, Object>> installation;
-
-	private List<Map<String, Object>> deinstallation;
 
 	private Map<String, Object> properties;
 
 	private String path;
 
 	private String manifestFile;
-
-	public String getSource() {
-		return source;
-	}
-
-	public void setSource(String source) {
-		this.source = source;
-	}
 
 	public String getDescription() {
 		return description;
@@ -114,48 +96,12 @@ public class WdlApp implements Comparable<WdlApp> {
 		return name.replaceAll(" ", "-").toLowerCase();
 	}
 
-	@Deprecated
-	public WdlWorkflow getMapred() {
-		return null;
-	}
-
-	@Deprecated
-	public void setMapred(WdlWorkflow mapred) {
-		this.workflow = mapred;
-	}
-
 	public WdlWorkflow getWorkflow() {
 		return workflow;
 	}
 
 	public void setWorkflow(WdlWorkflow workflow) {
 		this.workflow = workflow;
-	}
-
-	@Deprecated
-	public Map<String, String> getCluster() {
-		return null;
-	}
-
-	@Deprecated
-	public void setCluster(Map<String, String> cluster) {
-		
-	}
-
-	public void setInstallation(List<Map<String, Object>> installation) {
-		this.installation = installation;
-	}
-
-	public List<Map<String, Object>> getInstallation() {
-		return installation;
-	}
-
-	public void setDeinstallation(List<Map<String, Object>> deinstallation) {
-		this.deinstallation = deinstallation;
-	}
-
-	public List<Map<String, Object>> getDeinstallation() {
-		return deinstallation;
 	}
 
 	public void setProperties(Map<String, Object> properties) {
@@ -206,10 +152,6 @@ public class WdlApp implements Comparable<WdlApp> {
 
 	public String getManifestFile() {
 		return manifestFile;
-	}
-
-	public boolean needsInstallation() {
-		return getInstallation() != null && getInstallation().size() > 0;
 	}
 
 	@Override
