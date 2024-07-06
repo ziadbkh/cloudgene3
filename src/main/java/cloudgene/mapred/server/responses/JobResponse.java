@@ -30,6 +30,7 @@ public class JobResponse {
 	private long submittedOn;
 	private String username;
 	private long currentTime;
+	private String workspaceSize;
 
 	@JsonProperty("steps")
 	private List<StepResponse> stepResponses;
@@ -165,6 +166,14 @@ public class JobResponse {
 		return currentTime;
 	}
 
+	public void setWorkspaceSize(String workspaceSize) {
+		this.workspaceSize = workspaceSize;
+	}
+
+	public String getWorkspaceSize() {
+		return workspaceSize;
+	}
+
 	public static JobResponse build(AbstractJob job, User user) {
 
 		// create tree
@@ -225,7 +234,6 @@ public class JobResponse {
 		}
 		
 		response.setCurrentTime(System.currentTimeMillis());
-
 		return response;
 	}
 
