@@ -5,10 +5,6 @@ public enum WdlParameterInputType {
 
 	LOCAL_FILE("local_file"),
 
-	HDFS_FOLDER("hdfs_folder"),
-
-	HDFS_FILE("hdfs_file"),
-
 	TEXT("text"),
 
 	STRING("string"),

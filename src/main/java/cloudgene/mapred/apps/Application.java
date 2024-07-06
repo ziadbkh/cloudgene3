@@ -16,15 +16,11 @@ public class Application implements Comparable<Application> {
 
 	private boolean syntaxError = false;
 
-	private boolean changed = true;
-
 	private WdlApp wdlApp = null;
 
 	private String errorMessage = "";
 
 	private boolean enabled = true;
-
-	private String wdlContent;
 
 	public Application(String id, String permission, String filename) {
 		this.id = id;
@@ -79,12 +75,10 @@ public class Application implements Comparable<Application> {
 			wdlApp = WdlReader.loadAppFromFile(getFilename());
 			syntaxError = false;
 			errorMessage = "";
-			wdlContent = FileUtil.readFileAsString(getFilename());
 		} catch (IOException e) {
 			syntaxError = true;
 			wdlApp = null;
 			errorMessage = e.getMessage();
-			wdlContent = FileUtil.readFileAsString(getFilename());
 			throw e;
 		}
 	}
@@ -111,19 +105,6 @@ public class Application implements Comparable<Application> {
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
-	}
-
-	public boolean isChanged() {
-		return changed;
-	}
-
-	public void setChanged(boolean changed) {
-		this.changed = changed;
-	}
-
-	public void checkForChanges() {
-		String newWdlContent = FileUtil.readFileAsString(getFilename());
-		setChanged(!wdlContent.equals(newWdlContent));
 	}
 
 	public boolean isInstalled(String hdfsAppFolder) {

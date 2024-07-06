@@ -75,13 +75,8 @@ public class CommandLineUtil {
 						throw new FileNotFoundException(input.getDescription() + ": file '" + value + "' not found.");
 					}
 					String entryName = tmpFile.getName();
+					props.put(input.getId(), value);
 
-					if (input.isHdfs()) {
-						throw new RuntimeException("HDFS not supported in CG3");
-
-					} else {
-						props.put(input.getId(), value);
-					}
 				}
 			} else {
 

@@ -5,7 +5,7 @@ website: http://cloudgene.uibk.ac.at
 category: cloudgene
 
  
-mapred:
+workflow:
 
   steps:
     - name: ReturnExceptionStep

@@ -20,7 +20,7 @@ public class JobAdminResponse {
 	private int pending;
 	private int waiting;
 	private int running;
-	private int canceld;
+	private int canceled;
 
 	public int getSuccess() {
 		return success;
@@ -62,33 +62,33 @@ public class JobAdminResponse {
 		this.running = running;
 	}
 
-	public int getCanceld() {
-		return canceld;
+	public int getCanceled() {
+		return canceled;
 	}
 
-	public void setCanceld(int canceld) {
-		this.canceld = canceld;
+	public void setCanceled(int canceled) {
+		this.canceled = canceled;
 	}
 	
-	public static JobAdminResponse build(List<AbstractJob> jobs, List<JobResponse> responses, String workspace) {
+	public static JobAdminResponse build(List<JobResponse> responses, String workspace) {
 		
 		int success = 0;
 		int failed = 0;
 		int pending = 0;
 		int waiting = 0;
-		int canceld = 0;
+		int canceled = 0;
 		int running = 0;
 		
 		JobAdminResponse response = new JobAdminResponse();
 		response.setData(responses);
-		response.setCount(jobs.size());
-		
-		for (AbstractJob job : jobs) {
+		response.setCount(responses.size());
+		for (JobResponse job: responses) {
 
 			String folder = FileUtil.path(workspace, job.getId());
 			File file = new File(folder);
 			if (file.exists()) {
 				long size = FileUtils.sizeOfDirectory(file);
+				System.out.println("----> " + size);
 				job.setWorkspaceSize(FileUtils.byteCountToDisplaySize(size));
 			}
 
@@ -110,7 +110,7 @@ public class JobAdminResponse {
 				waiting++;
 			}
 			if (job.getState() == AbstractJob.STATE_CANCELED) {
-				canceld++;
+				canceled++;
 			}
 		}
 		
@@ -118,7 +118,7 @@ public class JobAdminResponse {
 		response.setFailed(failed);
 		response.setPending(pending);
 		response.setWaiting(waiting);
-		response.setCanceld(canceld);
+		response.setCanceled(canceled);
 		response.setRunning(running);
 		
 		return response;

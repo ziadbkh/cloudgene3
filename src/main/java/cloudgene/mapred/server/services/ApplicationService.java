@@ -1,10 +1,10 @@
 package cloudgene.mapred.server.services;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.io.IOException;
+import java.util.*;
 
+import cloudgene.mapred.plugins.IPlugin;
+import cloudgene.mapred.plugins.PluginManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +25,7 @@ public class ApplicationService {
 	private static final String APPLICATION_NOT_REMOVED = "Application not removed: %s";
 	private static final String APPLICATION_NOT_FOUND = "Application %s not found or the request requires user authentication.";
 	private static final String APPLICATION_NOT_UPDATED = "Application not updated: %s";
-	private static final String APPLICATION_NOT_INSTALLED = "Application not installed. ";
+	private static final String APPLICATION_NOT_INSTALLED = "Application not installed. %s";
 	private static final String NO_URL = "No url or file location set.";
 	private static final String APPLICATION_NOT_INSTALLED_NO_WORKFLOW = "Application not installed: No workflow file found.";
 
@@ -122,7 +122,7 @@ public class ApplicationService {
 
 	}
 
-	public void updateConfig(Application app, Map<String, String> config) {
+	public void updateConfig(Application app, Map<String, String> config) throws IOException {
 
 		ApplicationRepository repository = this.application.getSettings().getApplicationRepository();
 		WdlApp wdlApp = app.getWdlApp();
@@ -131,11 +131,16 @@ public class ApplicationService {
 			return;
 		}
 
-		Map<String, String> updatedConfig = repository.getConfig(wdlApp);
-		updatedConfig.put("nextflow.config", config.get("nextflow.config"));
-		updatedConfig.put("nextflow.profile", config.get("nextflow.profile"));
-		updatedConfig.put("nextflow.work", config.get("nextflow.work"));
-		repository.updateConfig(wdlApp, updatedConfig);
+		for (IPlugin plugin: PluginManager.getInstance().getPlugins()) {
+			Map<String, String> updatedConfig = plugin.getConfig(wdlApp);
+			if (updatedConfig == null) {
+				continue;
+			}
+			for (String key: config.keySet()){
+				updatedConfig.put(key, config.get(key));
+			}
+			plugin.updateConfig(wdlApp, updatedConfig);
+		}
 
 	}
 
@@ -147,13 +152,14 @@ public class ApplicationService {
 			repository.reload();
 		}
 
-		List<Application> apps = new Vector<Application>(repository.getAll());
-		Collections.sort(apps);
-		for (Application app : apps) {
-			app.checkForChanges();
-
-		}
-		return apps;
+		List<Application> applications = new Vector<Application>(repository.getAll());
+		Collections.sort(applications, new Comparator<Application>() {
+			@Override
+			public int compare(Application o1, Application o2) {
+					return o1.getWdlApp().getName().compareTo(o2.getWdlApp().getName());
+			}
+		});
+		return applications;
 	}
 
 	public Application installApp(String url) {

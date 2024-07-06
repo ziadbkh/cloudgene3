@@ -162,7 +162,7 @@ public class JobAdminController {
 		log.info(String.format("Job: list all jobs of of all users (by ADMIN user ID %s - email %s)", admin.getId(),
 				admin.getMail()));
 		
-		return JobAdminResponse.build(jobs, responses, workspace);
+		return JobAdminResponse.build(responses, workspace);
 
 	}
 

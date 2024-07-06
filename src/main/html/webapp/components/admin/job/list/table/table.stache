@@ -15,8 +15,8 @@
 {{^is(jobs.pending, 0)}}
 <b>{{jobs.pending}}</b> jobs are <b>pending</b>.
 {{/is}}
-{{^is(jobs.canceld, 0)}}
-<b>{{jobs.canceld}}</b> jobs are <b>canceld</b>.
+{{^is(jobs.canceled, 0)}}
+<b>{{jobs.canceled}}</b> jobs are <b>canceled</b>.
 {{/is}}
 </p>
 
@@ -60,13 +60,7 @@
 			<td>
 				<p style="line-height: 1.15 !important; margin-bottom: 0px !important;">
 					{{username}}<br>
-				</p>
-				<p style="line-height: 1.15 !important; margin-top: 0px !important;  margin-bottom: 0px !important; padding-top:0px !important;">
-					<small class="text-muted" >
-						{{#user.roles}}
-							{{.}}&nbsp;
-						{{/user.roles}}
-					</small>
+					<small class="text-muted">{{userAgent}}</small>
 				</p>
 			</td>
 
@@ -88,7 +82,7 @@
 
 			<td>
 				{{#workspaceSize}}
-					<small>{{../workspaceSize}}</small>
+					<small>{{.}}</small>
 				{{else}}
 					-
 				{{/workspaceSize}}
@@ -121,10 +115,8 @@
 							<a class="change-retire-date-btn dropdown-item" style="cursor:pointer">Increase retire date</a>
 						{{/canIncreaseRetireDate}}
 
-						<a class="dropdown-item" href="mailto:{{user.mail}}">Send E-Mail...</a>
-
 						{{#canShowLog}}
-						<a class="dropdown-item" href="/logs/{{id}}" target="_blank">Logs</a>
+						<a class="dropdown-item" href="/logs/{../id}}" target="_blank">Logs</a>
 						{{/canShowLog}}
 
 						<div class="dropdown-divider"></div>

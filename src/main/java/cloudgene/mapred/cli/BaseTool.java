@@ -1,12 +1,6 @@
 package cloudgene.mapred.cli;
 
-import java.io.File;
-import java.io.FileReader;
-
-import com.esotericsoftware.yamlbeans.YamlReader;
-
 import cloudgene.mapred.apps.ApplicationRepository;
-import cloudgene.mapred.util.Config;
 import cloudgene.mapred.util.Settings;
 import genepi.base.Tool;
 
@@ -15,8 +9,6 @@ public abstract class BaseTool extends Tool {
 	private int MAX_LENGTH = 80;
 
 	protected Settings settings;
-
-	protected Config config;
 
 	protected String[] args;
 
@@ -29,43 +21,12 @@ public abstract class BaseTool extends Tool {
 
 	@Override
 	public void init() {
-				
 		try {
 			turnLoggingOff();
-			// turnLoggingOn();
-
-			// load cloudgene.conf file. contains path to settings, db, apps, ..
-			config = new Config();
-			if (new File(Config.CONFIG_FILENAME).exists()) {
-				try {
-					YamlReader reader = new YamlReader(new FileReader(Config.CONFIG_FILENAME));
-					config = reader.read(Config.class);
-				} catch (Exception e) {
-					printError("Error loading cloudgene.conf file:");
-					printError(e.getMessage());
-					return;
-				}
-			}
-
-			// load default settings when not yet loaded
-			String settingsFilename = config.getSettings();
-			settings = null;
-			if (settingsFilename != null && new File(settingsFilename).exists()) {
-				try {
-					settings = Settings.load(config);
-				} catch (Exception e) {
-					printError("Error loading settings file '" + settingsFilename + "' :");
-					printError(e.getMessage());
-					return;
-				}
-			} else {
-				settings = new Settings(config);
-			}
-
+			settings = Settings.load();
 			repository = settings.getApplicationRepository();
-
 		} catch (Exception e) {
-			e.printStackTrace();
+			printError(e.getMessage());
 		}
 	}
 

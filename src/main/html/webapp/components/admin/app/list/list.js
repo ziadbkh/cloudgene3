@@ -22,9 +22,30 @@ export default Control.extend({
     var that = this;
 
     Application.findAll({}, function (applications) {
-      that.options.installedApplications = applications;
+
+      var grouped = {};
+      applications.forEach(function(item) {
+        var category = item.wdlApp.category;
+        if (category == undefined) {
+          category = "Application";
+        }
+        if (!grouped[category]) {
+          grouped[category] = [];
+        }
+        grouped[category].push(item);
+      });
+
+      var categories = Object.keys(grouped).map(category => {
+        return {
+          name: category,
+          applications: grouped[category].map(app => {
+            return app;
+          })
+        };
+      });
+
       $(element).html(template({
-        applications: applications
+        categories: categories
       }));
       $(element).fadeIn();
 
@@ -105,6 +126,7 @@ export default Control.extend({
           waitingDialog.modal('show');
         }
       });
+
   },
 
   '#reload-apps-btn click': function (el, ev) {
@@ -114,8 +136,29 @@ export default Control.extend({
       reload: 'true'
     }, function (applications) {
 
+  var grouped = {};
+      applications.forEach(function(item) {
+        var category = item.wdlApp.category;
+        if (category == undefined) {
+          category = "Application";
+        }
+        if (!grouped[category]) {
+          grouped[category] = [];
+        }
+        grouped[category].push(item);
+      });
+
+      var categories = Object.keys(grouped).map(category => {
+        return {
+          name: category,
+          applications: grouped[category].map(app => {
+            return app;
+          })
+        };
+      });
+
       $(element).html(template({
-        applications: applications
+        categories: categories
       }));
       $("#content").fadeIn();
 
@@ -243,6 +286,16 @@ export default Control.extend({
         new ErrorPage(element, response);
       });
 
+  },
+
+  '.view-source-btn click': function(el, ev) {
+
+    var card = $(el).closest('tr');
+    var application = domData.get.call(card[0], 'application');
+    bootbox.alert({
+      message: '<div style="overflow: auto; height: 600px; width: 100%"><h5>File</h5><p>' + application.attr('filename') + '</p>' + '<h5>Source</h5><small><p><pre><code>' + application.attr('source') + '</code></pre></small></p></div>',
+      className: 'w-100'
+    });
   }
 
 });

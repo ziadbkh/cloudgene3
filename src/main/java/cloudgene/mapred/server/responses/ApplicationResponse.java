@@ -1,6 +1,8 @@
 package cloudgene.mapred.server.responses;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -8,13 +10,16 @@ import java.util.Vector;
 import cloudgene.mapred.apps.Application;
 import cloudgene.mapred.apps.ApplicationRepository;
 import cloudgene.mapred.jobs.Environment;
+import cloudgene.mapred.plugins.IPlugin;
+import cloudgene.mapred.plugins.PluginManager;
 import cloudgene.mapred.util.Settings;
 import cloudgene.mapred.wdl.WdlApp;
 import com.fasterxml.jackson.annotation.JsonClassDescription;
 import genepi.io.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @JsonClassDescription
-
 public class ApplicationResponse {
 
 	private String id = "";
@@ -39,6 +44,8 @@ public class ApplicationResponse {
 
 	private Map<String, String> config;
 
+	private static final Logger log = LoggerFactory.getLogger(ApplicationResponse.class);
+
 	public static ApplicationResponse build(Application app) {
 
 		ApplicationResponse appResponse = new ApplicationResponse();
@@ -47,7 +54,6 @@ public class ApplicationResponse {
 		appResponse.setFilename(app.getFilename());
 		appResponse.setLoaded(app.isLoaded());
 		appResponse.setErrorMessage(app.getErrorMessage());
-		appResponse.setChanged(app.isChanged());
 		appResponse.setPermission(app.getPermission());
 		// TODO: check if we need wdl app and file? only in details?
 		appResponse.setWdlApp(app.getWdlApp());
@@ -68,8 +74,19 @@ public class ApplicationResponse {
 		List<Environment.Variable> environment = settings.buildEnvironment().addApplication(app.getWdlApp()).toList();
 		appResponse.setEnvironment(environment);
 
-		Map<String, String> updatedConfig = repository.getConfig(app.getWdlApp());
-		appResponse.setConfig(updatedConfig);
+		Map<String, String> config = new HashMap<String, String>();
+		for (IPlugin plugin: PluginManager.getInstance().getPlugins()) {
+			try {
+				Map<String, String> pluginConfig = plugin.getConfig(app.getWdlApp());
+				if (pluginConfig == null) {
+					continue;
+				}
+				config.putAll(pluginConfig);
+			}catch (IOException e) {
+				log.warn("Loading configuration for plugin '" + plugin.getName() +"' and application '" + app.getWdlApp().getId() + "' failed.",  e);
+			}
+		}
+		appResponse.setConfig(config);
 
 		return appResponse;
 
