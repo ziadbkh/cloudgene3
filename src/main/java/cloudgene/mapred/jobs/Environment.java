@@ -41,29 +41,9 @@ public class Environment {
 		add("USER_NAME", context.getUser().getUsername());
 		add("USER_EMAIL", context.getUser().getMail());
 		add("USER_FULL_NAME", context.getUser().getFullName());
-
-		for (String dataKey: context.getData().keySet()) {
-			Object data = context.getData(dataKey);
-			if (!(data instanceof Map)){
-				continue;
-			}
-			addMap("inputs_" + dataKey, (Map) data);
-		}
-
 		return this;
 	}
 
-	private void addMap(String prefix, Map<String, Object> map) {
-		for (String dataKey: map.keySet()) {
-			Object data = map.get(dataKey);
-			if (!(data instanceof Map)){
-				env.put(prefix + "_" + dataKey, resolve(data.toString()));
-			} else {
-				addMap(prefix + "_" + dataKey, (Map) data);
-			}
-		}
-	}
-	
 	public Environment addApplication(WdlApp application) {
 		String localFolder = application.getPath();
 		add("APP_LOCATION", localFolder);

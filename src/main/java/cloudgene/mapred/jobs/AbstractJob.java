@@ -259,13 +259,6 @@ abstract public class AbstractJob extends PriorityRunnable {
 		setState(AbstractJob.STATE_RUNNING);
 		setStartTime(System.currentTimeMillis());
 
-		/*if (!runInstallationAndResolveAppLinks()) {
-			log.info("[Job {}] Setup failed.", getId());
-			setEndTime(System.currentTimeMillis());
-			setState(AbstractJob.STATE_FAILED);
-			return;
-		}*/
-
 		log.info("[Job {}] Running job...", getId());
 		setStartTime(System.currentTimeMillis());
 
@@ -290,9 +283,9 @@ abstract public class AbstractJob extends PriorityRunnable {
 
 			writeLog("Executing Job....");
 
-			boolean succesfull = execute();
+			boolean successfull = execute();
 
-			if (succesfull) {
+			if (successfull) {
 
 				log.info("[Job {}] Execution successful.", getId());
 

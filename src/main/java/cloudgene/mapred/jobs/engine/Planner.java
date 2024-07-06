@@ -16,7 +16,7 @@ public class Planner {
 
 	public WdlApp evaluateWDL(WdlApp app, CloudgeneContext context, Settings settings) throws Exception {
 
-		Map<String, String> context2 = new HashMap<String, String>();
+		Map<String, Object> context2 = new HashMap<String, Object>();
 
 		// add input values to context
 		for (WdlParameterInput param : app.getWorkflow().getInputs()) {
@@ -26,6 +26,11 @@ public class Planner {
 		// add output values to context
 		for (WdlParameterOutput param : app.getWorkflow().getOutputs()) {
 			context2.put(param.getId(), context.getOutput(param.getId()));
+		}
+
+		// add resolved properties to context
+		for (String key: context.getData().keySet()){
+			context2.put(key, context.getData(key));
 		}
 
 		context2.putAll(settings.buildEnvironment().addApplication(app).addContext(context).toMap());
