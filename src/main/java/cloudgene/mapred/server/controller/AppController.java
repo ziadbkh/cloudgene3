@@ -1,5 +1,6 @@
 package cloudgene.mapred.server.controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -83,11 +84,7 @@ public class AppController {
 		// update permissions
 		applicationService.updatePermissions(app, permission);
 
-		app.checkForChanges();
-
-		ApplicationResponse appResponse = ApplicationResponse.build(app);
-
-		return appResponse;
+		return ApplicationResponse.build(app);
 	}
 
 	@Get("/api/v2/server/apps/{appId}/settings")
@@ -95,28 +92,22 @@ public class AppController {
 	public ApplicationResponse getAppSettings(String appId) {
 		Application app = applicationService.getById(appId);
 		ApplicationRepository repository = applicationService.getRepository();
-		ApplicationResponse appResponse = ApplicationResponse.buildWithDetails(app, this.application.getSettings(),
-				repository);
+		return ApplicationResponse.buildWithDetails(app, this.application.getSettings(), repository);
 
-		return appResponse;
 	}
 
 	@Put("/api/v2/server/apps/{appId}/settings")
 	@Secured(User.ROLE_ADMIN)
 	public ApplicationResponse updateAppSettings(String appId, @Nullable Boolean enabled, @Nullable String permission,
-			@Nullable Boolean reinstall, @Nullable Map<String, String> config) {
+			@Nullable Boolean reinstall, @Nullable Map<String, String> config) throws IOException {
 
 		Application app = applicationService.getById(appId);
 		applicationService.updateConfig(app, config);
 
-		app.checkForChanges();
-
 		ApplicationRepository repository = applicationService.getRepository();
 
-		ApplicationResponse appResponse = ApplicationResponse.buildWithDetails(app, this.application.getSettings(),
-				repository);
+		return ApplicationResponse.buildWithDetails(app, this.application.getSettings(), repository);
 
-		return appResponse;
 	}
 
 	@Post("/api/v2/server/apps")

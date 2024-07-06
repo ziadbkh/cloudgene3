@@ -11,6 +11,7 @@ import java.util.Vector;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
+import cloudgene.mapred.plugins.nextflow.NextflowPlugin;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -267,8 +268,9 @@ public class ServerService {
 	}
 
 	public void updateNextflowConfig(String content) {
+		NextflowPlugin plugin = (NextflowPlugin) PluginManager.getInstance().getPlugin(NextflowPlugin.ID);
 		Settings settings = application.getSettings();
-		String filename = settings.getNextflowConfig();
+		String filename = plugin.getNextflowConfig();
 		FileUtil.writeStringBufferToFile(filename, new StringBuffer(content));
 	}
 

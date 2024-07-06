@@ -119,12 +119,6 @@ public class CloudgeneJob extends AbstractJob {
 		for (CloudgeneParameterOutput param : outputParams) {
 
 			switch (param.getType()) {
-			case HDFS_FILE:
-			case HDFS_FOLDER:
-				log.info("[Job {}] Setting output param '{}' failed. HDFS support was removed in Cloudgene 3'", getId(),
-						param.getName());
-				throw new RuntimeException("HDFS support was removed in Cloudgene 3");
-
 			case LOCAL_FILE:
 				String filename = workspace.createFile(param.getName(), param.getName());
 				param.setValue(filename);
@@ -265,13 +259,6 @@ public class CloudgeneJob extends AbstractJob {
 	public boolean exportParameter(CloudgeneParameterOutput out) {
 
 		writeLog("  Exporting parameter " + out.getName() + "...");
-
-		if (out.getType() == WdlParameterOutputType.HDFS_FOLDER || out.getType() == WdlParameterOutputType.HDFS_FILE) {
-
-			throw new RuntimeException("HDFS support was removed in Cloudgene 3");
-
-		}
-
 		out.setJobId(getId());
 
 		List<Download> downloads = workspace.getDownloads(out.getValue());

@@ -6,6 +6,7 @@ import cloudgene.mapred.plugins.IPlugin;
 import cloudgene.mapred.plugins.docker.DockerBinary;
 import cloudgene.mapred.steps.RMarkdownDockerStep;
 import cloudgene.mapred.util.Settings;
+import cloudgene.mapred.wdl.WdlApp;
 
 public class RMarkdownPlugin implements IPlugin {
 
@@ -89,4 +90,13 @@ public class RMarkdownPlugin implements IPlugin {
 		}
 	}
 
+	@Override
+	public Map<String, String> getConfig(WdlApp app) {
+		return null;
+	}
+
+	@Override
+	public void updateConfig(WdlApp app, Map<String, String> config) {
+
+	}
 }

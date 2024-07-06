@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cloudgene.mapred.util.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +20,6 @@ import cloudgene.mapred.database.util.Fixtures;
 import cloudgene.mapred.jobs.PersistentWorkflowEngine;
 import cloudgene.mapred.jobs.WorkflowEngine;
 import cloudgene.mapred.plugins.PluginManager;
-import cloudgene.mapred.util.Config;
 import cloudgene.mapred.util.Settings;
 import genepi.io.FileUtil;
 import io.micronaut.context.annotation.Context;
@@ -32,8 +32,6 @@ public class Application {
 	private Database database;
 
 	public static Settings settings;
-	
-	public static Config config;
 
 	private WorkflowEngine engine;
 
@@ -76,7 +74,7 @@ public class Application {
 		log.info("Setup Database...");
 		InputStream is = Application.class.getResourceAsStream("/updates.sql");
 
-		DatabaseUpdater updater = new DatabaseUpdater(database, config.getVersion(), is, VERSION);
+		DatabaseUpdater updater = new DatabaseUpdater(database, Configuration.getVersionFilename(), is, VERSION);
 		updater.addUpdate("2.3.0", new BcryptHashUpdate());
 
 		if (!updater.updateDB()) {

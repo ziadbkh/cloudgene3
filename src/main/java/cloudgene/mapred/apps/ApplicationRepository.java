@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import cloudgene.mapred.util.Configuration;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,9 @@ public class ApplicationRepository {
 
 	private Map<String, Application> indexApps;
 
-	private String appsFolder = "apps";
+	public static final String CONFIG_PATH = Configuration.getConfigDirectory();
+
+	private String appsFolder = Configuration.getAppsDirectory();;
 
 	private static final Logger log = LoggerFactory.getLogger(ApplicationRepository.class);
 
@@ -103,46 +106,35 @@ public class ApplicationRepository {
 	public Application getById(String id) {
 
 		Application application = indexApps.get(id);
-
-		if (application == null) {
-			// try without version
-
-			List<Application> versions = new Vector<Application>();
-
-			for (String idd : indexApps.keySet()) {
-				String tiles[] = idd.split("@");
-				if (tiles.length == 2) {
-					if (id.equals(tiles[0])) {
-						versions.add(indexApps.get(idd));
-					}
-				}
-			}
-
-			if (!versions.isEmpty()) {
-				// find latest
-
-				Application latest = versions.get(0);
-
-				for (int i = 1; i < versions.size(); i++) {
-
-					String latestVersion = latest.getWdlApp().getVersion();
-					String version = versions.get(i).getWdlApp().getVersion();
-
-					if (DatabaseUpdater.compareVersion(version, latestVersion) == 1) {
-						latest = versions.get(i);
-					}
-
-				}
-
-				return latest;
-
-			} else {
-				return null;
-			}
-
+		if (application != null) {
+			return application;
 		}
 
-		return application;
+		// try without version
+		List<Application> versions = new Vector<Application>();
+		for (String idd : indexApps.keySet()) {
+			String[] tiles = idd.split("@");
+			if (tiles.length == 2) {
+				if (id.equals(tiles[0])) {
+					versions.add(indexApps.get(idd));
+				}
+			}
+		}
+		if (versions.isEmpty()) {
+			return null;
+		}
+
+		// find latest
+		Application latest = versions.get(0);
+		for (int i = 1; i < versions.size(); i++) {
+			String latestVersion = latest.getWdlApp().getVersion();
+			String version = versions.get(i).getWdlApp().getVersion();
+			if (DatabaseUpdater.compareVersion(version, latestVersion) == 1) {
+				latest = versions.get(i);
+			}
+		}
+
+		return latest;
 
 	}
 
@@ -152,25 +144,22 @@ public class ApplicationRepository {
 
 		for (Application application : getAll()) {
 
-			if (hasAccess(user, application) && isActivated(application)) {
+            if (!hasAccess(user, application) || !isActivated(application)) {
+                continue;
+            }
 
-				WdlApp wdlApp = application.getWdlApp();
+            WdlApp wdlApp = application.getWdlApp();
 
-				if (filter == APPS_AND_DATASETS) {
-					listApps.add(wdlApp);
-				} else if (filter == APPS) {
-					if (wdlApp.getWorkflow() != null) {
-						listApps.add(wdlApp);
-					}
-				} else if (filter == DATASETS) {
-					if (wdlApp.getWorkflow() == null) {
-						listApps.add(wdlApp);
-					}
-				}
+            if (filter == APPS_AND_DATASETS) {
+                listApps.add(wdlApp);
+            } else if (filter == APPS && wdlApp.getWorkflow() != null) {
+				listApps.add(wdlApp);
 
-			}
+            } else if (filter == DATASETS && wdlApp.getWorkflow() != null) {
+				listApps.add(wdlApp);
+            }
 
-		}
+        }
 
 		Collections.sort(listApps);
 		return listApps;
@@ -248,17 +237,17 @@ public class ApplicationRepository {
 	}
 
 	public Application installFromUrl(String url) throws IOException {
-		// download file from url
-		if (url.endsWith(".zip")) {
-			File zipFile = new File(FileUtil.path(appsFolder, "archive.zip"));
-			FileUtils.copyURLToFile(new URL(url), zipFile);
-			Application application = installFromZipFile(zipFile.getAbsolutePath());
-			zipFile.delete();
-			return application;
-		}
-		return null;
+        if (!url.endsWith(".zip")) {
+            return null;
+        }
 
-	}
+		// download file from url
+		File zipFile = new File(FileUtil.path(appsFolder, "archive.zip"));
+        FileUtils.copyURLToFile(new URL(url), zipFile);
+        Application application = installFromZipFile(zipFile.getAbsolutePath());
+        zipFile.delete();
+        return application;
+    }
 
 	public Application installFromS3(String url) throws IOException {
 		// download file from s3 bucket
@@ -268,58 +257,64 @@ public class ApplicationRepository {
 			Application application = installFromZipFile(zipFile.getAbsolutePath());
 			zipFile.delete();
 			return application;
-		} else {
+		}
 
-			String appPath = FileUtil.path(appsFolder, "s3-download");
-			FileUtil.deleteDirectory(appPath);
-			FileUtil.createDirectory(appPath);
+		String appPath = FileUtil.path(appsFolder, "s3-download");
+		FileUtil.deleteDirectory(appPath);
+		FileUtil.createDirectory(appPath);
 
-			String baseKey = S3Util.getKey(url);
+		String baseKey = S3Util.getKey(url);
 
-			ObjectListing listing = S3Util.listObjects(url);
+		ObjectListing listing = S3Util.listObjects(url);
 
-			for (S3ObjectSummary summary : listing.getObjectSummaries()) {
+		// create folders
+		for (S3ObjectSummary summary : listing.getObjectSummaries()) {
 
-				String bucket = summary.getBucketName();
-				String key = summary.getKey();
+			String bucket = summary.getBucketName();
+			String key = summary.getKey();
 
-				if (summary.getKey().endsWith("/")) {
-					System.out.println("Found folder" + bucket + "/" + key);
-					String relativeKey = summary.getKey().replaceAll(baseKey, "");
-					String target = FileUtil.path(appPath, relativeKey);
-					FileUtil.createDirectory(target);
-				}
-
+			if (!summary.getKey().endsWith("/")) {
+				continue;
 			}
 
-			for (S3ObjectSummary summary : listing.getObjectSummaries()) {
-
-				String bucket = summary.getBucketName();
-				String key = summary.getKey();
-
-				if (!summary.getKey().endsWith("/")) {
-					System.out.println("Found file" + bucket + "/" + key);
-					String relativeKey = summary.getKey().replaceAll(baseKey, "");
-					String target = FileUtil.path(appPath, relativeKey);
-					File file = new File(target);
-					// create parent folder
-					File parent = file.getParentFile();
-					if (!parent.exists()) {
-						parent.mkdirs();
-					}
-					System.out.println("Copy file from " + bucket + "/" + key + " to " + target);
-					S3Util.copyToFile(bucket, key, file);
-				}
-			}
-
-			try {
-				Application application = installFromDirectory(appPath, true);
-				return application;
-			} finally {
-				FileUtil.deleteDirectory(appPath);
-			}
+			System.out.println("Found folder" + bucket + "/" + key);
+			String relativeKey = summary.getKey().replaceAll(baseKey, "");
+			String target = FileUtil.path(appPath, relativeKey);
+			FileUtil.createDirectory(target);
 
 		}
+
+		//copy files
+		for (S3ObjectSummary summary : listing.getObjectSummaries()) {
+
+			String bucket = summary.getBucketName();
+			String key = summary.getKey();
+
+			if (summary.getKey().endsWith("/")) {
+				continue;
+			}
+
+			System.out.println("Found file" + bucket + "/" + key);
+			String relativeKey = summary.getKey().replaceAll(baseKey, "");
+			String target = FileUtil.path(appPath, relativeKey);
+			File file = new File(target);
+			// create parent folder
+			File parent = file.getParentFile();
+			if (!parent.exists()) {
+				parent.mkdirs();
+			}
+			System.out.println("Copy file from " + bucket + "/" + key + " to " + target);
+			S3Util.copyToFile(bucket, key, file);
+
+		}
+
+		try {
+			return installFromDirectory(appPath, true);
+		} finally {
+			FileUtil.deleteDirectory(appPath);
+		}
+
+
 	}
 
 	public Application installFromGitHub(Repository repository) throws MalformedURLException, IOException {
@@ -346,7 +341,6 @@ public class ApplicationRepository {
 	public Application installFromZipFile(String zipFilename) throws IOException {
 
 		// extract in apps folder
-
 		String appPath = FileUtil.path(appsFolder, "archive");
 		FileUtil.deleteDirectory(appPath);
 		FileUtil.createDirectory(appPath);
@@ -359,8 +353,7 @@ public class ApplicationRepository {
 		}
 
 		try {
-			Application application = installFromDirectory(appPath, true);
-			return application;
+			return installFromDirectory(appPath, true);
 		} finally {
 			FileUtil.deleteDirectory(appPath);
 		}
@@ -387,8 +380,7 @@ public class ApplicationRepository {
 		}
 
 		try {
-			Application application = installFromDirectory(appPath, true);
-			return application;
+			return installFromDirectory(appPath, true);
 		} finally {
 			FileUtil.deleteDirectory(appPath);
 		}
@@ -539,35 +531,7 @@ public class ApplicationRepository {
 	}
 
 	public String getConfigDirectory(WdlApp app) {
-		return FileUtil.path(appsFolder, app.getId().split("@")[0]);
-	}
-
-	public Map<String, String> getConfig(WdlApp app) {
-
-		String appFolder = getConfigDirectory(app);
-
-		Map<String, String> config = new HashMap<String, String>();
-
-		String nextflowConfig = FileUtil.path(appFolder, "nextflow.config");
-		if (new File(nextflowConfig).exists()) {
-			String content = FileUtil.readFileAsString(nextflowConfig);
-			config.put("nextflow.config", content);
-		}
-
-		String nextflowProfile = FileUtil.path(appFolder, "nextflow.profile");
-		if (new File(nextflowProfile).exists()) {
-			String content = FileUtil.readFileAsString(nextflowProfile);
-			config.put("nextflow.profile", content);
-		}
-
-		String nextflowWork = FileUtil.path(appFolder, "nextflow.work");
-		if (new File(nextflowWork).exists()) {
-			String content = FileUtil.readFileAsString(nextflowWork);
-			config.put("nextflow.work", content);
-		}
-
-		return config;
-
+		return FileUtil.path(CONFIG_PATH, app.getId().split("@")[0]);
 	}
 
 	public boolean hasAccess(User user, Application application) {
@@ -582,28 +546,6 @@ public class ApplicationRepository {
 			return false;
 		}
 		return application.isEnabled() && application.isLoaded() && !application.hasSyntaxError();
-	}
-
-	public void updateConfig(WdlApp app, Map<String, String> config) {
-
-		String appFolder = getConfigDirectory(app);
-		FileUtil.createDirectory(appFolder);
-
-		String nextflowConfig = FileUtil.path(appFolder, "nextflow.config");
-		String content = config.get("nextflow.config");
-		StringBuffer contentNextflowConfig = new StringBuffer(content == null ? "" : content);
-		FileUtil.writeStringBufferToFile(nextflowConfig, contentNextflowConfig);
-
-		String nextflowProfile = FileUtil.path(appFolder, "nextflow.profile");
-		content = config.get("nextflow.profile");
-		StringBuffer contentNextflowProfile = new StringBuffer(content == null ? "" : content);
-		FileUtil.writeStringBufferToFile(nextflowProfile, contentNextflowProfile);
-
-		String nextflowWork = FileUtil.path(appFolder, "nextflow.work");
-		content = config.get("nextflow.work");
-		StringBuffer contentNextflowWork = new StringBuffer(content == null ? "" : content);
-		FileUtil.writeStringBufferToFile(nextflowWork, contentNextflowWork);
-
 	}
 
 }

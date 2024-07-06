@@ -78,22 +78,4 @@ public class WdlWorkflow {
 		return onFailure;
 	}
 
-	public boolean hasHdfsOutputs() {
-		for (WdlParameterOutput output : outputs) {
-			if (output.isHdfs()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	public boolean hasHdfsInputs() {
-		for (WdlParameterInput input : inputs) {
-			if (input.isHdfs()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
 }

@@ -68,4 +68,10 @@ public class PluginManager {
 		return plugins;
 	}
 
+    public IPlugin getPlugin(String id) {
+		if (!pluginsIndex.containsKey(id)) {
+			throw new RuntimeException("Plugin '" + id + "' not found.");
+		}
+		return pluginsIndex.get(id);
+    }
 }

@@ -49,6 +49,6 @@
 		<td style="width: 150px;">{{.}}</td>
 	</tr>
 
-{{/counter.complete}}
+{{/each}}
 
 </table>

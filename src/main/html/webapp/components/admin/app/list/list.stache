@@ -17,27 +17,30 @@
 </p>
 <br>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th></th>
-            <th>ID</th>
-            <th>Application</th>
-            <th>Version</th>
-            <th>Permissions</th>
-            <th class="text-right">Operations</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{#applications}}
-        <tr class="" {{data 'application'}}>
-            <td>
-              <small>{{wdlApp.category}}</small>
-            </td>
-            <td>
-               <small>{{id}}</small>
-            </td>
-            <td>
+{{#categories}}
+  <h4>{{name}}</h4>
+  <table class="table table-bordered">
+      <thead>
+          <tr>
+              <!-- <th>ID</th> -->
+              <th width = "400px">Name</th>
+              <th width = "150px">Version</th>
+              <th>Permissions</th>
+              <th class="text-right"  width = "200px">Operations</th>
+          </tr>
+      </thead>
+      <tbody>
+          {{#applications}}
+          <tr class="{{^enabled}}text-muted{{/enabled}}" {{data 'application'}}>
+              <!-- <td>
+                 <small>{{id}}</small>
+              </td> -->
+              <td>
+                {{#if wdlApp.workflow}}
+                  <i class="fas fa-rocket"></i>
+                {{else}}
+                  <i class="fas fa-table"></i>
+                {{/if}}
                {{wdlApp.name}}<br>
                 {{#changed}}
                     <small class="text-danger">Warning: File <b>{{filename}}</b> changed on disk. Reload Apps to solve this issue.</small>
@@ -45,40 +48,45 @@
                 {{#errorMessage}}
                     <small class="text-danger">{{errorMessage}}</small>
                 {{/errorMessage}}
-            </td>
-            <td>{{wdlApp.version}}</td>
-            <td>
-              <button type="button" class="edit-permission-btn btn btn-sm btn-outline-secondary">
-                    <i class="fas fa-users"></i> {{permission}}
-              </button>
-            </td>
-            <td class="text-right">
-
-                {{#if wdlApp.workflow}}
-                    <a class="btn edit-settings-btn btn btn-sm btn-outline-secondary" href="#!pages/admin-apps/{{id}}">
-                        <i class="fas fa-cog"></i>
-                    </a>
-                {{/if}}
-
-                <button type="button" class="delete-app-btn btn btn-sm btn-outline-secondary">
-                    <i class="fas fa-trash-alt"></i>
+              </td>
+              <td>{{wdlApp.version}}</td>
+              <td>
+                <button type="button" class="edit-permission-btn btn btn-sm btn-outline-secondary">
+                      <i class="fas fa-users"></i> {{permission}}
                 </button>
+              </td>
+              <td class="text-right">
 
-                {{#enabled}}
-                    <button type="button" class="enable-disable-btn btn btn-sm btn-success">
-                        <i class="fas fa-pause"></i>
-                    </button>
-                {{else}}
-                    <button type="button" class="enable-disable-btn btn btn-sm btn-danger">
-                        <i class="fas fa-play"></i>
-                    </button>
-                {{/enabled}}
-            </td>
-        </tr>
-        {{/applications}}
-    </tbody>
-</table>
+                  {{#if wdlApp.workflow}}
+                      <a class="btn edit-settings-btn btn btn-sm btn-outline-secondary" href="#!pages/admin-apps/{{id}}">
+                          <i class="fas fa-cog"></i>
+                      </a>
+                  {{/if}}
 
+                  <button type="button" class="view-source-btn btn btn-sm btn-outline-secondary">
+                      <i class="fas fa-code"></i>
+                  </button>
+
+                  <button type="button" class="delete-app-btn btn btn-sm btn-outline-secondary">
+                      <i class="fas fa-trash-alt"></i>
+                  </button>
+
+                  {{#enabled}}
+                      <button type="button" class="enable-disable-btn btn btn-sm btn-success">
+                          <i class="fas fa-pause"></i>
+                      </button>
+                  {{else}}
+                      <button type="button" class="enable-disable-btn btn btn-sm btn-danger">
+                          <i class="fas fa-play"></i>
+                      </button>
+                  {{/enabled}}
+              </td>
+          </tr>
+          {{/applications}}
+      </tbody>
+  </table>
+<br>
+{{/categories}}
 
 <br>
 <br>

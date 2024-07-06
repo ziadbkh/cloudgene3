@@ -21,7 +21,11 @@ export JAVA_PROGRAM_ARGS=`echo "$@"`
 # change current directory
 cd $FOLDER
 
-ENV_FILE="config/cloudgene.env"
+ENV_FILE="cloudgene.env"
+if [[ "$CG_ENV_FILE" ]]; then
+  ENV_FILE="$CG_ENV_FILE"
+fi
+
 if [ -f "$ENV_FILE" ]; then
     source "$ENV_FILE"
     echo "File '$ENV_FILE' exists and has been sourced."

@@ -1,7 +1,7 @@
 package cloudgene.mapred.wdl;
 
 public enum WdlParameterOutputType {
-	LOCAL_FOLDER("local_folder"), LOCAL_FILE("local_file"), HDFS_FOLDER("hdfs_folder"), HDFS_FILE("hdfs_file");
+	LOCAL_FOLDER("local_folder"), LOCAL_FILE("local_file");
 
 	private String value;
 

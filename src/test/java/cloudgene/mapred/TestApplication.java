@@ -11,7 +11,6 @@ import cloudgene.mapred.apps.Application;
 import cloudgene.mapred.core.User;
 import cloudgene.mapred.database.UserDao;
 import cloudgene.mapred.database.util.Database;
-import cloudgene.mapred.util.Config;
 import cloudgene.mapred.util.HashUtil;
 import cloudgene.mapred.util.Settings;
 import cloudgene.mapred.util.TestMailServer;
@@ -22,9 +21,8 @@ import io.micronaut.context.annotation.Context;
 public class TestApplication extends cloudgene.mapred.server.Application {
 
 	static {
-		TestApplication.config = new Config();
 		try {
-			TestApplication.settings = loadSettings(config);
+			TestApplication.settings = loadSettings();
 		} catch (FileNotFoundException | YamlException e) {
 			e.printStackTrace();
 		}
@@ -34,9 +32,9 @@ public class TestApplication extends cloudgene.mapred.server.Application {
 		super();
 	}
 
-	protected static Settings loadSettings(Config config) throws FileNotFoundException, YamlException {
+	protected static Settings loadSettings() throws FileNotFoundException, YamlException {
 		
-		Settings settings = new Settings(new Config());
+		Settings settings = new Settings();
 
 		HashMap<String, String> mail = new HashMap<String, String>();
 		mail.put("smtp", "localhost");
