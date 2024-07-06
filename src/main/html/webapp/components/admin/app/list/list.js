@@ -22,9 +22,30 @@ export default Control.extend({
     var that = this;
 
     Application.findAll({}, function (applications) {
-      that.options.installedApplications = applications;
+
+      var grouped = {};
+      applications.forEach(function(item) {
+        var category = item.wdlApp.category;
+        if (category == undefined) {
+          category = "Application";
+        }
+        if (!grouped[category]) {
+          grouped[category] = [];
+        }
+        grouped[category].push(item);
+      });
+
+      var categories = Object.keys(grouped).map(category => {
+        return {
+          name: category,
+          applications: grouped[category].map(app => {
+            return app;
+          })
+        };
+      });
+
       $(element).html(template({
-        applications: applications
+        categories: categories
       }));
       $(element).fadeIn();
 
@@ -114,8 +135,29 @@ export default Control.extend({
       reload: 'true'
     }, function (applications) {
 
+  var grouped = {};
+      applications.forEach(function(item) {
+        var category = item.wdlApp.category;
+        if (category == undefined) {
+          category = "Application";
+        }
+        if (!grouped[category]) {
+          grouped[category] = [];
+        }
+        grouped[category].push(item);
+      });
+
+      var categories = Object.keys(grouped).map(category => {
+        return {
+          name: category,
+          applications: grouped[category].map(app => {
+            return app;
+          })
+        };
+      });
+
       $(element).html(template({
-        applications: applications
+        categories: categories
       }));
       $("#content").fadeIn();
 

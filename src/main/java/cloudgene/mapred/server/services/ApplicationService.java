@@ -1,10 +1,7 @@
 package cloudgene.mapred.server.services;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 
 import cloudgene.mapred.plugins.IPlugin;
 import cloudgene.mapred.plugins.PluginManager;
@@ -154,7 +151,15 @@ public class ApplicationService {
 		if (reload) {
 			repository.reload();
 		}
-		return new Vector<Application>(repository.getAll());
+
+		List<Application> applications = new Vector<Application>(repository.getAll());
+		Collections.sort(applications, new Comparator<Application>() {
+			@Override
+			public int compare(Application o1, Application o2) {
+					return o1.getWdlApp().getName().compareTo(o2.getWdlApp().getName());
+			}
+		});
+		return applications;
 	}
 
 	public Application installApp(String url) {

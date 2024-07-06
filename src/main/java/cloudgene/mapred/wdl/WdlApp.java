@@ -17,7 +17,7 @@ public class WdlApp implements Comparable<WdlApp> {
 
 	private String name;
 
-	private String category;
+	private String category = "Application";
 
 	private String author;
 
