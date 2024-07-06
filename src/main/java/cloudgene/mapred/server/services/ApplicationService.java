@@ -28,7 +28,7 @@ public class ApplicationService {
 	private static final String APPLICATION_NOT_REMOVED = "Application not removed: %s";
 	private static final String APPLICATION_NOT_FOUND = "Application %s not found or the request requires user authentication.";
 	private static final String APPLICATION_NOT_UPDATED = "Application not updated: %s";
-	private static final String APPLICATION_NOT_INSTALLED = "Application not installed. ";
+	private static final String APPLICATION_NOT_INSTALLED = "Application not installed. %s";
 	private static final String NO_URL = "No url or file location set.";
 	private static final String APPLICATION_NOT_INSTALLED_NO_WORKFLOW = "Application not installed: No workflow file found.";
 
