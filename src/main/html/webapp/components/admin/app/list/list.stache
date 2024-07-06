@@ -63,6 +63,10 @@
                       </a>
                   {{/if}}
 
+                  <button type="button" class="view-source-btn btn btn-sm btn-outline-secondary">
+                      <i class="fas fa-code"></i>
+                  </button>
+
                   <button type="button" class="delete-app-btn btn btn-sm btn-outline-secondary">
                       <i class="fas fa-trash-alt"></i>
                   </button>

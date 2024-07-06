@@ -126,6 +126,7 @@ export default Control.extend({
           waitingDialog.modal('show');
         }
       });
+
   },
 
   '#reload-apps-btn click': function (el, ev) {
@@ -285,6 +286,16 @@ export default Control.extend({
         new ErrorPage(element, response);
       });
 
+  },
+
+  '.view-source-btn click': function(el, ev) {
+
+    var card = $(el).closest('tr');
+    var application = domData.get.call(card[0], 'application');
+    bootbox.alert({
+      message: '<div style="overflow: auto; height: 600px; width: 100%"><h5>File</h5><p>' + application.attr('filename') + '</p>' + '<h5>Source</h5><small><p><pre><code>' + application.attr('source') + '</code></pre></small></p></div>',
+      className: 'w-100'
+    });
   }
 
 });
