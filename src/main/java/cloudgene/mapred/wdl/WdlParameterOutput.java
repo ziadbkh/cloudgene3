@@ -14,17 +14,9 @@ public class WdlParameterOutput implements WdlParameter {
 	
 	private WdlParameterOutputType typeEnum;
 
-	private boolean makeAbsolute = true;
-
 	private boolean download = true;
 
 	private boolean autoExport = false;
-
-	private boolean mergeOutput = true;
-
-	private boolean zip = true;
-
-	private boolean removeHeader = true;
 
 	private boolean adminOnly = false;
 
@@ -57,28 +49,12 @@ public class WdlParameterOutput implements WdlParameter {
 		return typeEnum;
 	}
 
-	public boolean isMergeOutput() {
-		return mergeOutput;
-	}
-
-	public void setMergeOutput(boolean mergeOutput) {
-		this.mergeOutput = mergeOutput;
-	}
-
 	public boolean isDownload() {
 		return download;
 	}
 
 	public void setDownload(boolean download) {
 		this.download = download;
-	}
-
-	public boolean isMakeAbsolute() {
-		return makeAbsolute;
-	}
-
-	public void setMakeAbsolute(boolean absolute) {
-		this.makeAbsolute = absolute;
 	}
 
 	@Deprecated
@@ -88,22 +64,6 @@ public class WdlParameterOutput implements WdlParameter {
 
 	@Deprecated
 	public void setTemp(boolean temp) {
-	}
-
-	public void setZip(boolean zip) {
-		this.zip = zip;
-	}
-
-	public boolean isZip() {
-		return zip;
-	}
-
-	public void setRemoveHeader(boolean removeHeader) {
-		this.removeHeader = removeHeader;
-	}
-
-	public boolean isRemoveHeader() {
-		return removeHeader;
 	}
 
 	public void setAutoExport(boolean autoExport) {

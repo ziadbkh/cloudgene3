@@ -41,6 +41,8 @@ public class WdlParameterInput implements WdlParameter {
 
 	private boolean serialize = true;
 
+	private String writeFile = null;
+
 	public WdlParameterInput() {
 		values = new HashMap<String, String>();
 		values.put("true", "true");
@@ -186,6 +188,14 @@ public class WdlParameterInput implements WdlParameter {
 			return false;
 		}
 		return serialize;
+	}
+
+	public void setWriteFile(String writeFile) {
+		this.writeFile = writeFile;
+	}
+
+	public String getWriteFile() {
+		return writeFile;
 	}
 
 	public boolean hasDataBindung() {

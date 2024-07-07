@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import cloudgene.mapred.jobs.*;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,11 +18,6 @@ import cloudgene.mapred.apps.ApplicationRepository;
 import cloudgene.mapred.core.User;
 import cloudgene.mapred.database.DownloadDao;
 import cloudgene.mapred.database.JobDao;
-import cloudgene.mapred.jobs.AbstractJob;
-import cloudgene.mapred.jobs.CloudgeneJob;
-import cloudgene.mapred.jobs.CloudgeneParameterOutput;
-import cloudgene.mapred.jobs.Download;
-import cloudgene.mapred.jobs.WorkflowEngine;
 import cloudgene.mapred.jobs.workspace.IWorkspace;
 import cloudgene.mapred.jobs.workspace.WorkspaceFactory;
 import cloudgene.mapred.server.Application;
@@ -47,8 +43,6 @@ public class JobService {
 
 	@Inject
 	protected WorkspaceFactory workspaceFactory;
-
-	private static final String PARAM_JOB_NAME = "job-name";
 
 	public AbstractJob getById(String id) {
 
@@ -130,7 +124,7 @@ public class JobService {
 			workspace.setup();
 
 			// parse input params
-			inputParams = parseAndUpdateInputParams(form, app, workspace);
+			inputParams = JobParameterParser.parse(form, app, workspace);
 
 		} catch (Exception e) {
 			throw new JsonHttpStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
@@ -378,131 +372,6 @@ public class JobService {
 		return "job-" + sdf.format(new Date());
 	}
 
-	// TODO: refactore and combine this method with CommandLineUtil.parseArgs...
-
-	private Map<String, String> parseAndUpdateInputParams(List<Parameter> form, WdlApp app, IWorkspace workspace)
-			throws Exception {
-
-		Map<String, String> props = new HashMap<String, String>();
-		Map<String, String> params = new HashMap<String, String>();
-
-		// uploaded files
-
-		for (Parameter formParam : form) {
-
-			String name = formParam.getName();
-			Object value = formParam.getValue();
-
-			if (value instanceof File) {
-				File inputFile = (File) value;
-
-				try {
-
-					// remove upload indentification!
-					String fieldName = name.replace("-upload", "").replace("input-", "");
-
-					WdlParameterInput inputParam = null;
-					for (WdlParameterInput input : app.getWorkflow().getInputs()) {
-						if (input.getId().equals(fieldName)) {
-							inputParam = input;
-						}
-					}
-
-					// copy to workspace in input directory
-					long start = System.currentTimeMillis();
-					log.debug("Upload file " + inputFile.getAbsolutePath() + " to workspace...");
-					String target = workspace.uploadInput(fieldName, inputFile);
-					log.debug("File " + inputFile.getAbsolutePath() + " uploaded in " + (System.currentTimeMillis() - start) + " ms");
-
-					if (inputParam.isFolder()) {
-						props.put(fieldName, workspace.getParent(target));
-					} else {
-						// file
-						props.put(fieldName, target);
-					}
-
-					// deletes temporary file
-					FileUtil.deleteFile(inputFile.getAbsolutePath());
-
-				} catch (Exception e) {
-					FileUtil.deleteFile(inputFile.getAbsolutePath());
-					throw e;
-				}
-
-			} else {
-
-				String key = StringEscapeUtils.escapeHtml(name);
-				if (key.startsWith("input-")) {
-					key = key.replace("input-", "");
-				}
-
-				WdlParameterInput input = getInputParamByName(app, key);
-
-				if (!key.equals(PARAM_JOB_NAME) && !key.endsWith("-pattern") && input == null) {
-					throw new Exception("Parameter '" + key + "' not found.");
-				}
-
-				String cleanedValue = StringEscapeUtils.escapeHtml(value.toString());
-
-				if (input != null && input.isFileOrFolder() && needsImport(cleanedValue)) {
-					throw new Exception("Parameter '" + input.getId()
-							+ "': URL-based uploads are no longer supported. Please use direct file uploads instead.");
-				}
-
-				if (!props.containsKey(key)) {
-					// don't override uploaded files
-					props.put(key, cleanedValue);
-				}
-
-			}
-
-		}
-
-		for (WdlParameterInput input : app.getWorkflow().getInputs()) {
-			if (!params.containsKey(input.getId())) {
-				if (props.containsKey(input.getId())) {
-
-					if (input.isFolder() && input.getPattern() != null && !input.getPattern().isEmpty()) {
-						String pattern = props.get(input.getId() + "-pattern");
-						if (pattern == null) {
-							pattern = input.getPattern();
-						}
-						String value = props.get(input.getId());
-						if (!value.endsWith("/")) {
-							value = value + "/";
-						}
-						params.put(input.getId(), value + pattern);
-					} else {
-
-						if (input.getTypeAsEnum() == WdlParameterInputType.CHECKBOX) {
-							params.put(input.getId(), input.getValues().get("true"));
-						} else {
-							params.put(input.getId(), props.get(input.getId()));
-						}
-					}
-				} else {
-					// ignore invisible input parameters
-					if (input.getTypeAsEnum() == WdlParameterInputType.CHECKBOX && input.isVisible()) {
-						params.put(input.getId(), input.getValues().get("false"));
-					}
-				}
-			}
-		}
-
-		params.put(PARAM_JOB_NAME, props.get(PARAM_JOB_NAME));
-
-		return params;
-	}
-
-	private WdlParameterInput getInputParamByName(WdlApp app, String name) {
-
-		for (WdlParameterInput input : app.getWorkflow().getInputs()) {
-			if (input.getId().equals(name)) {
-				return input;
-			}
-		}
-		return null;
-	}
 
 	public List<AbstractJob> getJobs(String state) {
 
@@ -555,11 +424,6 @@ public class JobService {
 			IWorkspace workspace = workspaceFactory.getByJob(job);
 			return workspace.downloadLog(name);
 		}
-	}
-
-	public boolean needsImport(String url) {
-		return url.startsWith("sftp://") || url.startsWith("http://") || url.startsWith("https://")
-				|| url.startsWith("ftp://") || url.startsWith("s3://");
 	}
 
 }
