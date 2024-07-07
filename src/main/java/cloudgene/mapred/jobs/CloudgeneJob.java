@@ -88,7 +88,7 @@ public class CloudgeneJob extends AbstractJob {
 
 	protected void initLogOutput() {
 		logOutput = new CloudgeneParameterOutput();
-		logOutput.setAdminOnly(true);
+		logOutput.setAdminOnly(!getSettings().isShowLogs());
 		logOutput.setDownload(true);
 		logOutput.setDescription("Logs");
 		logOutput.setName(CLOUDGENE_LOGS_PARAM);

@@ -70,6 +70,8 @@ public class Settings {
 
 	private String adminName = null;
 
+	private boolean showLogs = false;
+
 	private List<MenuItem> navigation = new Vector<MenuItem>();
 
 	private Map<String, String> externalWorkspace = null;
@@ -411,6 +413,14 @@ public class Settings {
 
 	public String getPort() {
 		return port;
+	}
+
+	public void setShowLogs(boolean showLogs) {
+		this.showLogs = showLogs;
+	}
+
+	public boolean isShowLogs() {
+		return showLogs;
 	}
 
 	public ApplicationRepository getApplicationRepository() {
