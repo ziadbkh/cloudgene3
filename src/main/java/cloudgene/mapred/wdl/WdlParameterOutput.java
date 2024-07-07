@@ -20,6 +20,8 @@ public class WdlParameterOutput implements WdlParameter {
 
 	private boolean adminOnly = false;
 
+	private boolean serialize = true;
+
 	public String getId() {
 		return id;
 	}
@@ -80,6 +82,14 @@ public class WdlParameterOutput implements WdlParameter {
 
 	public boolean isAdminOnly() {
 		return adminOnly;
+	}
+
+	public boolean isSerialize() {
+		return serialize;
+	}
+
+	public void setSerialize(boolean serialize) {
+		this.serialize = serialize;
 	}
 
 	public boolean isFileOrFolder() {

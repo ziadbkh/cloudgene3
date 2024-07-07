@@ -12,6 +12,7 @@ import java.util.Vector;
 import cloudgene.mapred.jobs.*;
 import cloudgene.mapred.plugins.PluginManager;
 import cloudgene.mapred.wdl.WdlParameterInput;
+import cloudgene.mapred.wdl.WdlParameterOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -165,6 +166,12 @@ public class NextflowStep extends CloudgeneStep {
 
 				if (killed) {
 					context.error("Pipeline execution canceled.");
+				} else {
+					context.error("Pipeline execution failed.");
+					Object stdout = step.get("stdout");
+					if (stdout != null && stdout.toString().equalsIgnoreCase("true")) {
+						context.error(output.toString());
+					}
 				}
 
 			}
@@ -182,7 +189,7 @@ public class NextflowStep extends CloudgeneStep {
 			try {
 				parseReport(report);
 			} catch (Exception e) {
-				log.error("[Job {}] Invalid report file.", e);
+				log.error("[Job {}] Invalid report file.", context.getJobId(), e);
 			}
 			
 			return successful;
@@ -301,9 +308,13 @@ public class NextflowStep extends CloudgeneStep {
 		}
 
 		// add all outputs
-		for (String param : context.getOutputs()) {
-			String value = context.getOutput(param);
-			params.put(param, value);
+		for (WdlParameterOutput param: context.getJob().getApp().getWorkflow().getOutputs()) {
+			String name = param.getId();
+			String value = context.getInput(name);
+			if (!param.isSerialize()) {
+				continue;
+			}
+			params.put(name, value);
 		}
 
 		return params;

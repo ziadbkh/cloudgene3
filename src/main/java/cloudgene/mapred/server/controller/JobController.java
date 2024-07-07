@@ -123,6 +123,8 @@ public class JobController {
 					return HttpResponse.ok(ResponseObject.build(job.getId(), message, true));
 				} catch (JsonHttpStatusException e) {
 					return HttpResponse.status(e.getStatus()).body(e.getObject());
+				} catch (Exception e) {
+					return HttpResponse.status(HttpStatus.BAD_REQUEST).body(e.toString());
 				} finally {
 					folder.delete();
 					log.debug("Deletes folder " + folder.getAbsolutePath() + ".");
