@@ -15,6 +15,8 @@ public class NextflowBinary {
 
 	private String script;
 
+	private String revision;
+
 	private String profile;
 
 	private List<File> configFiles = new Vector<File>();
@@ -131,6 +133,11 @@ public class NextflowBinary {
 		nextflow.add("run");
 		nextflow.add(script);
 
+		if (revision != null && !revision.isEmpty()) {
+			nextflow.add("-r");
+			nextflow.add(revision);
+		}
+
 		// set profile
 		if (profile != null && !profile.isEmpty()) {
 			nextflow.add("-profile");
@@ -194,4 +201,7 @@ public class NextflowBinary {
 		return result;
 	}
 
+    public void setRevision(String revision) {
+		this.revision = revision;
+    }
 }

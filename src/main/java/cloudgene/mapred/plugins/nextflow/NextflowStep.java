@@ -62,9 +62,12 @@ public class NextflowStep extends CloudgeneStep {
 			scriptPath = FileUtil.path(context.getWorkingDirectory(), script);
 		}
 		if (!new File(scriptPath).exists()) {
-			context.error(
-					"Nextflow script '" + scriptPath + "' not found. Please use 'script' to define your nf file.");
+			context.log(
+					"Warning: Nextflow script '" + scriptPath + "' not found. Try to resolve it on github as '" + script + "'");
+			scriptPath = script;
 		}
+
+		String revision = step.getString("revision");
 
 		// load process styling
 		loadProcessConfigs(step.get(PROPERTY_PROCESS_CONFIG));
@@ -77,6 +80,7 @@ public class NextflowStep extends CloudgeneStep {
 
 		NextflowBinary nextflow = NextflowBinary.build(settings);
 		nextflow.setScript(scriptPath);
+		nextflow.setRevision(revision);
 
 		AbstractJob job = context.getJob();
 		String appFolder = settings.getApplicationRepository().getConfigDirectory(job.getApplicationId());
