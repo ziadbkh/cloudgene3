@@ -49,7 +49,7 @@ public class NextflowStep extends CloudgeneStep {
 	public boolean run(WdlStep step, CloudgeneContext context) {
 
 		this.context = context;
-		
+
 		Settings settings = context.getSettings();
 
 		String script = step.getString("script");
@@ -74,6 +74,9 @@ public class NextflowStep extends CloudgeneStep {
 		// load process styling
 		loadProcessConfigs(step.get(PROPERTY_PROCESS_CONFIG));
 		Map<String, Step> groups = loadGroups(step.get(PROPERTY_GROUPS_CONFIG));
+		if (groups.isEmpty()) {
+			context.createStep(step.getName());
+		}
 		for (NextflowProcessConfig config: configs.values()) {
 			if (config.getGroup() != null) {
 				config.setStep(groups.get(config.getGroup()));
@@ -314,7 +317,7 @@ public class NextflowStep extends CloudgeneStep {
 		// add all outputs
 		for (WdlParameterOutput param: context.getJob().getApp().getWorkflow().getOutputs()) {
 			String name = param.getId();
-			String value = context.getInput(name);
+			String value = context.getOutput(name);
 			if (!param.isSerialize()) {
 				continue;
 			}

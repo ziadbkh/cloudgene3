@@ -59,15 +59,6 @@ public class WdlParameterOutput implements WdlParameter {
 		this.download = download;
 	}
 
-	@Deprecated
-	public boolean isTemp() {
-		return false;
-	}
-
-	@Deprecated
-	public void setTemp(boolean temp) {
-	}
-
 	public void setAutoExport(boolean autoExport) {
 		this.autoExport = autoExport;
 	}
