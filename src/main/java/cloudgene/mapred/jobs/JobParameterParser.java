@@ -48,48 +48,65 @@ public class JobParameterParser {
                 key = key.replace("input-", "");
             }
 
+            log.debug("Process parameter " + key + "...");
+
+
+            if (key.equals(PARAM_JOB_NAME) || key.endsWith("-pattern")) {
+                String cleanedValue = StringEscapeUtils.escapeHtml(value.toString());
+                props.put(key, cleanedValue);
+                log.debug("Parameter " + key + " ignored.");
+                continue;
+            }
+
             WdlParameterInput input = getInputParamByName(app, key);
-            if (!key.equals(PARAM_JOB_NAME) && !key.endsWith("-pattern") && input == null) {
+            if (input == null) {
+                log.error("Parameter " + key + " not found in wdl application.");
                 throw new Exception("Parameter '" + key + "' not found.");
             }
 
-            if (value instanceof File) {
-                File inputFile = (File) value;
+            if (value instanceof File inputFile) {
+
+                log.debug("Parameter " + key + " is a file.");
 
                 try {
 
                     // copy to workspace in input directory
                     long start = System.currentTimeMillis();
                     log.debug("Upload file " + inputFile.getAbsolutePath() + " to workspace...");
-                    String target = workspace.uploadInput(name, inputFile);
+                    String target = workspace.uploadInput(key, inputFile);
                     log.debug("File " + inputFile.getAbsolutePath() + " uploaded in " + (System.currentTimeMillis() - start) + " ms");
 
                     if (input.isFolder()) {
-                        props.put(name, workspace.getParent(target));
+                        props.put(key, workspace.getParent(target));
                     } else {
                         // file
-                        props.put(name, target);
+                        props.put(key, target);
                     }
 
                 } finally {
                     FileUtil.deleteFile(inputFile.getAbsolutePath());
                 }
 
+                log.debug("Parameter " + key + " processed." );
+
             } else {
+
+                log.debug("Parameter " + key + " is a value parameter.");
 
                 String cleanedValue = StringEscapeUtils.escapeHtml(value.toString());
 
-                if (input != null && input.isFileOrFolder() && needsImport(cleanedValue)) {
-                    throw new Exception("Parameter '" + input.getId()
-                            + "': URL-based uploads are no longer supported. Please use direct file uploads instead.");
-                }
-
                 if (input.getWriteFile() != null && !input.getWriteFile().trim().isEmpty()) {
+
                     File file = Files.createTempFile("upload_", input.getWriteFile()).toFile();
-                    FileUtil.writeStringBufferToFile(file.getAbsolutePath(), new StringBuffer(cleanedValue));
-                    String target = workspace.uploadInput(key, file);
-                    file.delete();
-                    cleanedValue = target;
+                    try {
+                        FileUtil.writeStringBufferToFile(file.getAbsolutePath(), new StringBuffer(cleanedValue));
+                        String target = workspace.uploadInput(key, file);
+                        cleanedValue = target;
+                        log.debug("Parameter " + key + " value written to file '" + target + '"');
+                    }finally {
+                        file.delete();
+                    }
+
                 }
 
                 if (!props.containsKey(key)) {
@@ -145,11 +162,6 @@ public class JobParameterParser {
             }
         }
         return null;
-    }
-
-    public static boolean needsImport(String url) {
-        return url.startsWith("sftp://") || url.startsWith("http://") || url.startsWith("https://")
-                || url.startsWith("ftp://") || url.startsWith("s3://");
     }
 
 }
