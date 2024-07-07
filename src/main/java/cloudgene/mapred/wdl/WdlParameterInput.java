@@ -39,6 +39,8 @@ public class WdlParameterInput implements WdlParameter {
 
 	private String emptySelection = null;
 
+	private boolean serialize = true;
+
 	public WdlParameterInput() {
 		values = new HashMap<String, String>();
 		values.put("true", "true");
@@ -168,6 +170,22 @@ public class WdlParameterInput implements WdlParameter {
 
 	public String getEmptySelection() {
 		return emptySelection;
+	}
+
+	public void setSerialize(boolean serialize) {
+		this.serialize = serialize;
+	}
+
+	public boolean isSerialize() {
+		if (typeEnum == WdlParameterInputType.LABEL ||
+				typeEnum == WdlParameterInputType.AGBCHECKBOX ||
+				typeEnum == WdlParameterInputType.INFO ||
+				typeEnum == WdlParameterInputType.SEPARATOR ||
+				typeEnum == WdlParameterInputType.TERMS_CHECKBOX ||
+				typeEnum == WdlParameterInputType.GROUP) {
+			return false;
+		}
+		return serialize;
 	}
 
 	public boolean hasDataBindung() {

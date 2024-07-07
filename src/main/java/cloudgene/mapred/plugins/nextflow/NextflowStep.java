@@ -11,6 +11,7 @@ import java.util.Vector;
 
 import cloudgene.mapred.jobs.*;
 import cloudgene.mapred.plugins.PluginManager;
+import cloudgene.mapred.wdl.WdlParameterInput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,8 +118,9 @@ public class NextflowStep extends CloudgeneStep {
 		File paramsFile = new File(paramsJsonFilename);
 		try {
 			Map<String, Object> params = createParamsMap(step);
-			// TODO: workspace?
 			writeParamsJson(params, paramsFile);
+			context.log("Wrote params to file '" + paramsJsonFilename + "'");
+
 		} catch (IOException e) {
 			log.error("[Job {}] Writing params.json file failed.", context.getJobId(), e);
 			return false;
@@ -271,27 +273,25 @@ public class NextflowStep extends CloudgeneStep {
 		Map<String, Object> params = new HashMap<String, Object>();
 
 		// used to defined hard coded params
-		for (String key : step.keySet()) {
-			if (key.startsWith("params.")) {
-				String param = key.replace("params.", "");
-				Object value = step.get(key);
-				params.put(param, value);
-			}
-		}
 		if (step.get("params") != null) {
 			Map<String, Object> paramsMap = (Map<String, Object>) step.get("params");
 			params.putAll(paramsMap);
 		}
 
 		// add all inputs
-		for (String param : context.getInputs()) {
-			String value = context.getInput(param);
+
+		for (WdlParameterInput param: context.getJob().getApp().getWorkflow().getInputs()) {
+			String name = param.getId();
+			String value = context.getInput(name);
+			if (!param.isSerialize()) {
+				continue;
+			}
 			// resolve app links: use all properties as input parameters
 			if (value.startsWith("apps@")) {
-				Map<String, Object> linkedApp = (Map<String, Object>) context.getData(param);
-				params.put(param, linkedApp);
+				Map<String, Object> linkedApp = (Map<String, Object>) context.getData(name);
+				params.put(name, linkedApp);
 			} else {
-				params.put(param, value);
+				params.put(name, value);
 			}
 
 		}
@@ -308,7 +308,7 @@ public class NextflowStep extends CloudgeneStep {
 
 	protected void writeParamsJson(Map<String, Object> params, File paramsFile) throws IOException {
 		BufferedWriter writer = new BufferedWriter(new FileWriter(paramsFile));
-		writer.write(JsonOutput.toJson(params));
+		writer.write(JsonOutput.prettyPrint(JsonOutput.toJson(params)));
 		writer.close();
 	}
 
