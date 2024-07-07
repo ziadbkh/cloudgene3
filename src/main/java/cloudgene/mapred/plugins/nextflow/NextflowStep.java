@@ -11,6 +11,7 @@ import java.util.Vector;
 
 import cloudgene.mapred.jobs.*;
 import cloudgene.mapred.plugins.PluginManager;
+import cloudgene.mapred.util.MapValueParser;
 import cloudgene.mapred.wdl.WdlParameterInput;
 import cloudgene.mapred.wdl.WdlParameterOutput;
 import org.slf4j.Logger;
@@ -286,7 +287,7 @@ public class NextflowStep extends CloudgeneStep {
 		// used to defined hard coded params
 		if (step.get("params") != null) {
 			Map<String, Object> paramsMap = (Map<String, Object>) step.get("params");
-			params.putAll(paramsMap);
+			params.putAll(MapValueParser.parseMap(paramsMap));
 		}
 
 		// add all inputs
@@ -300,8 +301,11 @@ public class NextflowStep extends CloudgeneStep {
 			// resolve app links: use all properties as input parameters
 			if (value.startsWith("apps@")) {
 				Map<String, Object> linkedApp = (Map<String, Object>) context.getData(name);
+				// TODO: check if this destroys something in imputationserver:
+				// params.put(name, MapValueParser.parseMap(linkedApp));
 				params.put(name, linkedApp);
 			} else {
+				//TODO: run MapValueParser.guessType(value) to convert it into numbers and booleans
 				params.put(name, value);
 			}
 
