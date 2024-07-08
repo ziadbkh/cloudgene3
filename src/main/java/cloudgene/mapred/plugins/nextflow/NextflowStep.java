@@ -294,7 +294,6 @@ public class NextflowStep extends CloudgeneStep {
 		}
 
 		// add all inputs
-
 		for (WdlParameterInput param: context.getJob().getApp().getWorkflow().getInputs()) {
 			String name = param.getId();
 			String value = context.getInput(name);
@@ -304,12 +303,9 @@ public class NextflowStep extends CloudgeneStep {
 			// resolve app links: use all properties as input parameters
 			if (value.startsWith("apps@")) {
 				Map<String, Object> linkedApp = (Map<String, Object>) context.getData(name);
-				// TODO: check if this destroys something in imputationserver:
-				// params.put(name, MapValueParser.parseMap(linkedApp));
-				params.put(name, linkedApp);
+				 params.put(name, MapValueParser.parseMap(linkedApp));
 			} else {
-				//TODO: run MapValueParser.guessType(value) to convert it into numbers and booleans
-				params.put(name, value);
+				params.put(name, MapValueParser.guessType(value));
 			}
 
 		}
