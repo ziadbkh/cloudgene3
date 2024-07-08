@@ -56,7 +56,7 @@ micronaut:
         mapping: "${micronaut.server.context-path:}/static/**"
         paths:
           - file:pages
-          - file:sample/pages
+          - classpath:/pages
   views:
     folder: webapp
   serde:

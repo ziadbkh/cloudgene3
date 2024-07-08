@@ -43,11 +43,6 @@
 			<directory>src/main/html/webapp/public</directory>
 		</fileSet>
 
-		<fileSet>
-			<outputDirectory>/sample</outputDirectory>
-			<directory>sample</directory>
-		</fileSet>
-
 	</fileSets>
 
 </assembly>
