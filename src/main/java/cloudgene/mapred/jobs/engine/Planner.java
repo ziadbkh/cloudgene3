@@ -5,11 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import cloudgene.mapred.jobs.CloudgeneContext;
+import cloudgene.mapred.util.MapValueParser;
 import cloudgene.mapred.util.Settings;
-import cloudgene.mapred.wdl.WdlApp;
-import cloudgene.mapred.wdl.WdlParameterInput;
-import cloudgene.mapred.wdl.WdlParameterOutput;
-import cloudgene.mapred.wdl.WdlReader;
+import cloudgene.mapred.wdl.*;
 import groovy.text.SimpleTemplateEngine;
 
 public class Planner {
@@ -20,17 +18,21 @@ public class Planner {
 
 		// add input values to context
 		for (WdlParameterInput param : app.getWorkflow().getInputs()) {
-			context2.put(param.getId(), context.getInput(param.getId()));
+			if (param.getTypeAsEnum() == WdlParameterInputType.APP_LIST) {
+				Map<String, Object> linkedApp = (Map<String, Object>) context.getData(param.getId());
+				if (linkedApp != null) {
+					context2.put(param.getId(), MapValueParser.parseMap(linkedApp));
+				}
+			} else {
+				String value = context.getInput(param.getId());
+				context2.put(param.getId(), MapValueParser.guessType(value));
+			}
 		}
 
 		// add output values to context
 		for (WdlParameterOutput param : app.getWorkflow().getOutputs()) {
-			context2.put(param.getId(), context.getOutput(param.getId()));
-		}
-
-		// add resolved properties to context
-		for (String key: context.getData().keySet()){
-			context2.put(key, context.getData(key));
+			String value = context.getOutput(param.getId());
+			context2.put(param.getId(), MapValueParser.guessType(value));
 		}
 
 		context2.putAll(settings.buildEnvironment().addApplication(app).addContext(context).toMap());

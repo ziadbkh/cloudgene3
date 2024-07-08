@@ -24,6 +24,9 @@ public class MapValueParser {
     }
     
     public static Object guessType(String value) {
+        if (value == null) {
+            return null;
+        }
         if (isInteger(value)) {
             return Integer.parseInt(value);
         } else if (isDouble(value)) {

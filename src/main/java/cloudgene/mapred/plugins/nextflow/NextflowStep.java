@@ -13,6 +13,7 @@ import cloudgene.mapred.jobs.*;
 import cloudgene.mapred.plugins.PluginManager;
 import cloudgene.mapred.util.MapValueParser;
 import cloudgene.mapred.wdl.WdlParameterInput;
+import cloudgene.mapred.wdl.WdlParameterInputType;
 import cloudgene.mapred.wdl.WdlParameterOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -301,9 +302,11 @@ public class NextflowStep extends CloudgeneStep {
 				continue;
 			}
 			// resolve app links: use all properties as input parameters
-			if (value.startsWith("apps@")) {
+			if (param.getTypeAsEnum() == WdlParameterInputType.APP_LIST) {
 				Map<String, Object> linkedApp = (Map<String, Object>) context.getData(name);
-				 params.put(name, MapValueParser.parseMap(linkedApp));
+				if (linkedApp != null) {
+					params.put(name, MapValueParser.parseMap(linkedApp));
+				}
 			} else {
 				params.put(name, MapValueParser.guessType(value));
 			}
