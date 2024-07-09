@@ -33,14 +33,11 @@ public class NextflowStep extends CloudgeneStep {
 
 	private static final String PROPERTY_GROUPS_CONFIG = "groups";
 
-
 	private CloudgeneContext context;
 
 	private Map<String, Message> messages = new HashMap<String, Message>();
 
 	private Map<String, NextflowProcessConfig> configs = new HashMap<String, NextflowProcessConfig>();
-
-	//private Map<String, Step> groups = new HashMap<String, Step>();
 
 	private NextflowCollector collector = NextflowCollector.getInstance();
 
@@ -141,11 +138,14 @@ public class NextflowStep extends CloudgeneStep {
 		String collectorUrl = collector.addContext(context, configs);
 		nextflow.setWeblog(collectorUrl);
 
+		String prefix = "step" + context.getStepCounter() + "_";
+
 		// log files and reports
-		nextflow.setTrace(workspace.createLogFile("trace.csv"));
-		nextflow.setReport(workspace.createLogFile("report.html"));
-		nextflow.setTimeline(workspace.createLogFile("timeline.html"));
-		nextflow.setLog(workspace.createLogFile("nextflow.log"));
+		nextflow.setTrace(workspace.createLogFile(prefix + "trace.csv"));
+		nextflow.setReport(workspace.createLogFile(prefix + "report.html"));
+		nextflow.setTimeline(workspace.createLogFile(prefix + "timeline.html"));
+		nextflow.setLog(workspace.createLogFile(prefix + "nextflow.log"));
+		nextflow.setName(job.getId() +  "-step-" + context.getStepCounter());
 
 		try {
 

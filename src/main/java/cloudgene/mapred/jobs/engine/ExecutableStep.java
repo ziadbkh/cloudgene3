@@ -42,6 +42,7 @@ public class ExecutableStep {
 		this.step = step;
 		this.context = context;
 		this.job = context.getJob();
+		context.incStepCounter();
 		instance();
 	}
 

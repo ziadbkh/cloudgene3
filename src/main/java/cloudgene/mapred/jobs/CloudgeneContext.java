@@ -47,6 +47,8 @@ public class CloudgeneContext extends WorkflowContext {
 
 	private Map<String, Object> config;
 
+	private int stepCounter = 0;
+
 	public CloudgeneContext(CloudgeneJob job) {
 
 		this.workingDirectory = job.getWorkingDirectory();
@@ -457,5 +459,13 @@ public class CloudgeneContext extends WorkflowContext {
 
 	public Map<String, Object> getData() {
 		return data;
+	}
+
+	public void incStepCounter(){
+		stepCounter++;
+	}
+
+	public int getStepCounter() {
+		return stepCounter;
 	}
 }

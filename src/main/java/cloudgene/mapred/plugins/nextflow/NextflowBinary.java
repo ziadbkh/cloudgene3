@@ -35,6 +35,8 @@ public class NextflowBinary {
 
 	private String log;
 
+	private String name;
+
 	public static NextflowBinary build(Settings settings) {
 		String binary = new BinaryFinder("nextflow").settings(settings, "nextflow", "home").env("NEXTFLOW_HOME")
 				.envPath().path("/usr/local/bin").find();
@@ -120,6 +122,10 @@ public class NextflowBinary {
 		this.log = log;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public List<String> buildCommand() {
 
 		List<String> nextflow = new Vector<String>();
@@ -136,6 +142,11 @@ public class NextflowBinary {
 		if (revision != null && !revision.isEmpty()) {
 			nextflow.add("-r");
 			nextflow.add(revision);
+		}
+
+		if (name != null) {
+			nextflow.add("-name");
+			nextflow.add(name);
 		}
 
 		// set profile
