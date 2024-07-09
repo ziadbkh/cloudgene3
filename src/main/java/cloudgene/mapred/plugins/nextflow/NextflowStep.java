@@ -120,8 +120,11 @@ public class NextflowStep extends CloudgeneStep {
 			nextflow.setWork(workDir);
 		}
 
+
+		String prefix = "step" + context.getStepCounter() + "-";
+
 		// params json file
-		String paramsJsonFilename = FileUtil.path(context.getLocalOutput(), "params.json");
+		String paramsJsonFilename = FileUtil.path(context.getLocalOutput(),prefix + "params.json");
 		File paramsFile = new File(paramsJsonFilename);
 		try {
 			Map<String, Object> params = createParamsMap(step);
@@ -137,8 +140,6 @@ public class NextflowStep extends CloudgeneStep {
 		// register job in webcollector and set created url
 		String collectorUrl = collector.addContext(context, configs);
 		nextflow.setWeblog(collectorUrl);
-
-		String prefix = "step" + context.getStepCounter() + "_";
 
 		// log files and reports
 		nextflow.setTrace(workspace.createLogFile(prefix + "trace.csv"));
