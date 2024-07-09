@@ -24,7 +24,6 @@ public class GlobUtil {
     }
 
     private static boolean matchPattern(String filename, String pattern) {
-        System.out.println("F: " + filename + " " + pattern);
         PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:" + pattern);
         return matcher.matches(Paths.get(filename));
     }
