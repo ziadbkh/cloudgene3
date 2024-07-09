@@ -1,11 +1,12 @@
 package cloudgene.mapred.jobs;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.nio.file.FileSystems;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
+import java.util.*;
 
+import cloudgene.mapred.util.GlobUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +63,7 @@ public class CloudgeneJob extends AbstractJob {
 			newOutput.initHash();
 			newOutput.setJob(this);
 			outputParams.add(newOutput);
+			outputParamsIndex.put(output.getId(), newOutput);
 		}
 
 		initLogOutput();
@@ -240,9 +242,10 @@ public class CloudgeneJob extends AbstractJob {
 
 		log.info("[Job {}] Export parameters...", getId());
 
-		for (CloudgeneParameterOutput out : getOutputParams()) {
-			if (out.isDownload()) {
-				exportParameter(out);
+		for (WdlParameterOutput output: getApp().getWorkflow().getOutputs()) {
+			if (output.isDownload()) {
+				CloudgeneParameterOutput out = outputParamsIndex.get(output.getId());
+				exportParameter(out, output.getIncludes(), output.getExcludes());
 			}
 		}
 
@@ -256,15 +259,21 @@ public class CloudgeneJob extends AbstractJob {
 		return true;
 	}
 
-	public boolean exportParameter(CloudgeneParameterOutput out) {
+	public boolean exportParameter(CloudgeneParameterOutput out,List<String> includes, List<String> excludes) {
 
 		writeLog("  Exporting parameter " + out.getName() + "...");
 		out.setJobId(getId());
-
 		List<Download> downloads = workspace.getDownloads(out.getValue());
 		for (Download download : downloads) {
 			download.setParameter(out);
 			download.setCount(MAX_DOWNLOAD);
+
+			// check if it is on excludes or not in includes
+			if (!GlobUtil.isFileIncluded(download.getName(), includes, excludes)){
+				writeLog("  Ignore download " + download.getName() + ".");
+				continue;
+			}
+
 			if (!out.getFiles().contains(download)) {
 				out.getFiles().add(download);
 				writeLog("  Added new download " + download.getName() + ".");
@@ -272,8 +281,7 @@ public class CloudgeneJob extends AbstractJob {
 				writeLog("  Download " + download.getName() + " already added.");
 			}
 		}
-		Collections.sort(downloads);
-		out.setFiles(downloads);
+		Collections.sort(out.getFiles());
 
 		return true;
 	}

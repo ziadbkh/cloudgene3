@@ -2,6 +2,9 @@ package cloudgene.mapred.wdl;
 
 import com.fasterxml.jackson.annotation.JsonClassDescription;
 
+import java.util.List;
+import java.util.Vector;
+
 @JsonClassDescription
 public class WdlParameterOutput implements WdlParameter {
 
@@ -21,6 +24,10 @@ public class WdlParameterOutput implements WdlParameter {
 	private boolean adminOnly = false;
 
 	private boolean serialize = true;
+
+	private List<String> includes = new Vector<String>();
+
+	private List<String> excludes = new Vector<String>();
 
 	public String getId() {
 		return id;
@@ -91,4 +98,19 @@ public class WdlParameterOutput implements WdlParameter {
 		return (typeEnum == WdlParameterOutputType.LOCAL_FOLDER);
 	}
 
+	public List<String> getIncludes() {
+		return includes;
+	}
+
+	public void setIncludes(List<String> includes) {
+		this.includes = includes;
+	}
+
+	public List<String> getExcludes() {
+		return excludes;
+	}
+
+	public void setExcludes(List<String> excludes) {
+		this.excludes = excludes;
+	}
 }

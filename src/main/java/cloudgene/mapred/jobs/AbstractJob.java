@@ -10,9 +10,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
@@ -90,6 +88,8 @@ abstract public class AbstractJob extends PriorityRunnable {
 	protected List<CloudgeneParameterInput> inputParams = new Vector<CloudgeneParameterInput>();
 
 	protected List<CloudgeneParameterOutput> outputParams = new Vector<CloudgeneParameterOutput>();
+
+	protected Map<String, CloudgeneParameterOutput> outputParamsIndex = new HashMap<String, CloudgeneParameterOutput>();
 
 	protected CloudgeneParameterOutput logOutput = null;
 
@@ -208,6 +208,9 @@ abstract public class AbstractJob extends PriorityRunnable {
 
 	public void setOutputParams(List<CloudgeneParameterOutput> outputParams) {
 		this.outputParams = outputParams;
+		for (CloudgeneParameterOutput param: outputParams) {
+			outputParamsIndex.put(param.getName(), param);
+		}
 	}
 
 	public CloudgeneParameterOutput getLogOutput() {
