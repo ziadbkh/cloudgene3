@@ -46,7 +46,7 @@ public class CloudgeneStepFactory {
 
 		String type = step.getString("type");
 		if (type == null) {
-			throw new RuntimeException("Not property type found");
+			type = "nextflow";
 		}
 
 		Class clazz = registeredClasses.get(type);
