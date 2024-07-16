@@ -531,7 +531,7 @@ public class ApplicationRepository {
 	}
 
 	public String getConfigDirectory(WdlApp app) {
-		return FileUtil.path(CONFIG_PATH, app.getId().split("@")[0]);
+		return FileUtil.path(CONFIG_PATH, app.getId().split("@")[0], app.getVersion());
 	}
 
 	public boolean hasAccess(User user, Application application) {
