@@ -187,6 +187,8 @@ public class NextflowStep extends CloudgeneStep {
 
 			collector.cleanProcesses(context);
 
+			parseOutput(output);
+
 			File report = new File(executionDir, Report.DEFAULT_FILENAME);
 			if (report.exists()) {
 				context.log("Load report file from '" + report.getCanonicalPath() + "'");
@@ -229,6 +231,15 @@ public class NextflowStep extends CloudgeneStep {
 
 	private void parseOutput(File file) throws IOException {
 		CommandOutput report = new CommandOutput(file.getAbsolutePath());
+		context.log("Execute " + report.getEvents().size() + " events.");
+		for (ReportEvent event : report.getEvents()) {
+			context.log("Event: " + event);
+			ReportEventExecutor.execute(event, context, context.getCurrentStep());
+		}
+	}
+
+	private void parseOutput(StringBuilder output) throws IOException {
+		CommandOutput report = new CommandOutput(output);
 		context.log("Execute " + report.getEvents().size() + " events.");
 		for (ReportEvent event : report.getEvents()) {
 			context.log("Event: " + event);

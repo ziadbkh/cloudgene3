@@ -18,6 +18,12 @@ public class CommandOutput {
 
 	}
 
+	public CommandOutput(StringBuilder output) throws IOException {
+		String str = output.toString();
+		byte[] bytes = str.getBytes();
+		loadFromInputStream(new ByteArrayInputStream(bytes));
+	}
+
 	public CommandOutput(String filename) throws IOException {
 		loadFromFile(filename);
 	}
