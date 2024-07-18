@@ -58,6 +58,7 @@ public class CommandOutput {
 					addEvent(ReportEvent.WebCommand.PRINTLN, command.getParameters().get("value"));
 					break;
 				case "set-counter":
+				case "inc-counter":
 					addEvent(ReportEvent.WebCommand.INC_COUNTER, command.getParameters().get("name"), Double.valueOf(Integer.parseInt(command.getParameters().get("value"))));
 					break;
 				case "submit-counter":
@@ -76,7 +77,6 @@ public class CommandOutput {
 	public void addEvent(ReportEvent.WebCommand command, Object... params) {
 		ReportEvent event = new ReportEvent(command, params);
 		events.add(event);
-		// TODO: autosave?
 	}
 
 }

@@ -25,7 +25,7 @@ public class GitHubActionsParser {
                             if (type == null) {
                                 type = "message";
                             }
-                            group.setName(type);
+                            group.setName(type.trim());
                             group = null;
                         } else {
                             if (group != null) {
@@ -41,7 +41,7 @@ public class GitHubActionsParser {
                             value += "\n";
                         }
                         value += line;
-                        group.getParameters().put("value", value);
+                        group.getParameters().put("value", value.trim());
                     }
                 }
             }
@@ -61,14 +61,14 @@ public class GitHubActionsParser {
         String[] commandNameAndValue = line.substring(2).trim().split("::", 2);
         String[] commandNameAndParams = commandNameAndValue[0].split(" ", 2);
 
-        String commandName = commandNameAndParams[0];
+        String commandName = commandNameAndParams[0].trim();
         String parameters = "";
         if (commandNameAndParams.length > 1) {
-            parameters = commandNameAndParams[1];
+            parameters = commandNameAndParams[1].trim();
         }
         String commandValue =  "";
         if (commandNameAndValue.length > 1) {
-            commandValue = commandNameAndValue[1];
+            commandValue = commandNameAndValue[1].trim();
         }
 
         Map<String, String> parameterMap = parseParameters(parameters);
