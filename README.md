@@ -26,13 +26,19 @@ You will need the following things properly installed on your computer.
 
 ## Installation
 
-You can install Cloudgene via our install script:
+You can install Cloudgene3 using the following command:
 
-```sh
-mkdir cloudgene
-cd cloudgene
-curl -s install.cloudgene.io | bash
+```bash
+curl -fsSL https://get.cloudgene.io | bash
 ```
+
+If you don't have curl installed, you could use wget:
+
+```bash
+wget -qO- https://get.ncloudgene.io | bash
+```
+
+It will create the `cloudgene` executable file in the current directory.
 
 Test the installation with the following command:
 
@@ -45,7 +51,7 @@ Test the installation with the following command:
 The *hello-cloudgene* application can be installed by using the following command:
 
 ```sh
-./cloudgene github-install lukfor/hello-cloudgene
+./cloudgene github-install lukfor/cg-fetchngs
 ```
 
 The webserver can be started with the following command:
@@ -57,13 +63,6 @@ The webserver can be started with the following command:
 The webservice is available on http://localhost:8082. Please open this address in your web browser and enter as username `admin` and as password `admin1978` to login.
 
 Click on *Run* to start the application.
-
-![image](docs/images/hello-cloudgene-saas.png)
-
-
-A job can be started by filling out the form and clicking on the blue submit button. The *hello-cloudgene* application displays several inspiring quotes:
-
-![image](docs/images/hello-cloudgene-saas-results.png)
 
 
 The documentation is available at http://docs.cloudgene.io
