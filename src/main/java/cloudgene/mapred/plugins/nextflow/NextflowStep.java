@@ -147,7 +147,6 @@ public class NextflowStep extends CloudgeneStep {
 		nextflow.setReport(workspace.createLogFile(prefix + "report.html"));
 		nextflow.setTimeline(workspace.createLogFile(prefix + "timeline.html"));
 		nextflow.setLog(workspace.createLogFile(prefix + "nextflow.log"));
-		nextflow.setName(job.getId() +  "-step-" + context.getStepCounter());
 
 		try {
 
