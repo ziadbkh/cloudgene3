@@ -90,10 +90,7 @@ public class WdlApp implements Comparable<WdlApp> {
 	}
 
 	public String getId() {
-		if (id != null && !id.isEmpty()) {
-			return id;
-		}
-		return name.replaceAll(" ", "-").toLowerCase();
+		return id;
 	}
 
 	public WdlWorkflow getWorkflow() {
