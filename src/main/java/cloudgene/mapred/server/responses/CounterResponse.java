@@ -16,6 +16,8 @@ public class CounterResponse {
 	
 	private Map<String, Long> waiting = new HashMap<String, Long>();
 
+	private Map<String, Long> queue = new HashMap<String, Long>();
+
 	private int users = 0;
 
 	public Map<String, Long> getComplete() {
@@ -49,12 +51,21 @@ public class CounterResponse {
 	public void setUsers(int users) {
 		this.users = users;
 	}
-	
+
+	public void setQueue(Map<String, Long> queue) {
+		this.queue = queue;
+	}
+
+	public Map<String, Long> getQueue() {
+		return queue;
+	}
+
 	public static CounterResponse build(WorkflowEngine workflowEngine) {
 		CounterResponse response = new CounterResponse();
 		response.complete = workflowEngine.getCounters(AbstractJob.STATE_SUCCESS);
 		response.running = workflowEngine.getCounters(AbstractJob.STATE_RUNNING);
 		response.waiting = workflowEngine.getCounters(AbstractJob.STATE_WAITING);
+		response.queue.put("size", (long) workflowEngine.getSize());
 		return response;
 	}
 	

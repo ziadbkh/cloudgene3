@@ -333,6 +333,10 @@ public abstract class Queue implements Runnable {
 		}
 	}
 
+	public int getSize() {
+		return queue.size();
+	}
+
 	abstract public void onComplete(AbstractJob job);
 
 	abstract public PriorityRunnable createRunnable(AbstractJob job);

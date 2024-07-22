@@ -200,4 +200,8 @@ public class WorkflowEngine implements Runnable {
 
 	}
 
+	public int getSize() {
+		return longTimeQueue.getSize();
+	}
+
 }
