@@ -58,9 +58,8 @@
 			</td>
 
 			<td>
-				<p style="line-height: 1.15 !important; margin-bottom: 0px !important;">
-					{{username}}<br>
-					<small class="text-muted">{{userAgent}}</small>
+				<p style="line-height: 1.15 !important; margin-bottom: 0px !important;" title="{{userAgent}}">
+					{{username}}
 				</p>
 			</td>
 

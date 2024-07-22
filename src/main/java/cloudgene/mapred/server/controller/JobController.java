@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Function;
 
+import io.micronaut.http.*;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +26,6 @@ import cloudgene.mapred.util.FormUtil;
 import cloudgene.mapred.util.FormUtil.Parameter;
 import cloudgene.mapred.util.Page;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.http.HttpResponse;
-import io.micronaut.http.HttpStatus;
-import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
@@ -87,12 +85,14 @@ public class JobController {
 	@Post("/submit/{app}")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Secured(SecurityRule.IS_AUTHENTICATED)
-	public Publisher<HttpResponse<Object>> submit(Authentication authentication, String app, @Body MultipartBody body) throws IOException {
+	public Publisher<HttpResponse<Object>> submit(Authentication authentication, HttpRequest<?> request, String app, @Body MultipartBody body) throws IOException {
+
+		String userAgent = request.getHeaders().get(HttpHeaders.USER_AGENT);
 
 		long start = System.currentTimeMillis();
 		File folder = application.getSettings().getTempFolder("upload_");
 
-		log.debug("Start submit process and parse multipary body. Folder for request: " + folder.getAbsolutePath());
+		log.debug("Start submit process and parse multipart body. Folder for request: " + folder.getAbsolutePath());
 
 		return formUtil.processMultipartBody(body, folder, new Function<List<Parameter>, HttpResponse<Object>>() {
 
@@ -108,7 +108,7 @@ public class JobController {
 
 					blockInMaintenanceMode(user);
 
-					AbstractJob job = jobService.submitJob(app, form, user);
+					AbstractJob job = jobService.submitJob(app, form, user, userAgent);
 
 					log.debug("Job " + job.getId() + " submitted in " + (System.currentTimeMillis() - start) + " ms.");
 

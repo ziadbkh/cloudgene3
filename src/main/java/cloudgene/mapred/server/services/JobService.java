@@ -85,7 +85,7 @@ public class JobService {
 		return job;
 	}
 
-	public AbstractJob submitJob(String appId, List<Parameter> form, User user) {
+	public AbstractJob submitJob(String appId, List<Parameter> form, User user, String userAgent) {
 
 		if (user == null) {
 			throw new JsonHttpStatusException(HttpStatus.UNAUTHORIZED, "Access denied.");
@@ -148,10 +148,6 @@ public class JobService {
 		job.setSettings(settings);
 		job.setApplication(app.getName() + " " + app.getVersion());
 		job.setApplicationId(appId);
-
-		// String userAgent = getRequest().getClientInfo().getAgent();
-		// TODO: How to read userAgent from micronaut request!
-		String userAgent = "Web.Interface";
 		job.setUserAgent(userAgent);
 
 		engine.submit(job);
