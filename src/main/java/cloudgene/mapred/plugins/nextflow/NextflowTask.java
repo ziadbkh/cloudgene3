@@ -71,7 +71,6 @@ public class NextflowTask {
 		if (!workspace.exists(reportFilename)) {
 			return false;
 		}
-		context.log("Load process output file from '" + reportFilename + "'");
 		InputStream stream = context.getWorkspace().download(reportFilename);
 		try {
 			CommandOutput report = new CommandOutput(stream);
