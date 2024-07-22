@@ -47,13 +47,9 @@ public class Environment {
 	public Environment addApplication(WdlApp application) {
 		String localFolder = application.getPath();
 		add("APP_LOCATION", localFolder);
-		//old variable names without prefix for compatibility
-		env.put("app_id", application.getId());
-		env.put("app_name", application.getName());
-		env.put("app_version", application.getVersion());
-		env.put("app_local_folder", localFolder);
-		env.put("local_app_folder", localFolder);
-		env.put("app_hdfs_folder", localFolder);
+		add("APP_ID", application.getId());
+		add("APP_NAME", application.getName());
+		add("APP_VERSION", application.getVersion());
 		return this;
 	}
 
