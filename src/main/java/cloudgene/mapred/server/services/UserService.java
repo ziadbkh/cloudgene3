@@ -26,7 +26,7 @@ public class UserService {
 
 	public static final String MESSAGE_USER_NOT_FOUND = "User %s not found.";
 
-	private static final String MESSAGE_USER_PROFILE_DELETE = "User profile sucessfully delete.";
+	private static final String MESSAGE_USER_PROFILE_DELETE = "User profile successfully delete.";
 
 	private static final String MESSAGE_DELETE_ERROR = "Error during deleting your user profile.";
 
@@ -38,7 +38,7 @@ public class UserService {
 
 	private static final String MESSAGE_NO_USERNAME_SET = "No username set.";
 
-	private static final String MESSAGE_PASSWORD_UPDATED = "Password sucessfully updated.";
+	private static final String MESSAGE_PASSWORD_UPDATED = "Password successfully updated.";
 
 	private static final String MESSAGE_INVALID_RECOVERY_REQUEST = "Your recovery request is invalid or expired.";
 
@@ -54,7 +54,7 @@ public class UserService {
 
 	private static final String MESSAGE_INVALID_USERNAME = "Please enter a valid username or email address.";
 
-	private static final String MESSAGE_USER_CREATED = "User sucessfully created.";
+	private static final String MESSAGE_USER_CREATED = "User successfully created.";
 
 	private static final String MESSAGE_EMAIL_ALREADY_REGISTERED = "E-Mail is already registered.";
 
@@ -64,7 +64,7 @@ public class UserService {
 
 	private static final String MESSAGE_WRONG_ACTIVATION_CODE = "Wrong activation code.";
 
-	private static final String MESSAGE_USER_ACTIVATED = "User sucessfully activated.";
+	private static final String MESSAGE_USER_ACTIVATED = "User successfully activated.";
 
 	public static final String DEFAULT_ROLE = "User";
 
@@ -320,7 +320,7 @@ public class UserService {
 			// send email with activation code
 			String app = application.getSettings().getName();
 			String subject = "[" + app + "] Password Recovery";
-			String body = application.getTemplate(Template.RECOVERY_MAIL, user.getFullName(), application, link);
+			String body = application.getTemplate(Template.RECOVERY_MAIL, user.getFullName(), app, link);
 
 			try {
 				if (user.getMail()!= null && !user.getMail().isEmpty()) {
@@ -413,8 +413,7 @@ public class UserService {
 				String appName = application.getSettings().getName();
 				String subject = "[" + appName + "] Signup activation";
 				String activationLink = hostname + "/#!activate/" + username + "/" + activationKey;
-				String body = application.getTemplate(Template.REGISTER_MAIL, full_name,
-						application.getSettings().getName(), activationLink);
+				String body = application.getTemplate(Template.REGISTER_MAIL, full_name, appName, activationLink);
 
 				MailUtil.send(application.getSettings(), mail, subject, body);
 
