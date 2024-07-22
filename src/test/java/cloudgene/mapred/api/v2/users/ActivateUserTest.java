@@ -53,7 +53,7 @@ public class ActivateUserTest {
 
 		// register user
 		RestAssured.given().formParams(form).when().post("/api/v2/users/register").then().statusCode(200).and()
-				.body("success", equalTo(true)).and().body("message", equalTo("User sucessfully created."));
+				.body("success", equalTo(true)).and().body("message", equalTo("User successfully created."));
 
 		// check if one mail was sent to user
 		assertEquals(mailsBefore + 1, mailServer.getReceivedEmailSize());
@@ -95,7 +95,7 @@ public class ActivateUserTest {
 		// activate user with correct data
 		RestAssured.when().get("/users/activate/" + user.getUsername() + "/" + user.getActivationCode()).then()
 				.statusCode(200).and().body("success", equalTo(true)).and()
-				.body("message", equalTo("User sucessfully activated."));
+				.body("message", equalTo("User successfully activated."));
 
 		// login should work
 		form = new HashMap<String, String>();

@@ -89,7 +89,7 @@ public class UpdatePasswordTest {
 		form.put("confirm-new-password", "New-password9");
 
 		RestAssured.given().formParams(form).when().post("/api/v2/users/update-password").then().statusCode(200).and()
-				.body("success", equalTo(true)).and().body("message", equalTo("Password sucessfully updated."));
+				.body("success", equalTo(true)).and().body("message", equalTo("Password successfully updated."));
 
 		// try login with old password
 		form = new HashMap<String, String>();
