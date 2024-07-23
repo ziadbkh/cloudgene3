@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import cloudgene.mapred.jobs.*;
 import cloudgene.mapred.plugins.PluginManager;
@@ -20,9 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cloudgene.mapred.jobs.workspace.IWorkspace;
-import cloudgene.mapred.plugins.nextflow.report.Report;
-import cloudgene.mapred.plugins.nextflow.report.ReportEvent;
-import cloudgene.mapred.plugins.nextflow.report.ReportEventExecutor;
 import cloudgene.mapred.util.Settings;
 import cloudgene.mapred.wdl.WdlStep;
 import genepi.io.FileUtil;
@@ -188,16 +184,6 @@ public class NextflowStep extends CloudgeneStep {
 
 			parseOutput(output);
 
-			File report = new File(executionDir, Report.DEFAULT_FILENAME);
-			if (report.exists()) {
-				context.log("Load report file from '" + report.getCanonicalPath() + "'");
-				try {
-					parseReport(report);
-				} catch (Exception e) {
-					log.error("[Job {}] Invalid report file.", context.getJobId(), e);
-				}
-			}
-
 			File outputFile = new File(executionDir, "cloudgene.out");
 			if (!outputFile.exists()) {
 				return successful;
@@ -219,31 +205,14 @@ public class NextflowStep extends CloudgeneStep {
 
 	}
 
-	private void parseReport(File file) throws IOException {
-		Report report = new Report(file.getAbsolutePath());
-		context.log("Execute " + report.getEvents().size() + " events.");
-		for (ReportEvent event : report.getEvents()) {
-			context.log("Event: " + event);
-			ReportEventExecutor.execute(event, context, context.getCurrentStep());
-		}
-	}
-
 	private void parseOutput(File file) throws IOException {
-		CommandOutput report = new CommandOutput(file.getAbsolutePath());
-		context.log("Execute " + report.getEvents().size() + " events.");
-		for (ReportEvent event : report.getEvents()) {
-			context.log("Event: " + event);
-			ReportEventExecutor.execute(event, context, context.getCurrentStep());
-		}
+		CommandOutput output = new CommandOutput(file.getAbsolutePath());
+		output.execute(context, context.getCurrentStep());
 	}
 
-	private void parseOutput(StringBuilder output) throws IOException {
-		CommandOutput report = new CommandOutput(output);
-		context.log("Execute " + report.getEvents().size() + " events.");
-		for (ReportEvent event : report.getEvents()) {
-			context.log("Event: " + event);
-			ReportEventExecutor.execute(event, context, context.getCurrentStep());
-		}
+	private void parseOutput(StringBuilder content) throws IOException {
+		CommandOutput output = new CommandOutput(content);
+		output.execute(context, context.getCurrentStep());
 	}
 
 	@Override

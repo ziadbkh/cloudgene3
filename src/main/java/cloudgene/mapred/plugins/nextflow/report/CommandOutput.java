@@ -1,6 +1,7 @@
 package cloudgene.mapred.plugins.nextflow.report;
 
 import cloudgene.mapred.jobs.CloudgeneContext;
+import cloudgene.mapred.jobs.Step;
 import cloudgene.mapred.plugins.nextflow.report.GitHubActionsParser.Command;
 
 import java.io.*;
@@ -12,7 +13,7 @@ public class CommandOutput {
 
 	public static final String DEFAULT_FILENAME = ".command.out";
 
-	private List<ReportEvent> events = new Vector<ReportEvent>();
+	private List<Command> commands = new Vector<Command>();
 
 	public CommandOutput() {
 
@@ -38,37 +39,45 @@ public class CommandOutput {
 
 	public void loadFromInputStream(InputStream in) throws IOException {
 		GitHubActionsParser parser = new GitHubActionsParser();
-		List<Command> commands = parser.parseOutput(in);
+		commands = parser.parseOutput(in);
+	}
+
+	public void execute(CloudgeneContext context, Step step) throws IOException {
+
+		if (step == null) {
+			step = context.getCurrentStep();
+		}
+
 		for (Command command : commands) {
 			switch(command.getName()){
 				case "error":
-					addEvent(ReportEvent.WebCommand.MESSAGE, command.getParameters().get("value"), (double)CloudgeneContext.ERROR);
+					context.message(step, command.getParameters().get("value"), CloudgeneContext.ERROR);
 					break;
 				case "warning":
-					addEvent(ReportEvent.WebCommand.MESSAGE, command.getParameters().get("value"),  (double)CloudgeneContext.WARNING);
+					context.message(step, command.getParameters().get("value"), CloudgeneContext.WARNING);
 					break;
 				case "message":
 				case "notice":
-					addEvent(ReportEvent.WebCommand.MESSAGE, command.getParameters().get("value"),  (double)CloudgeneContext.OK);
+					context.message(step, command.getParameters().get("value"), CloudgeneContext.OK);
 					break;
 				case "log":
-					addEvent(ReportEvent.WebCommand.LOG, command.getParameters().get("value"));
+					context.log(command.getParameters().get("value"));
 					break;
 				case "debug":
-					addEvent(ReportEvent.WebCommand.PRINTLN, command.getParameters().get("value"));
+					context.println(command.getParameters().get("value"));
 					break;
 				case "set-counter":
 				case "inc-counter":
-					addEvent(ReportEvent.WebCommand.INC_COUNTER, command.getParameters().get("name"), Double.valueOf(Integer.parseInt(command.getParameters().get("value"))));
+					context.incCounter(command.getParameters().get("name"), Integer.parseInt(command.getParameters().get("value")));
 					break;
 				case "submit-counter":
-					addEvent(ReportEvent.WebCommand.SUBMIT_COUNTER, command.getParameters().get("name"));
+					context.submitCounter(command.getParameters().get("name"));
 					break;
 				case "set-value":
-					addEvent(ReportEvent.WebCommand.SET_VALUE, command.getParameters().get("name"), command.getParameters().get("value"));
+					context.setValue(command.getParameters().get("name"), command.getParameters().get("value"));
 					break;
 				case "submit-value":
-					addEvent(ReportEvent.WebCommand.SUBMIT_VALUE, command.getParameters().get("name"));
+					context.submitValue(command.getParameters().get("name"));
 					break;
 				default:
 					throw new IOException("Unknown command: " + command.getName());
@@ -76,13 +85,5 @@ public class CommandOutput {
 		}
 	}
 
-	public List<ReportEvent> getEvents() {
-		return events;
-	}
-
-	public void addEvent(ReportEvent.WebCommand command, Object... params) {
-		ReportEvent event = new ReportEvent(command, params);
-		events.add(event);
-	}
 
 }
