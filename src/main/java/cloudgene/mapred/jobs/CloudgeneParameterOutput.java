@@ -4,10 +4,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
-import cloudgene.mapred.util.HashUtil;
 import cloudgene.mapred.wdl.WdlParameterOutput;
 import cloudgene.mapred.wdl.WdlParameterOutputType;
-import org.apache.commons.math3.random.RandomGenerator;
 
 public class CloudgeneParameterOutput {
 

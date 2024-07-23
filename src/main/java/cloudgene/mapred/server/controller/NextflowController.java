@@ -44,13 +44,10 @@ public class NextflowController {
 			NextflowCollector info = NextflowCollector.getInstance();
 			if (event.containsKey("trace")) {
 				info.addEvent(job, event);
-			} else {
-				// System.out.println(event.toString());
 			}
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error("Parsing Nextflow weblog for job {} failed." + job, e);
 		}
 
 		return "";

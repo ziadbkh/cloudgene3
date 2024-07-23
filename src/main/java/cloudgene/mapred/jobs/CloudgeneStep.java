@@ -8,8 +8,12 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 import cloudgene.mapred.wdl.WdlStep;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class CloudgeneStep {
+
+	private static Logger log = LoggerFactory.getLogger(CloudgeneStep.class);
 
 	private CloudgeneJob job;
 
@@ -92,18 +96,12 @@ public abstract class CloudgeneStep {
 		InputStreamReader isr = new InputStreamReader(is, "ISO-8859-1");
 		BufferedReader br = new BufferedReader(isr);
 		String line = null;
-		try {
-
-			while ((line = br.readLine()) != null) {
-				context.println(line);
-				if (output != null) {
-					output.append(line + "\n");
-				}
+		while ((line = br.readLine()) != null) {
+			context.println(line);
+			if (output != null) {
+				output.append(line + "\n");
 			}
-		} catch (Exception e) {
-			// e.printStackTrace();
 		}
-
 		br.close();
 		isr.close();
 		is.close();
@@ -128,8 +126,7 @@ public abstract class CloudgeneStep {
 				try {
 					Thread.sleep(200);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.error("Process killing failed.", e);
 				}
 			}
 		}

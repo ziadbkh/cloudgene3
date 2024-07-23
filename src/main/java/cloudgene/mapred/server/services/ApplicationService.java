@@ -20,11 +20,9 @@ import jakarta.inject.Inject;
 public class ApplicationService {
 
 	private static final String UNDER_MAINTENANCE = "This functionality is currently under maintenance.";
-	private static final String HADOOP_CLUSTER_UNREACHABLE = "Hadoop cluster seems unreachable or misconfigured. Hadoop support is disabled, but this application requires it.";
 	private static final String APPLICATION_IS_DATA_PACKAGE = "Application %s is a data package.";
 	private static final String APPLICATION_NOT_REMOVED = "Application not removed: %s";
 	private static final String APPLICATION_NOT_FOUND = "Application %s not found or the request requires user authentication.";
-	private static final String APPLICATION_NOT_UPDATED = "Application not updated: %s";
 	private static final String APPLICATION_NOT_INSTALLED = "Application not installed. %s";
 	private static final String NO_URL = "No url or file location set.";
 	private static final String APPLICATION_NOT_INSTALLED_NO_WORKFLOW = "Application not installed: No workflow file found.";
@@ -180,13 +178,11 @@ public class ApplicationService {
 				throw new JsonHttpStatusException(HttpStatus.BAD_REQUEST, APPLICATION_NOT_INSTALLED_NO_WORKFLOW);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			log.error(APPLICATION_NOT_INSTALLED, e);
 			throw new JsonHttpStatusException(HttpStatus.BAD_REQUEST,
 					String.format(APPLICATION_NOT_INSTALLED, e.getMessage()));
 
 		} catch (Error e) {
-			e.printStackTrace();
 			log.error(APPLICATION_NOT_INSTALLED, e);
 			throw new JsonHttpStatusException(HttpStatus.BAD_REQUEST,
 					String.format(APPLICATION_NOT_INSTALLED, e.getMessage()));

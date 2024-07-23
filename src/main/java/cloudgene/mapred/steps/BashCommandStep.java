@@ -98,7 +98,7 @@ public class BashCommandStep extends CloudgeneStep {
 				return false;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			context.log("Execution failed.", e);
 			return false;
 		}
 

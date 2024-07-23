@@ -19,8 +19,6 @@ import genepi.io.FileUtil;
 
 public class LocalWorkspace implements IWorkspace {
 
-	private static final String OUTPUT_DIRECTORY = "outputs";
-
 	private static final String INPUT_DIRECTORY = "input";
 
 	private static final String TEMP_DIRECTORY = "temp";

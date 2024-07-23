@@ -228,16 +228,9 @@ public class S3Workspace implements IWorkspace {
 	}
 
 	@Override
-	public List<Download> getDownloads(String url) {
+	public List<Download> getDownloads(String url) throws IOException {
 		List<Download> downloads = new Vector<Download>();
-		ObjectListing listing;
-		try {
-			listing = S3Util.listObjects(url);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return downloads;
-		}
+		ObjectListing listing = S3Util.listObjects(url);
 
 		String baseKey = S3Util.getKey(url);
 
@@ -266,7 +259,7 @@ public class S3Workspace implements IWorkspace {
 	}
 
 	@Override
-	public List<Download> getLogs() {
+	public List<Download> getLogs() throws IOException {
 		String url = location + "/" + job + "/" + LOGS_DIRECTORY;
 		return getDownloads(url);
 	}

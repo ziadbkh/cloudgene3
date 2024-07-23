@@ -37,9 +37,9 @@ public interface IWorkspace {
 
 	public String createTempFolder(String string);
 
-	public List<Download> getDownloads(String url);
+	public List<Download> getDownloads(String url) throws IOException;
 	
-	public List<Download> getLogs();
+	public List<Download> getLogs() throws IOException;
 	
 	public void cleanup(String job) throws IOException;
 	

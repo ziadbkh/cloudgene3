@@ -92,7 +92,7 @@ public class JavaExternalStep extends CloudgeneStep {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			context.log("Execution failed.", e);
 			return false;
 		}
 	}

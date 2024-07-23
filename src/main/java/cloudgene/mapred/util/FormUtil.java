@@ -96,7 +96,7 @@ public class FormUtil {
 				log.debug("Data written to " + file.getAbsolutePath() + " in " + (System.currentTimeMillis() - start) + " ms.");
 				return new Parameter(partName, file);
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.error("Write data to " + file.getAbsolutePath() + " failed", e);
 			}
 
 		} else {
@@ -109,7 +109,7 @@ public class FormUtil {
 				log.debug("Data written to string.");
 				return new Parameter(partName, value);
 			} catch (IOException e) {
-				e.printStackTrace();
+				log.error("Write data to string failed", e);
 			}
 		}
 

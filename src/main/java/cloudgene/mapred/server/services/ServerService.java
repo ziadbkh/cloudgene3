@@ -24,14 +24,17 @@ import cloudgene.mapred.plugins.PluginManager;
 import cloudgene.mapred.server.Application;
 import cloudgene.mapred.server.controller.ServerAdminController;
 import cloudgene.mapred.util.Settings;
-import cloudgene.mapred.wdl.WdlApp;
 import genepi.io.FileUtil;
 import io.micronaut.security.oauth2.configuration.OauthClientConfigurationProperties;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class ServerService {
+
+	private static final Logger log = LoggerFactory.getLogger(ServerService.class);
 
 	public static final String IMAGE_DATA = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"96\" height=\"20\">"
 			+ "	<linearGradient id=\"b\" x2=\"0\" y2=\"100%\"><stop offset=\"0\" stop-color=\"#bbb\" stop-opacity=\".1\"/><stop offset=\"1\" stop-opacity=\".1\"/></linearGradient>"
@@ -252,24 +255,21 @@ public class ServerService {
 
 			String lastLine = sb.reverse().toString();
 			return lastLine;
-		} catch (java.io.FileNotFoundException e) {
-			e.printStackTrace();
-			return null;
 		} catch (java.io.IOException e) {
-			e.printStackTrace();
+			log.error("Parsing log file failed.", e);
 			return null;
 		} finally {
 			if (fileHandler != null)
 				try {
 					fileHandler.close();
 				} catch (IOException e) {
+					log.error("Parsing log file failed.", e);
 				}
 		}
 	}
 
 	public void updateNextflowConfig(String content) {
 		NextflowPlugin plugin = (NextflowPlugin) PluginManager.getInstance().getPlugin(NextflowPlugin.ID);
-		Settings settings = application.getSettings();
 		String filename = plugin.getNextflowConfig();
 		FileUtil.writeStringBufferToFile(filename, new StringBuffer(content));
 	}

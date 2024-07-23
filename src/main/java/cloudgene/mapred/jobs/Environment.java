@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Vector;
 
-import cloudgene.mapred.plugins.IPlugin;
-import cloudgene.mapred.plugins.PluginManager;
 import cloudgene.mapred.util.Settings;
 import cloudgene.mapred.wdl.WdlApp;
 import com.fasterxml.jackson.annotation.JsonClassDescription;

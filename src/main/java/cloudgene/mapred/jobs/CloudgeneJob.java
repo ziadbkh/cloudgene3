@@ -1,9 +1,6 @@
 package cloudgene.mapred.jobs;
 
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.PathMatcher;
-import java.nio.file.Paths;
 import java.util.*;
 
 import cloudgene.mapred.util.GlobUtil;
@@ -169,9 +166,9 @@ public class CloudgeneJob extends AbstractJob {
 			return true;
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			writeOutput(e.getMessage());
 			setError(e.getMessage());
+			log.error("[Job {}] execution failed.", getId(), e);
 			return false;
 		}
 
@@ -241,25 +238,28 @@ public class CloudgeneJob extends AbstractJob {
 	public boolean after() {
 
 		log.info("[Job {}] Export parameters...", getId());
-
-		for (WdlParameterOutput output: getApp().getWorkflow().getOutputs()) {
-			if (output.isDownload()) {
-				CloudgeneParameterOutput out = outputParamsIndex.get(output.getId());
-				exportParameter(out, output.getIncludes(), output.getExcludes());
+		try {
+			for (WdlParameterOutput output : getApp().getWorkflow().getOutputs()) {
+				if (output.isDownload()) {
+					CloudgeneParameterOutput out = outputParamsIndex.get(output.getId());
+					exportParameter(out, output.getIncludes(), output.getExcludes());
+				}
 			}
-		}
 
-		log.info("[Job {}] Export logs...", getId());
-		List<Download> logs = workspace.getLogs();
-		for (Download log : logs) {
-			log.setCount(-1);
+			log.info("[Job {}] Export logs...", getId());
+			List<Download> logs = workspace.getLogs();
+			for (Download log : logs) {
+				log.setCount(-1);
+			}
+			logOutput.setFiles(logs);
+		} catch (IOException e) {
+			log.error("[Job {}] Export parameters failed.", getId(), e);
+			return false;
 		}
-		logOutput.setFiles(logs);
-
 		return true;
 	}
 
-	public boolean exportParameter(CloudgeneParameterOutput out,List<String> includes, List<String> excludes) {
+	public void exportParameter(CloudgeneParameterOutput out,List<String> includes, List<String> excludes) throws IOException {
 
 		writeLog("  Exporting parameter " + out.getName() + "...");
 		out.setJobId(getId());
@@ -282,8 +282,6 @@ public class CloudgeneJob extends AbstractJob {
 			}
 		}
 		Collections.sort(out.getFiles());
-
-		return true;
 	}
 
 	public String getWorkingDirectory() {

@@ -10,8 +10,6 @@ public class Message {
 
 	public static final int RUNNING = 3;
 
-	public static final int ERROR_ANSI = 4;
-	
 	private String message;
 
 	private int type;

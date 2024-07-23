@@ -2,11 +2,7 @@ package cloudgene.mapred.plugins.nextflow;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.net.URISyntaxException;;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -154,7 +150,7 @@ public class NextflowProcessRenderer {
 		return template;
 	}
 
-	private static String readTemplate(String path) throws IOException, URISyntaxException {
+	private static String readTemplate(String path) {
 		InputStream stream = NextflowProcess.class.getResourceAsStream(path);
 		return FileUtil.readFileAsString(stream);
 	}
