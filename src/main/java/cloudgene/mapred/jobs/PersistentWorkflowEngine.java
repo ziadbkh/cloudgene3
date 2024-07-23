@@ -4,15 +4,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cloudgene.mapred.database.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cloudgene.mapred.database.CounterDao;
-import cloudgene.mapred.database.DownloadDao;
-import cloudgene.mapred.database.JobDao;
-import cloudgene.mapred.database.MessageDao;
-import cloudgene.mapred.database.ParameterDao;
-import cloudgene.mapred.database.StepDao;
 import cloudgene.mapred.database.util.Database;
 
 public class PersistentWorkflowEngine extends WorkflowEngine {
@@ -127,6 +122,17 @@ public class PersistentWorkflowEngine extends WorkflowEngine {
 
 				counterDao.insert(name, value, job);
 
+			}
+		}
+
+		// write all submitted values into database
+		JobValueDao jobValueDao = new JobValueDao(database);
+		Map<String, String> submittedValues = job.getContext().getSubmittedValues();
+		for (String name : submittedValues.keySet()) {
+			String value = submittedValues.get(name);
+
+			if (value != null) {
+				jobValueDao.insert(name, value, job);
 			}
 		}
 

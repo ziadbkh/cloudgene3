@@ -178,3 +178,12 @@ CREATE INDEX idx_user_fullname ON `user`(full_name);
 
 -- 3.0.0-beta5
 alter table `parameter` add column hash varchar(300) null default null;
+
+
+--3.0.0-rc2
+create table job_values (
+	id	    	integer not null auto_increment primary key,
+	name		varchar(300),
+	job_id		varchar(100) null,
+	`value`		varchar(300) not null
+);

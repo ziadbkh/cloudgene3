@@ -29,8 +29,6 @@ public class CloudgeneContext extends WorkflowContext {
 
 	private Settings settings;
 
-	//private StepOutput step;
-
 	private User user;
 
 	private Map<String, CloudgeneParameterInput> inputParameters;
@@ -39,7 +37,11 @@ public class CloudgeneContext extends WorkflowContext {
 
 	private Map<String, Integer> counters = new HashMap<String, Integer>();
 
+	private Map<String, String> values = new HashMap<String, String>();
+
 	private Map<String, Boolean> submitCounters = new HashMap<String, Boolean>();
+
+	private Map<String, Boolean> submitValues = new HashMap<String, Boolean>();
 
 	private CloudgeneJob job;
 
@@ -288,6 +290,28 @@ public class CloudgeneContext extends WorkflowContext {
 
 	public Map<String, Integer> getCounters() {
 		return counters;
+	}
+
+	public void setValue(String name, String value) {
+		log("Set value " + name + " to " + value);
+		values.put(name,  value);
+	}
+
+	public void submitValue(String name) {
+		log("Submit value " + name);
+		submitValues.put(name, true);
+	}
+
+	public Map<String, String> getSubmittedValues() {
+		Map<String, String> result = new HashMap<String, String>();
+		for (String name : submitValues.keySet()) {
+			result.put(name, values.get(name));
+		}
+		return result;
+	}
+
+	public Map<String, String> getValues() {
+		return values;
 	}
 
 	public String createLinkToFile(String id) {

@@ -4,10 +4,12 @@ import java.util.List;
 
 import cloudgene.mapred.core.User;
 import cloudgene.mapred.database.UserDao;
+import cloudgene.mapred.database.JobValueDao;
 import cloudgene.mapred.server.Application;
 import cloudgene.mapred.server.auth.AuthenticationService;
 import cloudgene.mapred.server.auth.AuthenticationType;
 import cloudgene.mapred.server.responses.CounterResponse;
+import cloudgene.mapred.server.responses.JobValueResponse;
 import cloudgene.mapred.server.services.ServerService;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
@@ -55,6 +57,13 @@ public class ServerController {
 		UserDao dao = new UserDao(application.getDatabase());
 		response.setUsers(dao.countAll());
 		return response;
+	}
+
+	@Get("/values")
+	@Secured(User.ROLE_ADMIN)
+	public Object values() {
+		JobValueDao jobValueDao = new JobValueDao(application.getDatabase());
+		return JobValueResponse.build(jobValueDao.getAll());
 	}
 
 	@Get("/queue/block")

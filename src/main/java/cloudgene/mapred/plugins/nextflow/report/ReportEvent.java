@@ -20,7 +20,11 @@ public class ReportEvent {
 
 		PRINTLN,
 
-		LOG
+		LOG,
+
+		SET_VALUE,
+
+		SUBMIT_VALUE
 
 	}
 

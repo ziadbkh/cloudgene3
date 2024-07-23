@@ -64,6 +64,12 @@ public class CommandOutput {
 				case "submit-counter":
 					addEvent(ReportEvent.WebCommand.SUBMIT_COUNTER, command.getParameters().get("name"));
 					break;
+				case "set-value":
+					addEvent(ReportEvent.WebCommand.SET_VALUE, command.getParameters().get("name"), command.getParameters().get("value"));
+					break;
+				case "submit-value":
+					addEvent(ReportEvent.WebCommand.SUBMIT_VALUE, command.getParameters().get("name"));
+					break;
 				default:
 					throw new IOException("Unknown command: " + command.getName());
 			}

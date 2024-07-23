@@ -4,6 +4,7 @@ import Raphael from 'raphael/raphael';
 import Morris from 'morris.js/morris.js';
 
 import Counter from 'models/counter';
+import JobValue from 'models/job-value';
 import template from './dashboard.stache';
 
 
@@ -16,34 +17,40 @@ export default Control.extend({
 
     window.Raphael = Raphael;
 
-    Counter.findOne({}, function(counter) {
-      $(element).html(template({
-        counter: counter
-      }));
-      $(element).fadeIn();
+    JobValue.findAll({}, function(values) {
 
-      $.getJSON("api/v2/admin/server/statistics", {
-        days: 1
-      }, function(mydata) {
+      Counter.findOne({}, function(counter) {
+        $(element).html(template({
+          counter: counter,
+          values: values
+        }));
+        $(element).fadeIn();
 
-        $("#new_users").html(mydata[0].users - mydata[mydata.length - 1].users);
-        $("#total_users").html(mydata[0].users);
+        $.getJSON("api/v2/admin/server/statistics", {
+          days: 1
+        }, function(mydata) {
 
-        $("#new_jobs").html(mydata[0].completeJobs - mydata[mydata.length - 1].completeJobs);
-        $("#total_jobs").html(mydata[0].completeJobs);
+          $("#new_users").html(mydata[0].users - mydata[mydata.length - 1].users);
+          $("#total_users").html(mydata[0].users);
 
-        that.options.running = Morris.Area({
-          element: 'morris-area-chart',
-          data: mydata,
-          xkey: 'timestamp',
-          ykeys: ['runningJobs', 'waitingJobs'],
-          labels: ['Running Jobs', 'Waiting Jobs'],
-          pointSize: 0,
-          hideHover: 'always',
-          smooth: 'false',
-          resize: true
+          $("#new_jobs").html(mydata[0].completeJobs - mydata[mydata.length - 1].completeJobs);
+          $("#total_jobs").html(mydata[0].completeJobs);
+
+          that.options.running = Morris.Area({
+            element: 'morris-area-chart',
+            data: mydata,
+            xkey: 'timestamp',
+            ykeys: ['runningJobs', 'waitingJobs'],
+            labels: ['Running Jobs', 'Waiting Jobs'],
+            pointSize: 0,
+            hideHover: 'always',
+            smooth: 'false',
+            resize: true
+          });
+
+
         });
-
+      }, function(message) {
 
       });
     }, function(message) {

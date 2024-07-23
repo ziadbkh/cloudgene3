@@ -54,6 +54,17 @@ public class ReportEventExecutor {
 			context.incCounter(name, count);
 			break;
 		}
+		case SET_VALUE: {
+			String name = (String) event.getParams()[0];
+			String value = ((String) event.getParams()[1]);
+			context.setValue(name, value);
+			break;
+		}
+		case SUBMIT_VALUE: {
+			String name = (String) event.getParams()[0];
+			context.submitValue(name);
+			break;
+		}
 		case PRINTLN: {
 			String line = (String) event.getParams()[0];
 			context.println(line);

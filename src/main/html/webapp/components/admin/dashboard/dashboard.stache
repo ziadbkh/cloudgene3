@@ -35,20 +35,50 @@
 
 <div  id="morris-area-chart"></div>
 
+<br><br>
 
 <h3>Counters</h3>
 
 <p>The following counters were submitted by applications.</p>
 
 <table class="table table-bordered">
-
+<thead>
+	<tr>
+		<th>Name</th>
+		<th style="width: 150px;">Value</th>
+	</tr>
+</thead>
+<tbody>
 {{#each counter.complete}}
-
 	<tr>
 		<td><b>{{@key}}</b></td>
 		<td style="width: 150px;">{{.}}</td>
 	</tr>
-
 {{/each}}
+</tbody>
+</table>
 
+<br>
+
+<h3>Values</h3>
+
+<p>The following values were submitted by applications.</p>
+
+<table class="table table-bordered">
+<thead>
+	<tr>
+		<th>Name</th>
+		<th style="width: 150px;">Value</th>
+		<th style="width: 150px;">#Jobs</th>
+	</tr>
+</thead>
+<tbody>
+{{#each values}}
+	<tr>
+		<td><b>{{name}}</b></td>
+		<td style="width: 150px;">{{value}}</td>
+		<td style="width: 150px;">{{count}}</td>
+	</tr>
+{{/each}}
+</tbody>
 </table>
