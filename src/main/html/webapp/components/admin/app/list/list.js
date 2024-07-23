@@ -44,6 +44,17 @@ export default Control.extend({
         };
       });
 
+      // Sort the categories array
+      categories.sort(function(a, b) {
+        // Place "Application" at the beginning
+        if (a.name.toLowerCase() === "application") return -1;
+        if (b.name.toLowerCase() === "application") return 1;
+
+        // Compare other categories alphabetically
+        return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+      });
+
+
       $(element).html(template({
         categories: categories
       }));
@@ -156,6 +167,17 @@ export default Control.extend({
           })
         };
       });
+
+     // Sort the categories array
+      categories.sort(function(a, b) {
+        // Place "Application" at the beginning
+        if (a.name.toLowerCase() === "application") return -1;
+        if (b.name.toLowerCase() === "application") return 1;
+
+        // Compare other categories alphabetically
+        return a.name.localeCompare(b.name, undefined, { sensitivity: 'base' });
+      });
+
 
       $(element).html(template({
         categories: categories
