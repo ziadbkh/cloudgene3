@@ -58,7 +58,6 @@ public class TestApplication extends cloudgene.mapred.server.Application {
 
 		// Set threads for workflow engine to 1
 		settings.setThreadsQueue(1);
-		settings.setThreadsSetupQueue(1);
 		settings.setMaintenance(false);
 
 		registerApplications(settings);
