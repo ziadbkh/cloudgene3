@@ -286,9 +286,9 @@ abstract public class AbstractJob extends PriorityRunnable {
 
 			writeLog("Executing Job....");
 
-			boolean successfull = execute();
+			boolean successful = execute();
 
-			if (successfull) {
+			if (successful) {
 
 				log.info("[Job {}] Execution successful.", getId());
 

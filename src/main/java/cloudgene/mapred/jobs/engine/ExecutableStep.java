@@ -36,8 +36,6 @@ public class ExecutableStep {
 
 	private long time;
 
-	private String id = "";
-
 	public ExecutableStep(WdlStep step, CloudgeneContext context) throws Exception {
 		this.step = step;
 		this.context = context;
@@ -54,13 +52,9 @@ public class ExecutableStep {
 		this.step = step;
 	}
 
-	private void instance()
-			throws MalformedURLException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-
-		id = step.getName().toLowerCase().replace(" ", "_");
+	private void instance() {
 
 		// find step implementation
-
 		CloudgeneStepFactory factory = CloudgeneStepFactory.getInstance();
 		Class myClass = factory.getClassname(step);
 
@@ -86,7 +80,7 @@ public class ExecutableStep {
 			for (String plugin : instance.getRequirements()) {
 				if (!pluginManager.isEnabled(plugin)) {
 					instance = new ErrorStep(
-							"Requirements not fullfilled. This steps needs plugin '" + plugin + "'");
+							"Requirements not fulfilled. This steps needs plugin '" + plugin + "'");
 				}
 			}
 
@@ -118,9 +112,6 @@ public class ExecutableStep {
 
 			if (!successful) {
 				job.writeLog("  " + step.getName() + " [ERROR]");
-
-				context.incCounter("steps.failure." + id, 1);
-				context.submitCounter("steps.failure." + id);
 				return killed ? ExecutionResult.CANCELED : ExecutionResult.FAILED;
 
 			} else {
@@ -133,15 +124,8 @@ public class ExecutableStep {
 			}
 		} catch (Exception e) {
 			log.error("Running extern job failed!", e);
-
-			context.incCounter("steps.failure." + id, 1);
-			context.submitCounter("steps.failure." + id);
-
 			return killed ? ExecutionResult.CANCELED : ExecutionResult.FAILED;
 		}
-
-		context.incCounter("steps.success." + id, 1);
-		context.submitCounter("steps.success." + id);
 
 		return ExecutionResult.SUCCESS;
 

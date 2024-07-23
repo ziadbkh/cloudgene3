@@ -50,7 +50,8 @@ public class JobValueDao extends JdbcDataAccessObject {
 		StringBuilder sql = new StringBuilder();
 		sql.append("select name, `value`, count(*) as n ");
 		sql.append("from job_values ");
-		sql.append("group by name, `value`");
+		sql.append("group by name, `value` ");
+		sql.append("order by name, `value` ");
 
 		List<JobValue> result = new Vector<JobValue>();
 

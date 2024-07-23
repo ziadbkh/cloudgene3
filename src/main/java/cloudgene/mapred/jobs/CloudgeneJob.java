@@ -157,10 +157,12 @@ public class CloudgeneJob extends AbstractJob {
 
 			if (result != ExecutionResult.SUCCESS) {
 				setError("Job Execution failed.");
-				ExecutableStep failedNode = executor.getCurrentNode();
-				executeFailureStep(failedNode.getStep());
+				executeFailureStep();
 				return false;
 			}
+
+			context.setValue("application", getApp().getId());
+			context.submitValue("application");
 
 			setError(null);
 			return true;
@@ -184,7 +186,7 @@ public class CloudgeneJob extends AbstractJob {
 		return true;
 	}
 
-	public boolean executeFailureStep(WdlStep failedStep) {
+	public boolean executeFailureStep() {
 
 		WdlStep step = app.getWorkflow().getOnFailure();
 		cleanUp();
@@ -196,8 +198,6 @@ public class CloudgeneJob extends AbstractJob {
 		try {
 			writeLog("Executing onFailure... ");
 			ExecutableStep node = new ExecutableStep(step, context);
-			context.setData("cloudgene.failedStep", failedStep);
-			context.setData("cloudgene.failedStep.classname", failedStep.getClassname());
 			ExecutionResult result = node.run();
 			if (result == ExecutionResult.SUCCESS) {
 				writeLog("onFailure execution successful.");

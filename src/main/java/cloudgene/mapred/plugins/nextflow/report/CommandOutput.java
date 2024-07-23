@@ -79,6 +79,10 @@ public class CommandOutput {
 				case "submit-value":
 					context.submitValue(command.getParameters().get("name"));
 					break;
+				case "set-value-and-submit":
+					context.setValue(command.getParameters().get("name"), command.getParameters().get("value"));
+					context.submitValue(command.getParameters().get("name"));
+					break;
 				default:
 					throw new IOException("Unknown command: " + command.getName());
 			}
