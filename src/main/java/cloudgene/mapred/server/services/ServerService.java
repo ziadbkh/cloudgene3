@@ -163,7 +163,6 @@ public class ServerService {
 		object.put("version", Application.VERSION);
 		object.put("maintenance", application.getSettings().isMaintenance());
 		object.put("blocked", !application.getWorkflowEngine().isRunning());
-		object.put("threads_setup", application.getSettings().getThreadsSetupQueue());
 		object.put("threads", application.getSettings().getThreadsQueue());
 		object.put("max_jobs_user", application.getSettings().getMaxRunningJobsPerUser());
 		try {

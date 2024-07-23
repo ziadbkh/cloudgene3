@@ -44,11 +44,11 @@ public class ServerTasks {
 		}
 
 		Map<String, Long> countersRunning = engine
-				.getCounters(AbstractJob.STATE_RUNNING);
+				.getCounters(AbstractJob.STATE_RUNNING, null);
 		Map<String, Long> countersWaiting = engine
-				.getCounters(AbstractJob.STATE_WAITING);
+				.getCounters(AbstractJob.STATE_WAITING, null);
 		Map<String, Long> countersComplete = engine
-				.getCounters(AbstractJob.STATE_SUCCESS);
+				.getCounters(AbstractJob.STATE_SUCCESS, null);
 
 		UserDao daoUser = new UserDao(database);
 		List<User> users = daoUser.findAll();

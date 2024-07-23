@@ -95,8 +95,7 @@ public class Application {
 		// start workflow engine
 		try {
 
-			engine = new PersistentWorkflowEngine(database, settings.getThreadsQueue(),
-					settings.getThreadsSetupQueue());
+			engine = new PersistentWorkflowEngine(database, settings.getThreadsQueue());
 			new Thread(engine).start();
 
 		} catch (Exception e) {

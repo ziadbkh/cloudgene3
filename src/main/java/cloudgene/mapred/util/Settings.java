@@ -52,8 +52,6 @@ public class Settings {
 
 	private int notificationAfter = 4;
 
-	private int threadsSetupQueue = 5;
-
 	private int threadsQueue = 5;
 
 	private int maxRunningJobsPerUser = 2;
@@ -83,6 +81,8 @@ public class Settings {
 	private int maxDownloads = 10;
 
 	private String port = "8082";
+
+	private List<String> counters = new Vector<String>();
 
 	public static final String DEFAULT_SECURITY_KEY = "default-key-change-me-immediately";
 
@@ -347,14 +347,6 @@ public class Settings {
 		this.uploadLimit = uploadLimit;
 	}
 
-	public void setThreadsSetupQueue(int threadsSetupQueue) {
-		this.threadsSetupQueue = threadsSetupQueue;
-	}
-
-	public int getThreadsSetupQueue() {
-		return threadsSetupQueue;
-	}
-
 	public int getAutoRetireInterval() {
 		return autoRetireInterval;
 	}
@@ -463,6 +455,14 @@ public class Settings {
 
 		return externalWorkspace.get("type");
 
+	}
+
+	public List<String> getCounters() {
+		return counters;
+	}
+
+	public void setCounters(List<String> counters) {
+		this.counters = counters;
 	}
 
 	public void setServerUrl(String serverUrl) {

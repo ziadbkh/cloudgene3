@@ -47,16 +47,7 @@
 
 	<tr>
 		<td>
-			<b>Threads Setup Queue:</b>
-		</td>
-		<td>
-			{{cluster.threads_setup}}
-		</td>
-	</tr>
-
-	<tr>
-		<td>
-			<b>Threads Processing Queue:</b>
+			<b>Threads Queue:</b>
 		</td>
 		<td>
 			{{cluster.threads}}

@@ -1,5 +1,6 @@
 package cloudgene.mapred.jobs;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,8 +27,8 @@ public class PersistentWorkflowEngine extends WorkflowEngine {
 
 	private Map<String, Long> counters;
 
-	public PersistentWorkflowEngine(Database database, int ltqThreads, int stqThreads) {
-		super(ltqThreads, stqThreads);
+	public PersistentWorkflowEngine(Database database, int ltqThreads) {
+		super(ltqThreads);
 		this.database = database;
 
 		log.info("Init Counters....");
@@ -155,11 +156,16 @@ public class PersistentWorkflowEngine extends WorkflowEngine {
 	}
 
 	@Override
-	public Map<String, Long> getCounters(int state) {
+	public Map<String, Long> getCounters(int state, List<String> names) {
 		if (state == AbstractJob.STATE_SUCCESS) {
+			List<String> keys = (names == null) ? counters.keySet().stream().toList() : names;
+			Map<String, Long> counters = new HashMap<>();
+			for (String name: keys) {
+				counters.put(name, this.counters.get(name));
+			}
 			return counters;
 		} else {
-			return super.getCounters(state);
+			return super.getCounters(state, null);
 		}
 	}
 

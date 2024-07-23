@@ -1,20 +1,23 @@
 package cloudgene.mapred.server.responses;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import cloudgene.mapred.jobs.AbstractJob;
 import cloudgene.mapred.jobs.WorkflowEngine;
+import cloudgene.mapred.server.Application;
 import com.fasterxml.jackson.annotation.JsonClassDescription;
+import jakarta.inject.Inject;
 
 @JsonClassDescription
 public class CounterResponse {
 
+	@Inject
+	protected Application application;
+
 	private Map<String, Long> complete = new HashMap<String, Long>();
-	
-	private Map<String, Long> running = new HashMap<String, Long>();
-	
-	private Map<String, Long> waiting = new HashMap<String, Long>();
 
 	private Map<String, Long> queue = new HashMap<String, Long>();
 
@@ -26,22 +29,6 @@ public class CounterResponse {
 
 	public void setComplete(Map<String, Long> complete) {
 		this.complete = complete;
-	}
-
-	public Map<String, Long> getRunning() {
-		return running;
-	}
-
-	public void setRunning(Map<String, Long> running) {
-		this.running = running;
-	}
-
-	public Map<String, Long> getWaiting() {
-		return waiting;
-	}
-
-	public void setWaiting(Map<String, Long> waiting) {
-		this.waiting = waiting;
 	}
 
 	public int getUsers() {
@@ -60,11 +47,9 @@ public class CounterResponse {
 		return queue;
 	}
 
-	public static CounterResponse build(WorkflowEngine workflowEngine) {
+	public static CounterResponse build(WorkflowEngine workflowEngine, List<String> counters) {
 		CounterResponse response = new CounterResponse();
-		response.complete = workflowEngine.getCounters(AbstractJob.STATE_SUCCESS);
-		response.running = workflowEngine.getCounters(AbstractJob.STATE_RUNNING);
-		response.waiting = workflowEngine.getCounters(AbstractJob.STATE_WAITING);
+		response.complete = workflowEngine.getCounters(AbstractJob.STATE_SUCCESS, counters);
 		response.queue.put("size", (long) workflowEngine.getSize());
 		return response;
 	}

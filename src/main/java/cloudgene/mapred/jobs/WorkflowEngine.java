@@ -24,7 +24,7 @@ public class WorkflowEngine implements Runnable {
 
 	private static final Logger log = LoggerFactory.getLogger(WorkflowEngine.class);
 
-	public WorkflowEngine(int ltqThreads, int stqThreads) {
+	public WorkflowEngine(int ltqThreads) {
 
 		longTimeQueue = new Queue("LongTimeQueue", ltqThreads, true, true) {
 
@@ -129,14 +129,14 @@ public class WorkflowEngine implements Runnable {
 		return longTimeQueue.getJobById(id);
 	}
 
-	public Map<String, Long> getCounters(int state) {
-
+	public Map<String, Long> getCounters(int state, List<String> names) {
 		Map<String, Long> result = new HashMap<String, Long>();
 		List<AbstractJob> jobs = longTimeQueue.getAllJobs();
 		for (AbstractJob job : jobs) {
 			if (job.getState() == state) {
 				Map<String, Integer> counters = job.getContext().getCounters();
-				for (String name : counters.keySet()) {
+				List<String> keys = (names == null) ? counters.keySet().stream().toList() : names;
+				for (String name : keys) {
 					Integer value = counters.get(name);
 					Long oldvalue = result.get(name);
 					if (oldvalue == null) {

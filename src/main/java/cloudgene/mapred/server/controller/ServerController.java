@@ -51,16 +51,10 @@ public class ServerController {
 	@Get("/counters")
 	@Secured(SecurityRule.IS_ANONYMOUS)
 	public CounterResponse counters() {
-
-		CounterResponse response = CounterResponse.build(application.getWorkflowEngine());
-
-		// TODO: implement a countAll method to avoid creating objects for all users!!
-		// or cache number of users to avoid sql query on each load
+		CounterResponse response = CounterResponse.build(application.getWorkflowEngine(), application.getSettings().getCounters());
 		UserDao dao = new UserDao(application.getDatabase());
-		response.setUsers(dao.findAll().size());
-
+		response.setUsers(dao.countAll());
 		return response;
-
 	}
 
 	@Get("/queue/block")
