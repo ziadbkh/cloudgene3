@@ -76,7 +76,7 @@
 {{#each values}}
 	<tr>
 		<td><b>{{name}}</b></td>
-		<td style="width: 150px;">{{value}}</td>
+		<td style="width: 250px;">{{value}}</td>
 		<td style="width: 150px;">{{count}}</td>
 	</tr>
 {{/each}}
