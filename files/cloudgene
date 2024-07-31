@@ -49,5 +49,5 @@ if [ "${JAVA_PROGRAM_ARGS}" = "update" ]; then
   update
 else
   echo "Start cloudgene with java args: ${JAVA_ARGS}"
-  ${JAVA_CMD} ${JAVA_ARGS} -jar "${FILE_PATH_JAR}" "$@"
+  exec ${JAVA_CMD} ${JAVA_ARGS} -jar "${FILE_PATH_JAR}" "$@"
 fi
