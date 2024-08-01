@@ -9,7 +9,7 @@ hide:
 
 ## Turn Your Nextflow Pipeline into a Powerful Web Service
 
-[:fontawesome-solid-book: Getting Started](server/introduction.md){ .md-button .md-button} [:fontawesome-solid-download: Installation](installation.md){ .md-button } [:fontawesome-brands-github: Source](https://github.com/genepi/cloudgene){ .md-button }
+[:fontawesome-solid-book: Getting Started](server/getting-started.md){ .md-button .md-button} [:fontawesome-solid-download: Installation](installation.md){ .md-button } [:fontawesome-brands-github: Source](https://github.com/genepi/cloudgene3){ .md-button }
 
 
 Documentation of [Cloudgene 2](https://v2.cloudgene.io/)
@@ -21,7 +21,7 @@ Documentation of [Cloudgene 2](https://v2.cloudgene.io/)
 - **Integrate** your analysis pipeline into Cloudgene by writing a simple configuration file
 - **Get** a powerful web application with user management, data transfer, error handling and more
 - **Deploy** your application with one click to in-house clusters or public Clouds like Amazon AWS
-- **Offer** your application as SaaS to other scientists, managing thousands of jobs like a pro
+- **Offer** your application as SaaS to other scientists, managing thousands of jobs
 - **Share** your application, enabling others to clone your service to their own hardware or private cloud instance
 
 ---
@@ -114,6 +114,8 @@ Documentation of [Cloudgene 2](https://v2.cloudgene.io/)
 ---
 
 ## Citation
+
+Schönherr S, Forer L, Weißensteiner H, Kronenberg F, Specht G, Kloss-Brandstätter A. Cloudgene: a graphical execution platform for MapReduce programs on private and public clouds. BMC Bioinformatics. 2012 Aug 13;13:200. doi: 10.1186/1471-2105-13-200. PMID: 22888776; PMCID: PMC3532373.
 
 ---
 
