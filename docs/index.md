@@ -9,8 +9,10 @@ hide:
 
 ## Turn Your Nextflow Pipeline into a Powerful Web Service
 
-
 [:fontawesome-solid-book: Getting Started](server/introduction.md){ .md-button .md-button} [:fontawesome-solid-download: Installation](installation.md){ .md-button } [:fontawesome-brands-github: Source](https://github.com/genepi/cloudgene){ .md-button }
+
+
+Documentation of [Cloudgene 2](https://v2.cloudgene.io/)
 </div>
 
 ---
