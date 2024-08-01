@@ -46,15 +46,15 @@ nav:
     - Manage Permissions: server/permissions.md
     - Manage Jobs: server/jobs.md
     - Configuration: server/configuration.md
+    - Configure Nextflow: server/configure-nextflow.md
     - Customization: server/customization.md
     - Administration: server/administration.md
   - Develop Applications:
     - Getting Started: developers/introduction.md
     - Inputs: developers/inputs.md
     - Outputs: developers/outputs.md
-    - Nextflow Interface: developers/steps/nextflow.md
+    - Integrate Nextflow Pipelines: developers/steps/nextflow.md
     - Environment Variables: developers/environment_variables.md
-    - Control Patterns: developers/control-patterns.md
     - Reporting: developers/reporting.md
     - Legacy Steps:
       - BashCommand: developers/steps/BashCommand.md

@@ -6,8 +6,9 @@ Cloudgene supports several environment variables that can be used in your `cloud
 
 | Variable                    | Description                                      |
 |-----------------------------|--------------------------------------------------|
+| `${CLOUDGENE_APP_ID}`       | The id of the application.                       |
+| `${CLOUDGENE_APP_VERSION}`  | The version of the application. |
 | `${CLOUDGENE_APP_LOCATION}` | The local folder path of the application.        |
-
 
 ### Job
 
