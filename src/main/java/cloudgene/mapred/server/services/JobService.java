@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import cloudgene.mapred.database.ParameterDao;
 import cloudgene.mapred.jobs.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -214,6 +215,10 @@ public class JobService {
 		JobDao dao = new JobDao(application.getDatabase());
 		dao.update(job);
 
+		// When a user manually deletes a job, clear sensitive data immediately
+		ParameterDao parameterDao = new ParameterDao(application.getDatabase());
+		parameterDao.deleteSensitiveByJob(job);
+
 		// delete all results that are stored on external workspaces
 
 		IWorkspace workspace = workspaceFactory.getByJob(job);
@@ -316,6 +321,10 @@ public class JobService {
 
 			job.setState(AbstractJob.STATE_RETIRED);
 			dao.update(job);
+
+			// When an admin manually deletes a job, clear sensitive data immediately
+			ParameterDao parameterDao = new ParameterDao(application.getDatabase());
+			parameterDao.deleteSensitiveByJob(job);
 
 			IWorkspace workspace = workspaceFactory.getByJob(job);
 

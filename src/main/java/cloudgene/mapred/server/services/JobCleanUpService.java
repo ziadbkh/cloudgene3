@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import cloudgene.mapred.core.Template;
 import cloudgene.mapred.database.JobDao;
+import cloudgene.mapred.database.ParameterDao;
 import cloudgene.mapred.database.util.Database;
 import cloudgene.mapred.jobs.AbstractJob;
 import cloudgene.mapred.jobs.workspace.WorkspaceFactory;
@@ -53,6 +54,10 @@ public class JobCleanUpService {
 
 				log.info("Job " + job.getId() + " retired.");
 				deleted++;
+
+				// Clear sensitive data for all jobs that retire naturally due to age
+				ParameterDao parameterDao = new ParameterDao(database);
+				parameterDao.deleteSensitiveByJob(job);
 
 				IWorkspace externalWorkspace = workspaceFactory.getByJob(job);
 

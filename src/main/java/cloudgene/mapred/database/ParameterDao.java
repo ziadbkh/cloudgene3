@@ -237,6 +237,35 @@ public class ParameterDao extends JdbcDataAccessObject {
 		}
 	}
 
+	public boolean deleteSensitiveByJob(AbstractJob job) {
+		// FIXME: Automate/generalize in the future
+		// Fully remove any parameters that may contain sensitive information, but only once job is completed.
+		// The existing workflow schema (yml file) does not have a flag for "sensitive" parameters. A future fix would
+		//   automate management of such data by understanding which workflow params are sensitive; this hardcoded list
+		//   is a temporary workaround based on existing workflows.
+		try {
+
+			StringBuilder sql = new StringBuilder();
+			sql.append("delete ");
+			sql.append("from parameter ");
+			sql.append("where job_id = ?");
+			sql.append("AND name LIKE '%password%'");
+
+			Object[] params = new Object[1];
+			params[0] = job.getId();
+
+			update(sql.toString(), params);
+
+			log.info("Job: Succesfully deleted sensitive parameters for job_id '" + job.getId());
+
+			return true;
+
+		} catch (SQLException e) {
+			log.error("Job: Error while deleting parameters for job_id '" + job.getId(), e);
+			return false;
+		}
+	}
+
 	class ParameterInputMapper implements IRowMapper {
 
 		@Override
