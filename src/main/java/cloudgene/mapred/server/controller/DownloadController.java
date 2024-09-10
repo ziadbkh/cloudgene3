@@ -78,8 +78,12 @@ public class DownloadController {
 
 		String message = String.format("Job: Anonymously downloading file '%s' (hash %s)", filename, hash);
 		log.info(message);
-		return downloadService.download(download);
-
+		try {
+			return downloadService.download(download);
+		} catch (Exception e) {
+			log.error("Downloading file failed.", e);
+			throw new JsonHttpStatusException(HttpStatus.NOT_FOUND, "File not found in workspace.");
+		}
 	}
 
 	@Get("/browse/{hash}/{filename:.+}")
