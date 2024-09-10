@@ -80,7 +80,7 @@ public class DownloadController {
 		log.info(message);
 		try {
 			return downloadService.download(download);
-		} catch (Exception e) {
+		} catch (IOException e) {
 			log.error("Downloading file failed.", e);
 			throw new JsonHttpStatusException(HttpStatus.NOT_FOUND, "File not found in workspace.");
 		}
