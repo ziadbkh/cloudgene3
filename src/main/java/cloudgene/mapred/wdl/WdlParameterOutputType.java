@@ -22,6 +22,6 @@ public enum WdlParameterOutputType {
 		for (WdlParameterOutputType v : values())
 			if (v.getValue().equalsIgnoreCase(value.replaceAll("-", "_")))
 				return v;
-		throw new IllegalArgumentException("Value '" + value + "' is not a valid type.");
+		return LOCAL_FOLDER;
 	}
 }
