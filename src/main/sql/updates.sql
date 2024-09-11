@@ -187,3 +187,6 @@ create table job_values (
 	job_id		varchar(100) null,
 	`value`		varchar(300) not null
 );
+
+-- 3.0.1
+ALTER TABLE parameter modify `value` varchar(200) NULL;
