@@ -46,6 +46,8 @@ public class Settings {
 
 	private Map<String, Map<String, String>> plugins;
 
+	private List<Map<String, String>> errorHandlers = new Vector<Map<String, String>>();
+
 	private int autoRetireInterval = 5;
 
 	private int retireAfter = 6;
@@ -377,6 +379,14 @@ public class Settings {
 		} else {
 			return null;
 		}
+	}
+
+	public void setErrorHandlers(List<Map<String, String>> errorHandlers) {
+		this.errorHandlers = errorHandlers;
+	}
+
+	public List<Map<String, String>> getErrorHandlers() {
+		return errorHandlers;
 	}
 
 	public void setRepository(ApplicationRepository repository) {

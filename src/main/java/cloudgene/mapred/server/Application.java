@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cloudgene.mapred.jobs.engine.handler.IJobErrorHandler;
+import cloudgene.mapred.jobs.engine.handler.JobErrorHandlerFactory;
 import cloudgene.mapred.util.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,7 +97,13 @@ public class Application {
 		// start workflow engine
 		try {
 
-			engine = new PersistentWorkflowEngine(database, settings.getThreadsQueue());
+			PersistentWorkflowEngine persistentWorkflowEngine = new PersistentWorkflowEngine(database, settings.getThreadsQueue());
+			for (Map<String, String> map: settings.getErrorHandlers()) {
+				IJobErrorHandler handler = JobErrorHandlerFactory.createByMap(map);
+				persistentWorkflowEngine.addJobErrorHandler(handler);
+				log.info("Created Job Error handler `" + handler.getName() + "`.");
+			}
+			engine = persistentWorkflowEngine;
 			new Thread(engine).start();
 
 		} catch (Exception e) {

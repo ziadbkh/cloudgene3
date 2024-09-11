@@ -3,8 +3,10 @@ package cloudgene.mapred.jobs;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import cloudgene.mapred.database.*;
+import cloudgene.mapred.jobs.engine.handler.IJobErrorHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +23,8 @@ public class PersistentWorkflowEngine extends WorkflowEngine {
 	private CounterDao counterDao;
 
 	private Map<String, Long> counters;
+
+	private List<IJobErrorHandler> handlers = new Vector<IJobErrorHandler>();
 
 	public PersistentWorkflowEngine(Database database, int ltqThreads) {
 		super(ltqThreads);
@@ -139,6 +143,12 @@ public class PersistentWorkflowEngine extends WorkflowEngine {
 		// update job updates (state, endtime, ....)
 		dao.update(job);
 
+		if (job.getState() == AbstractJob.STATE_FAILED) {
+			for (IJobErrorHandler handler: handlers) {
+				handler.handle(this, job);
+			}
+		}
+
 	}
 
 	@Override
@@ -173,6 +183,10 @@ public class PersistentWorkflowEngine extends WorkflowEngine {
 		} else {
 			return super.getCounters(state, null);
 		}
+	}
+
+	public void addJobErrorHandler(IJobErrorHandler handler) {
+		this.handlers.add(handler);
 	}
 
 }
