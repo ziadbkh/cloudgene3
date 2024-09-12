@@ -124,7 +124,7 @@ public class ServerService {
 		return data.toString();
 	}
 
-	public void updateSettings(String name, String adminName, String adminMail, String serverUrl, String background_color, String foreground_color, String google_analytics,
+	public void updateSettings(String name, String adminName, String adminMail, String serverUrl, String baseUrl, String background_color, String foreground_color, String google_analytics,
 			String mail, String mail_smtp, String mail_port, String mail_user, String mail_password, String mail_name, String workspaceType, String workspaceLocation) {
 
 		Settings settings = application.getSettings();
@@ -132,6 +132,7 @@ public class ServerService {
 		settings.setAdminName(adminName);
 		settings.setAdminMail(adminMail);
 		settings.setServerUrl(serverUrl);
+		settings.setBaseUrl(baseUrl);
 		settings.getColors().put("background", background_color);
 		settings.getColors().put("foreground", foreground_color);
 		settings.setGoogleAnalytics(google_analytics);

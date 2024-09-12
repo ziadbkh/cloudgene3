@@ -30,6 +30,7 @@ export default Control.extend({
     this.settings.attr('adminName', $(form).find("[name='adminName']").val());
     this.settings.attr('adminMail', $(form).find("[name='adminMail']").val());
     this.settings.attr('serverUrl', $(form).find("[name='serverUrl']").val());
+    this.settings.attr('baseUrl', $(form).find("[name='baseUrl']").val());
     this.settings.attr('backgroundColor', $(form).find("[name='background-color']").val());
     this.settings.attr('foregroundColor', $(form).find("[name='foreground-color']").val());
     this.settings.attr('googleAnalytics', $(form).find("[name='google-analytics']").val());

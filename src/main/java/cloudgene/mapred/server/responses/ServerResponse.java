@@ -26,13 +26,15 @@ public class ServerResponse {
 	private String serverUrl;
 	private String workspaceType;
 	private String workspaceLocation;
+	private String baseUrl;
 
 	public static ServerResponse build(Settings settings) {
 		ServerResponse response = new ServerResponse();
 		response.setName(settings.getName());
 		response.setAdminName(settings.getAdminName());
 		response.setAdminMail(settings.getAdminMail());
-		response.setServerUrl(settings.getServerUrl() + settings.getBaseUrl());
+		response.setServerUrl(settings.getServerUrl());
+		response.setBaseUrl(settings.getBaseUrl());
 		response.setBackgroundColor(settings.getColors().get("background"));
 		response.setForegroundColor(settings.getColors().get("foreground"));
 		response.setGoogleAnalytics(settings.getGoogleAnalytics());
@@ -60,6 +62,14 @@ public class ServerResponse {
 		}
 
 		return response;
+	}
+
+	private void setBaseUrl(String baseUrl) {
+		this.baseUrl = baseUrl;
+	}
+
+	public String getBaseUrl() {
+		return baseUrl;
 	}
 
 	public String getName() {

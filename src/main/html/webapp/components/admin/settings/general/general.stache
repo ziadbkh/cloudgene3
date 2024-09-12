@@ -14,9 +14,16 @@
 	</div>
 
 	<div class="form-group">
-		<label for="serverUrl" class="control-label">Url:</label>
+		<label for="serverUrl" class="control-label">Server Url:</label>
 		<input id="serverUrl" name="serverUrl" type="text" class="form-control col-md-4" value="{{settings.serverUrl}}" autocomplete="off">
 	</div>
+
+	<div class="form-group">
+		<label for="baseUrl" class="control-label">Base Url:</label>
+		<input id="baseUrl" name="baseUrl" type="text" class="form-control col-md-4" value="{{settings.baseUrl}}" autocomplete="off">
+		<br><small class="text-muted">has to start with /</small>
+	</div>
+
 
 	<hr/>
 
