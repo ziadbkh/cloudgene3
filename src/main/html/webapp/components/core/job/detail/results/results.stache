@@ -1,7 +1,5 @@
 {{#job.outputParams}}
 
-  {{^is(files.length, 0)}}
-
     <div class="list-group">
 
       <div class="list-group-item bg-light flex-column align-items-start">
@@ -12,13 +10,18 @@
       </div>
 
       <div class="list-group-item flex-column align-items-start">
-        <p class="mb-1">{{{renderTree(../job.id, tree)}}}</p>
+        {{^is(files.length, 0)}}
+          <p class="mb-1">{{{renderTree(../job.id, tree)}}}</p>
+        {{else}}
+          {{#is(job.isRunning, true)}}
+            <small>Files will be available once the job has finished.</small>
+          {{else}}
+            <small>This folder is empty.</small>
+            {{/is}}
+        {{/is}}
       </div>
     </div>
     <br>
-
-  {{/is}}
-
 
 {{else}}
   <i>This folder is empty.</i>

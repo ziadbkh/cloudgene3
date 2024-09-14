@@ -103,7 +103,7 @@
 {{/is}}
 
 
-<div id="content" class=""></div>
+<div id="content" class="" style="min-height: 300px"></div>
 
 <footer class="text-muted" style="border-top: 1px solid #dee2e6;">
   <div class="container">

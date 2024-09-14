@@ -166,6 +166,12 @@ export default Model.extend({
       }
     },
 
+    'isRunning': {
+      get: function () {
+        return this.attr('state') == '2' || this.attr('state') == '3';
+      }
+    },
+
     'willBeRetired': {
       get: function () {
         return this.attr('state') == 8 || this.attr('state') == 9;
