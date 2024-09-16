@@ -88,4 +88,4 @@ More about how to build Cloudgene from source can be found [here](https://github
 
 ## License
 
-Cloudgene is licensed under [AGPL-3.0](https://opensource.org/licenses/AGPL-3.0).
+Cloudgene is licensed under MIT.
