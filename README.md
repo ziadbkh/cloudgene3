@@ -35,7 +35,7 @@ curl -fsSL https://get.cloudgene.io | bash
 If you don't have curl installed, you could use wget:
 
 ```bash
-wget -qO- https://get.ncloudgene.io | bash
+wget -qO- https://get.cloudgene.io | bash
 ```
 
 It will create the `cloudgene` executable file in the current directory.
