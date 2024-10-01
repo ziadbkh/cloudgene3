@@ -105,6 +105,13 @@ public class NextflowStep extends CloudgeneStep {
 		String appConfig = FileUtil.path(appFolder, "nextflow.config");
 		nextflow.addConfig(appConfig);
 
+		String globalEnv = plugin.getNextflowEnv();
+		nextflow.addEnvScript(new File(globalEnv));
+
+		String appEnv = FileUtil.path(appFolder, "nextflow.env");
+		nextflow.addEnvScript(new File(appEnv));
+
+
 		// set work directory
 		IWorkspace workspace = job.getWorkspace();
 
