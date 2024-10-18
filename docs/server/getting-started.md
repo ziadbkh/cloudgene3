@@ -1,21 +1,20 @@
-# Getting started
+# Getting Started
 
-This guide helps you to start Cloudgene and to install your first application. You have to install Cloudgene properly on your computer before you can start.
+This guide will help you start Cloudgene and install your first application. You must install Cloudgene properly on your computer before you can begin.
 
-## Start Cloudgene Server
+## Start the Cloudgene Server
 
-The webserver can be started with the following command:
+The web server can be started with the following command:
 
 ```sh
 ./cloudgene server
 ```
 
-The webservice is available on [http://localhost:8082](http://localhost:8082). Please use username `admin` and password `admin1978` to login. 
-The default port can be changed in the [configuration file](configuration.md#web-application).
+The web service is available at [http://localhost:8082](http://localhost:8082). Please use the username `admin` and password `admin1978` to log in. The default port can be changed in the [configuration file](configuration.md#web-application).
 
-## Install your first application
+## Install Your First Application
 
-Stop the webservice by pressing `CTRL-C`. The **cg-fetchngs** application can be installed by using the following command:
+Stop the web service by pressing `CTRL-C`. The **cg-fetchngs** application can be installed using the following command:
 
 ```sh
 ./cloudgene install lukfor/cg-fetchngs
@@ -27,21 +26,16 @@ Next, restart Cloudgene with the following command:
 ./cloudgene server
 ```
 
-Open Cloudgene in your browser and login. A new menu item **Run** appears in the menubar. Click on it to start a new job:
+Open Cloudgene in your browser and log in. A new menu item, **Run**, will appear in the menu bar. Click on it to start a new job:
 
-<div class="screenshot">
-<img src="../../images/screenshots/menubar.png">
-<img src="../../images/screenshots/hello-cloudgene.png">
-</div>
+![](../images/index/cg-fetchngs.png)
 
-The **hello-cloudgene** application displays several inspiring quotes:
+The **cg-fetchngs** application starts the nf-core pipeline, downloads the entered IDs, and provides the results for download.
 
-<div class="screenshot">
-<img src="../../images/screenshots/hello-cloudgene-results.png">
-</div>
+![](../images/index/cg-fetchngs-results.png)
 
-## What's next?
+## What's Next?
 
 - [Install additional applications](/server/install-apps)
-- [Configure and customize Cloudgene](/server/configuration) to support E-Mail notification, SSL cerificates,
-- Learn how to [manage permissions](/server/permissions) and [handle jobs](/daemon/jobs)
+- [Configure and customize Cloudgene](/server/configuration) to support email notifications and SSL certificates.
+- Learn how to [manage permissions](/server/permissions) and [handle jobs](/daemon/jobs).

@@ -28,6 +28,8 @@ Documentation of [Cloudgene 2](https://v2.cloudgene.io/)
 
 ## :octicons-package-16: Integrate Your Nextflow pipelines
 
+Integrate your analysis pipeline into Cloudgene by writing a simple configuration file.
+
 === ":material-file: cloudgene.yaml"
 
     ```yaml
@@ -54,54 +56,70 @@ Documentation of [Cloudgene 2](https://v2.cloudgene.io/)
           description: Output
           type: local-folder
     ```
+=== ":material-file: Web-Interface"
+    ![alt text](images/index/cg-fetchngs.png)
+=== ":material-file: Results"
+    ![alt text](images/index/cg-fetchngs-results.png)
 ---
 
+## :fontawesome-solid-share: Share your pipeline
+
+Share your application via HTTP, GitHub, or S3, and enable users to install it with a simple command.
+
+```bash
+cloudgene install lukfor/cg-fetchngs
+```
+
 ## :fontawesome-solid-diagram-project: Combine Your Nextflow pipeline with others
+
+Combine your Nextflow pipeline with other pipelines and create use-case specific web services.
 
 === ":material-file: cloudgene.yaml"
 
     ```yaml
-    id: fetch-ngs
-    name: FetchNGS
-    description: Pipeline to fetch metadata and raw FastQ files from public databases
-    version: 1.12.0
-    website: https://github.com/nf-core/fetchngs
-    author: Harshil Patel, Moritz E. Beber and Jose Espinosa-Carrasco
+    id: taxprofiler
+    name: Taxprofiler
+    description: Taxonomic classification and profiling of shotgun short- and long-read metagenomic data
+    version: 1.1.8
+    website: https://github.com/nf-core/taxprofiler
+    author: James A. Fellows Yates, Sofia Stamouli, Moritz E. Beber, and the nf-core/taxprofiler team
     logo: https://raw.githubusercontent.com/nf-core/fetchngs/master/docs/images/nf-core-fetchngs_logo_light.png
-    
-    workflow:
-    steps:
-      - name: Fetch Data
-        type: nextflow #set default?
-        script: nf-core/fetchngs
-        revision: 1.12.0
-        stdout: true # set deafault?
-        params:
-          input: "${input_ids}"
-    
-      - name: Run Kraken2 using taxprofiler
-        type: nextflow #set default?
-        script: nf-core/taxprofiler
-        revision: 1.1.8
-        stdout: true # set deafault?
-        params:
-          input: "${outdir}/samplesheet/samplesheet.csv"
-          run_kraken2: true
-          databases: "https://raw.githubusercontent.com/nf-core/test-datasets/taxprofiler/database_full_v1.2.csv"
-     
-    inputs:
-      - id: input_ids
-        description: IDs
-        type: textarea
-        writeFile: "ids.csv"
-        serialize: false
-    
-    outputs:
-      - id: outdir
-        description: Output
-        type: local-folder
-    ```
 
+    workflow:
+      steps:
+        - name: Fetch Data
+          script: nf-core/fetchngs
+          revision: 1.12.0
+          stdout: true
+          params:
+            input: "${input_ids}"
+
+        - name: Run taxprofiler
+          script: nf-core/taxprofiler
+          revision: 1.1.8
+          stdout: true
+          params:
+            input: "${outdir}/samplesheet/samplesheet.csv"
+            databases: "https://raw.githubusercontent.com/nf-core/test-datasets/taxprofiler/database_full_v1.2.csv"
+            multiqc_title: "${CLOUDGENE_JOB_NAME}"
+
+      inputs:
+        - id: input_ids
+          description: IDs
+          type: textarea
+          value: "SRR12696236"
+          writeFile: "ids.csv"
+          serialize: false
+
+      outputs:
+        - id: outdir
+          description: Output
+          type: local_folder
+    ```
+=== ":material-file: Web-Interface"
+    ![alt text](images/index/cg-taxprofiler.png)
+=== ":material-file: Results"
+    ![alt text](images/index/cg-taxprofiler-results.png)
 ## Who uses Cloudgene?
 
 
