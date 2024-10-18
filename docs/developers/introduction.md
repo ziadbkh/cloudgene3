@@ -1,186 +1,195 @@
 # Introduction
 
-The idea behind Cloudgene is quite simple: If you are able to execute your program or Hadoop application on the command line, take some minutes and write a YAML configuration to connect your program with Cloudgene. Doing so, you are able to transform your Hadoop command line program (or a set of programs) into a web-based service, present your collaborators a scalable best practices workflow and provide reproducible science.
+This guide will walk you through creating a Cloudgene YAML file that acts as a bridge between the Nextflow pipeline and Cloudgene. We'll create a Cloudgene YAML file, define workflow steps, inputs, and outputs, and demonstrate how to set default parameters.
 
-## Project structure
+## Prerequisites
 
-First of all, we create a new project folder for our new application. This folder must contain a file called `cloudgene.yaml`. This file is also called the *Manifest File* and includes all information needed in order to install and execute your programs or pipelines. This folder contains also all other files that are needed by your workflow steps. For example binaries, a jar file of a ready-to-use MapReduce program, a PIG script or some R-Markdown script.
+Before you begin, ensure you have the following:
 
-A basic Cloudgene application usually looks something like this:
+- Cloudgene installed
+- Nextflow installed
+- Basic understanding of YAML syntax
 
-```ansi
-my-cloudgene-app
-├── cloudgene.yaml
-├── sample-mapredduce-program.jar
-├── sample-rmarkdown-report.Rmd
-├── some-folder
-|   ├── dataset2.csv
-|   └── my-binary
-└── README.md
-```
+## Creating the Cloudgene YAML File
 
-After we are finished developing our application, we create a zip file of this folder. This zip file contains all needed files and can be deployed to any Cloudgene webserver by uploading it.
+The Cloudgene YAML file defines the link between the Nextflow pipeline and Cloudgene. It contains metadata about the pipeline, the workflow steps, inputs, and outputs.
 
-Read more about [installing applications](/docs/03-installing-apps).
+### Header Section
 
-## cloudgene.yaml
-
-The file content starts with a simple header containing general information about the application, followed by the description of input/output parameters as well as all steps of the workflows:
-
-A simple example looks like this:
+The header section includes basic information about the pipeline:
 
 ```yaml
-id: tool-name
-name: Tool Name
-description: tool-description
-category: tool-category
-version: 1.0
-website: http://www.my-website.com
+id: fetch-ngs
+name: FetchNGS
+description: Pipeline to fetch metadata and raw FastQ files from public databases
+version: 1.12.0
+website: https://github.com/nf-core/fetchngs
+author: Harshil Patel, Moritz E. Beber and Jose Espinosa-Carrasco
+logo: https://raw.githubusercontent.com/nf-core/fetchngs/master/docs/images/nf-core-fetchngs_logo_light.png
 ```
-The two most important fields are `id`, `name` and `version`, without them your application won’t be able to install. The `id` and `version` fields are used together to create a unique id. `description` and `website` should be used to describe your application.
 
-The next step is to add the `workflow` section to your configuration file to define steps as well as input- and output-parameters.
+### Workflow Section
 
-## Defining steps
+The workflow section defines the steps, inputs, and outputs.
 
-The simplest way to model a workflow is to create a list of steps where each step depends on its forerunner. Steps are defined in the `steps` section where each step is defined by a `name` and type specific properties.
+#### Defining the Workflow Object
 
-A simple example with two steps looks like this:
+In the workflow object, we define a step that executes the `nf-core/fetchngs` pipeline at version 1.12.0:
 
 ```yaml
-id: hello-cloudgene
-name: Hello Cloudgene
-version: 1.0
 workflow:
   steps:
-    - name: Step1
-      cmd: /bin/echo hey cloudgene developer! I am step 1.
-      stdout: true
-
-    - name: Step2
-      cmd: /bin/echo hey cloudgene developer! I am step 2.
-      stdout: true
+    - name: Fetch NGS
+      script: nf-core/fetchngs
+      revision: 1.12.0
 ```
 
-In this example we used the command line tool `echo` to print out some text. However, Cloudgene supports a variety of different step types which can be combined into one workflow to take advantage of different technologies.
+#### Defining Inputs and Outputs
 
-To test our workflow we copy the content into a file named `hello-cloudgene.yaml`. Next, we can upload the zip file of our application to a Cloudgene webserver or we execute it on our developement machine with the `cloudgene-cli` program:
+The pipeline has one input and one output. We define the corresponding variables and their types.
 
-```bash
-cloudgene run hello-cloudgene.yaml
-```
-
-```ansi
-Cloudgene 1.30.6
-http://www.cloudgene.io
-(c) 2009-2018 Lukas Forer and Sebastian Schoenherr
-Built by lukas on 2018-11-19T10:14:17Z
-
-
-hello-cloudgene 1.0
-
-[INFO]  No external Haddop cluster set.
-[WARN]  Cluster seems unreachable. Hadoop support disabled.
-[INFO]  Submit job job-20181119-112052...
-[OUT]   hey cloudgene developer! I am step 1.
-[OK]    Execution successful.
-[OUT]   hey cloudgene developer! I am step 2.
-[OK]    Execution successful.
-
-Done! Executed without errors.
-Results can be found in file:///home/lukas/new-cloudgene/job-20181119-112052
-```
-
-We see that Cloudgene executes our workflow and prints the text to the terminal.
-
-## Defining input parameters
-
-Input parameters are defined in the `inputs` section where each parameter is defined by an unique `id`, a textual `description` and a `type`.
-
-We extend the example above by an input parameter to set the message:
+**Example with File Input:**
 
 ```yaml
-id: hello-cloudgene
-name: Hello Cloudgene
-version: 1.0
+inputs:
+  - id: input
+    description: ID File
+    type: local_file
+
+outputs:
+  - id: outdir
+    description: Output
+    type: local-folder
+```
+
+Cloudgene automatically creates a user interface with input parameters. Upon submission, it generates the outputs (folders or files). All inputs and outputs are automatically added to the `params.json` file, which Cloudgene uses to execute the Nextflow workflow.
+
+### Extended Example with Textarea Input
+
+We can extend the configuration to allow users to enter a list of IDs in a textarea. Cloudgene writes this content to a file.
+
+**Example with Textarea Input:**
+
+```yaml
 workflow:
   steps:
-    - name: Step1
-      cmd: /bin/echo hey cloudgene developer! $message
-      stdout: true
+    - name: Fetch NGS
+      script: nf-core/fetchngs
+      revision: 1.12.0
+
   inputs:
-    - id: message
-      description: Message
-      type: text
+    - id: input
+      description: IDs
+      type: textarea
+      writeFile: "ids.csv"
+
+  outputs:
+    - id: outdir
+      description: Output
+      type: local-folder
 ```
 
- If the workflow is executed on a Cloudgene Webserver, a web-interface is automatically created where the user has to enter the message. However, if we execute the workflow using `cloudgene-cli`, the parameter has to be set as a command-line argument:
+### Setting Default Parameters
 
-```bash
-cloudgene run hello-cloudgene.yaml --message "Using an input parameter is easy!"
+We can also set default parameters without requiring user inputs.
+
+**Example with Default Parameters:**
+
+```yaml
+workflow:
+  steps:
+    - name: Fetch NGS
+      script: nf-core/fetchngs
+      revision: 1.12.0
+      params:
+        monochrome_logs: false
 ```
 
-```ansi
-Cloudgene 1.30.6
-http://www.cloudgene.io
-(c) 2009-2018 Lukas Forer and Sebastian Schoenherr
-Built by lukas on 2018-11-19T10:14:17Z
+## Connecting Pipelines
 
+Cloudgene supports the connection of multiple pipelines by allowing you to define workflows that consist of multiple steps. Each step can execute a separate pipeline, and the output of one pipeline can be passed as the input to the next.
 
-hello-cloudgene 1.0
+In this example, Cloudgene connects two Nextflow pipelines (nf-core/fetchngs and nf-core/taxprofiler) into a single workflow, making it easy to fetch data and then run a taxonomic profiler.
 
-[INFO]  No external Haddop cluster set.
-[WARN]  Cluster seems unreachable. Hadoop support disabled.
-[INFO]  Submit job job-20181119-112527...
-  Input values:
-    message: Using an input parameter is easy!
-[OUT]   hey cloudgene developer! Using an input parameter is easy!
-[OK]    Execution successful.
+```yaml
+workflow:
+  steps:
+    - name: Fetch Data
+      script: nf-core/fetchngs
+      revision: 1.12.0
+      stdout: true
+      params:
+        input: "${input_ids}"
 
-Done! Executed without errors.
-Results can be found in file:///home/lukas/new-cloudgene/job-20181119-112527
+    - name: Run taxprofiler
+      script: nf-core/taxprofiler
+      revision: 1.1.8
+      stdout: true
+      params:
+        input: "${outdir}/samplesheet/samplesheet.csv"
+        databases: "https://raw.githubusercontent.com/nf-core/test-datasets/taxprofiler/database_full_v1.2.csv"
+        multiqc_title: "${CLOUDGENE_JOB_NAME}"
+
+  inputs:
+    - id: input_ids
+      description: IDs
+      type: textarea
+      value: "SRR12696236"
+      writeFile: "ids.csv"
+      serialize: false
+
+  outputs:
+    - id: outdir
+      description: Output
+      type: local_folder
 ```
 
-## Serve the webservice
+## Local Nextflow Script
 
-Before you can start a webservice for your workflow, you have to install it:
+You can also place the `cloudgene.yaml` file directly into your pipeline directory and set the `script` property to the Nextflow script (e.g., `main.nf`). In this case, if you install the application via GitHub, Cloudgene automatically downloads the pipeline and executes the script.
 
-```bash
-cloudgene install hello-cloudgene.yaml
+```yaml
+workflow:
+  steps:
+    - name: Execute Pipeline
+      script: main.nf
 ```
 
-```ansi
-Cloudgene 1.30.6
-http://www.cloudgene.io
-(c) 2009-2018 Lukas Forer and Sebastian Schoenherr
-Built by lukas on 2018-11-19T10:14:17Z
+## Complete Example
 
-Installing application hello-cloudgene...
-Process file hello-cloudgene.yaml....
-[OK] 1 Applications installed:
+Here’s a complete example combining all the sections:
 
-APPLICATION                        VERSION             STATUS              FILENAME
-hello-cloudgene                    1.0                 OK                  hello-cloudgene.yaml
+```yaml
+id: fetch-ngs
+name: FetchNGS
+description: Pipeline to fetch metadata and raw FastQ files from public databases
+version: 1.12.0
+website: https://github.com/nf-core/fetchngs
+author: Harshil Patel, Moritz E. Beber and Jose Espinosa-Carrasco
+logo: https://raw.githubusercontent.com/nf-core/fetchngs/master/docs/images/nf-core-fetchngs_logo_light.png
+
+workflow:
+  steps:
+    - name: Fetch NGS
+      script: nf-core/fetchngs
+      revision: 1.12.0
+      params:
+        monochrome_logs: false
+
+  inputs:
+    - id: input
+      description: IDs
+      type: textarea
+      writeFile: "ids.csv"
+
+  outputs:
+    - id: outdir
+      description: Output
+      type: local-folder
 ```
 
-Next, we can start the webserver:
+## Conclusion
 
-```bash
-cloudgene server
-```
+You have now created a Cloudgene YAML file that defines a Nextflow pipeline workflow with inputs, outputs, and default parameters. This configuration allows Cloudgene to generate a user interface, handle inputs and outputs, and execute the Nextflow workflow seamlessly.
 
-The webservice is available on [http://localhost:8082](http://localhost:8082). Please use username `admin` and password `admin1978` to login.
-
-Click on **Run** and slect your application (**hello-cloudgene**). Cloudgene creates automatically a web-interface for your input parameters:
-
-<div class="screenshot">
-<img src="../../images/screenshots/hello-cloudgene-yaml.png">
-</div>
-
-Enter a message and click on **Submit Job** to run your workflow. You should see the following job output:
-
-<div class="screenshot">
-<img src="../../images/screenshots/hello-cloudgene-yaml-output.png">
-</div>
-
-You can install different workflows in the same instance and define in the [Admin Dashboard](/daemon/permissions) who has access to each of them.
+For more information, refer to the [Cloudgene documentation](https://cloudgene.readthedocs.io/) and the [nf-core/fetchngs repository](https://github.com/nf-core/fetchngs).

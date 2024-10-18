@@ -76,7 +76,6 @@ nav:
     - List Jobs: api/list-jobs.md
     - Job Details: api/job-details.md
 - Tutorials:
-  - Getting Started with Cloudgene and Nextflow Pipeline Integration: tutorials/nextflow-integration.md
   - Getting Started with Reporting: tutorials/nextflow-reporting.md
   - Using AppLinks to link to other applications: tutorials/application-links.md
 - About: about.md
