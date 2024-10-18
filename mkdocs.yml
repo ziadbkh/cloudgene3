@@ -41,14 +41,13 @@ nav:
 - Installation: installation.md
 - Documentation:
   - Getting Started: server/getting-started.md
-  - Server Management:
-    - Install Applications: server/install-apps.md
-    - Manage Permissions: server/permissions.md
-    - Manage Jobs: server/jobs.md
-    - Configuration: server/configuration.md
-    - Configure Nextflow: server/configure-nextflow.md
-    - Customization: server/customization.md
-    - Administration: server/administration.md
+  - Install Applications: server/install-apps.md
+  - Manage Permissions: server/permissions.md
+  - Manage Jobs: server/jobs.md
+  - Configuration: server/configuration.md
+  - Configure Nextflow: server/configure-nextflow.md
+  - Customization: server/customization.md
+  - Administration: server/administration.md
   - Develop Applications:
     - Getting Started: developers/introduction.md
     - Inputs: developers/inputs.md
@@ -77,9 +76,9 @@ nav:
     - List Jobs: api/list-jobs.md
     - Job Details: api/job-details.md
 - Tutorials:
-  - Using AppLinks to link to other applications: tutorials/application-links.md
   - Getting Started with Cloudgene and Nextflow Pipeline Integration: tutorials/nextflow-integration.md
   - Getting Started with Reporting: tutorials/nextflow-reporting.md
+  - Using AppLinks to link to other applications: tutorials/application-links.md
 - About: about.md
 
 markdown_extensions:
