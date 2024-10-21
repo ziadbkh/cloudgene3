@@ -135,7 +135,7 @@ workflow:
 
 #### Explanation
 
-- **`dataset` input**: The input `database` uses the `dataset` type, allowing users to select a dataset from all installed database applications that fall under the `datasets` category.
+- **`dataset` input**: The input `database` uses the `dataset` type, allowing users to select a dataset from all installed database applications that fall under the `taxprofiler_database` category.
 - **Database link**: The `database.database_url` references the `database_url` property defined in the dataset application’s `cloudgene.yaml`, dynamically linking the selected database to the `taxprofiler` pipeline.
   
 With this setup, users can select a dataset from the available options, and the `taxprofiler` pipeline will use the corresponding database for taxonomic profiling.
