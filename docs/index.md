@@ -123,13 +123,17 @@ Combine your Nextflow pipeline with other pipelines and create use-case specific
 ## Who uses Cloudgene?
 
 
-### Michigan Imputation Server
+### Michigan Imputation Server 2
 
+[Michigan Imputation Server 2](https://imputationserver.sph.umich.edu) provides a free genotype imputation service (chromosomes 1-22, chromosome X and HLA region) using Minimac4. You can upload phased or unphased GWAS genotypes and receive phased and imputed genomes in return. Our server supports imputation from numerous reference panels. For all uploaded datasets a comprehensive QC is performed. The complete source code is available on [GitHub](https://github.com/genepi/imputationserver2).
 
+### mtDNA-Server 2
 
-### mtDNA-Server
+[mtDNA-Server 2](https://mitoverse.i-med.ac.at) is a Nextflow DSL2 pipeline to accurately detect heteroplasmic and homoplasmic variants in mitochondrial (mtDNA) genomes. The complete source code can be acccessed [here](https://github.com/genepi/mtdna-server-2).
 
----
+### Haplocheck
+
+[Haplocheck](https://mitoverse.i-med.ac.at) detects in-sample contamination in mtDNA or WGS sequencing studies by analyzing the mitchondrial content. 
 
 ## Citation
 
