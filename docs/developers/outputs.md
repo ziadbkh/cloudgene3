@@ -12,7 +12,7 @@ workflow:
   outputs:
     - id: output
       description: Output Folder
-      type: local_folder
+      type: folder
       mergeOutput: false
       download: true
       zip: false
@@ -31,7 +31,7 @@ workflow:
   outputs:
     - id: output
       description: Output Folder
-      type: local_folder
+      type: folder
       mergeOutput: false
       download: true
       zip: false
@@ -56,6 +56,6 @@ These properties define the basic behaviour of an output parameter:
 
 At the moment the following types of output parameters are supported:
 
-### `local_file`
+### `file`
 
-### `local_folder`
+### `folder`

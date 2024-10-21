@@ -54,7 +54,7 @@ Integrate your analysis pipeline into Cloudgene by writing a simple configuratio
       outputs:
         - id: outdir
           description: Output
-          type: local-folder
+          type: folder
     ```
 === ":material-file: Web-Interface"
     ![alt text](images/index/cg-fetchngs.png)
@@ -114,7 +114,7 @@ Combine your Nextflow pipeline with other pipelines and create use-case specific
       outputs:
         - id: outdir
           description: Output
-          type: local_folder
+          type: folder
     ```
 === ":material-file: Web-Interface"
     ![alt text](images/index/cg-taxprofiler.png)
