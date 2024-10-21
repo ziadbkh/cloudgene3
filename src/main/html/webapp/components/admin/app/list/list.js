@@ -279,8 +279,15 @@ export default Control.extend({
           options = options + ' <b>' + group.attr('name') + '</b></label><br>';
         });
 
+      // Add input field for creating a new group
+      var newGroupSection = `
+        <hr>
+        <label for="new-group-name">New Group Name:</label>
+        <input type="text" id="new-group-name" class="form-control" placeholder="Enter new group name">
+      `;
+
         bootbox.confirm(
-          '<h4>Edit permission of ' + application.attr('name') + '</h4><hr><form id="role-form">' + options + '</form>',
+          '<h4>Edit permission of ' + application.attr('name') + '</h4><hr><form id="role-form">' + options + newGroupSection + '</form>',
           function(result) {
             if (result) {
 
@@ -290,6 +297,11 @@ export default Control.extend({
                 if (boxes[i].checked) {
                   checked.push(boxes[i].value);
                 }
+              }
+
+               var newGroupName = $('#new-group-name').val().trim();
+              if (newGroupName) {
+                checked.push(newGroupName);
               }
 
               var text = checked.join(',');
