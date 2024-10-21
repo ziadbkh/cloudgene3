@@ -1,187 +1,152 @@
-# Datasets
+### Tutorial: Taxprofiler Pipeline with Dataset Integration Using Cloudgene
 
-Datasets allow you to link applications to each other. Linking two applications enables access to one application's properties from within the other.
+In this tutorial, we will adapt the `taxprofiler` pipeline for taxonomic classification and profiling of metagenomic data using Cloudgene. The pipeline will be configured to integrate with datasets, allowing users to select specific datasets for their analysis while reducing input complexity. The Cloudgene application will be tailored for this use case, simplifying the pipeline's input parameters and linking datasets dynamically.
 
-In this tutorial, we will create an application that provides different datasets. The user can select one of these datasets and receive some information about it. This example can be used as a template for your own applications.
+---
 
-## Dataset Analyzer
+### Taxprofiler Application
 
-We have a Cloudgene application with the following folder structure:
-
-```ansi
-dataset-analyzer
-├── cloudgene.yaml
-├── analyze-dataset.groovy
-├── datasets
-|   ├── dataset1.csv
-|   └── dataset2.csv
-└── README.md
-```
-
-In folder `datasets` we have different datasets and the user can select one of these datasets. For this propose, we create the following `cloudgene.yaml` file that contains one input parameter of type `list`:
+We start with the `taxprofiler` pipeline, which fetches data based on user-provided input IDs and performs taxonomic profiling. Here is the `cloudgene.yaml` file for the `taxprofiler` pipeline:
 
 ```yaml
-name: dataset-analyzer
-version: 1.0
+id: taxprofiler
+name: Taxprofiler
+description: Taxonomic classification and profiling of shotgun short- and long-read metagenomic data
+version: 1.1.8
+website: https://github.com/nf-core/taxprofiler
+author: James A. Fellows Yates, Sofia Stamouli, Moritz E. Beber, and the nf-core/taxprofiler team
+logo: https://raw.githubusercontent.com/nf-core/fetchngs/master/docs/images/nf-core-fetchngs_logo_light.png
+
 workflow:
   steps:
-    - name: Analyze Dataset
-      type: groovy
-      script: analyze-dataset.groovy
+    - name: Fetch Data
+      script: nf-core/fetchngs
+      revision: 1.12.0
+      stdout: true
+      params:
+        input: "${input_ids}"
+
+    - name: Run taxprofiler
+      script: nf-core/taxprofiler
+      revision: 1.1.8
+      stdout: true
+      params:
+        input: "${outdir}/samplesheet/samplesheet.csv"
+        databases: "https://raw.githubusercontent.com/nf-core/test-datasets/taxprofiler/database_full_v1.2.csv"
+        multiqc_title: "${CLOUDGENE_JOB_NAME}"
+
   inputs:
-    - id: dataset
-      description: Dataset
-      type: list
-      values:
-        dataset1: Dataset 1
-        dataset2: Dataset 2
+    - id: input_ids
+      description: IDs
+      type: textarea
+      value: "SRR12696236"
+      writeFile: "ids.csv"
+      serialize: false
+
+  outputs:
+    - id: outdir
+      description: Output
+      type: folder
 ```
 
-To simulate our analysis pipeline, we create a small groovy script called `analyze-dataset.groovy` that prints the content of the selected dataset:
+This setup fetches sequence data and runs the taxprofiler pipeline using an external database. However, we want to make the database selection dynamic and allow users to choose a specific dataset for taxonomic profiling. 
 
-```groovy
-import genepi.hadoop.common.WorkflowContext
+---
 
-def run(WorkflowContext context) {
+### Datasets for Taxprofiler
 
-  def dataset = context.get("dataset");
-  def directory = context.getWorkingDirectory();
+Datasets allow us to link the pipeline to different database options dynamically, enabling users to select the most relevant database for their analysis. We will create individual Cloudgene applications for each database dataset and link them to the `taxprofiler` pipeline.
 
-  def content = '';
-  switch(dataset){
-    case 'dataset1':
-      content = new File(directory + '/datasets/dataset1.csv').text;
-      break;
-    case 'dataset2':
-      content = new File(directory + '/datasets/dataset2.csv').text;
-      break;
-  }
+#### Dataset Structure
 
-  // annalyze dataset. for demonstration: print content.
-  context.ok(content);
-
-  return true;
-}
-```
-
-Next, we can install our application via the commandline and start a Cloudgene server:
-
-```bash
-cloudgene install dataset-analyzer dataset-analyzer/cloudgene.yaml
-cloudgene server
-```
-
-If we open `http://localhost:8082` in our broswer we can submit a new job for this application:
-
-![](/images/tutorials/dataset-analyzer-2.png)
-
-Depending on the selected dataset, we get different outputs:
-
-![](/images/tutorials/dataset-analyzer-results-2.png)
-
-
-The Cloudgene application works as expected. However, the following implementation has several shortcomings:
-
-- each time we want to add a new dataset, we have to adapt the groovy script and have to change `values` in `cloudgene.yaml`.
-- this leads to different `cloudgene.yaml` files for different setups on different servers
-- different `cloudgene.yaml`files are hard to deploy, update and to manage (especially in full automated Cloud deployments)
-
-## Switch to AppLinks
-
-A more generic solution is to create one application for each dataset. This enables us to separate our application logic from our datasets.
-By using AppLinks we have the possibility to link them together and the `cloudgene.yaml` file of our application stays the same no matters how many new datasets we want to create.
-
-### Dataset Application
-
-In a first step, we create an application for Dataset1 with the following folder structure:
+We will create a Cloudgene application for each database with the following structure:
 
 ```ansi
-dataset1
+database1
 ├── cloudgene.yaml
-├── dataset1.csv
+├── database_full_v1.2.csv
 └── README.md
 ```
 
-Next, we create the following `cloudgene.yaml` file for our dataset:
+#### `cloudgene.yaml` for Dataset 1
+
+The `cloudgene.yaml` file for each dataset application will define properties to share the dataset location with the main pipeline:
 
 ```yaml
-name: Dataset 1
+name: Database 1
 version: 1.0
-category: datasets
+category: taxprofiler_database
 properties:
-  filename: ${local_app_folder}/dataset1.csv
+  database_url: ${CLOUDGENE_APP_LOCATION}/database_full_v1.2.csv
 ```
 
-Our `cloudgene.yaml` file contains no workflow steps, instead we define `properties`. This properties can be used to share information from the *Dataset* application to the *Dataset Analyzer* application. In this case we define a property that contains the filename of our dataset. Moreover, we use the `local_app_folder` variable to get the correct directory and to avoid hard-coded paths.
+Here, the `database_url` property points to the dataset file, allowing the main pipeline to retrieve this information when the user selects the dataset. The `category` field is used to group all dataset applications, making it easier to filter and display them within the `taxprofiler` pipeline interface.
 
-The `category` property can be used to annotate our different *Dataset* applications. We give all datasets the same category so we can further filter them when we create an AppLinks list.
+---
 
-Finally, we can create an application for Dataset2 in the same way.
+### Updating the Taxprofiler Application to Use Datasets
 
-### Dataset Analzer Application
+Now, we update the `cloudgene.yaml` file for the `taxprofiler` pipeline to use datasets. Instead of hardcoding the database URL, we will allow users to select from available datasets.
 
-Now, we can remove all datasets from *Dataset-Analyzer* application:
-
-```ansi
-dataset-analyzer
-├── cloudgene.yaml
-├── analyze-dataset.groovy
-└── README.md
-```
-
-In the `cloudgene.yaml` file we replace the input type with `app_list` and add a custom filter to display only applications that fall in category `datasets`:
+#### Updated `cloudgene.yaml` for Taxprofiler
 
 ```yaml
-name: dataset-analyzer
-version: 1.0
+id: taxprofiler
+name: Taxprofiler
+description: Taxonomic classification and profiling of shotgun short- and long-read metagenomic data
+version: 1.1.8
+
 workflow:
   steps:
-    - name: Analyze Dataset
-      type: groovy
-      script: analyze-dataset.groovy
+    - name: Fetch Data
+      script: nf-core/fetchngs
+      revision: 1.12.0
+      stdout: true
+      params:
+        input: "${input_ids}"
+
+    - name: Run taxprofiler
+      script: nf-core/taxprofiler
+      revision: 1.1.8
+      stdout: true
+      params:
+        input: "${outdir}/samplesheet/samplesheet.csv"
+        databases: "${database.database_url}"
+        multiqc_title: "${CLOUDGENE_JOB_NAME}"
+
   inputs:
-    - id: dataset
-      description: Dataset
-      type: app_list
-      category: datasets
+    - id: input_ids
+      description: IDs
+      type: textarea
+      value: "SRR12696236"
+      writeFile: "ids.csv"
+      serialize: false
+    - id: selected_database
+      description: Database
+      type: dataset
+      category: taxprofiler_database
+      serialize: false
+
+  outputs:
+    - id: outdir
+      description: Output
+      type: folder
 ```
 
-We adapt our groovy script to read the file from the location we shared through properties. With `context.getData(param_id)` we get access to all properties of the selected application:
+#### Explanation
 
-```groovy
-import genepi.hadoop.common.WorkflowContext
+- **`dataset` input**: The input `database` uses the `dataset` type, allowing users to select a dataset from all installed database applications that fall under the `datasets` category.
+- **Database link**: The `database.database_url` references the `database_url` property defined in the dataset application’s `cloudgene.yaml`, dynamically linking the selected database to the `taxprofiler` pipeline.
+  
+With this setup, users can select a dataset from the available options, and the `taxprofiler` pipeline will use the corresponding database for taxonomic profiling.
 
-def run(WorkflowContext context) {
+---
 
-  def datasetProperties = context.getData("dataset");
-  def filename = datasetProperties.get('filename');
-  def content = new File(filename).text;
+### Advantages of This Approach
 
+1. **Dynamic Dataset Selection**: Users can easily select a dataset from a predefined list without modifying the pipeline configuration.
+2. **Separation of Concerns**: The logic of dataset management is separated from the pipeline itself, making it easier to add or update datasets without changing the pipeline code.
+3. **Scalability**: As new datasets are added, they are automatically available for selection without further changes to the pipeline.
+4. **Permission Management**: Admins can control access to specific datasets through user groups, providing flexibility in shared environments.
 
-  // annalyze dataset. for demonstration: print content.
-  context.ok(content);
-
-  return true;
-}
-```
-
-We stop Cloudgene and restart it. When we try to submit a new job, we see that the list of datasets is empty.
-
-Therefore, we stop Cloudgene again and install dataset1:
-
-```yaml
-cloudgene install dataset1 dataset1/cloudgene.yaml
-cloudgene server
-```
-
-
-Now, when we open the submit dialog of *Dataset-Analyzer*, we see Dataset1 and when we start the job we get the expected output.
-
-- screenshot
-
-## Advantages
-
-- we don't need to change our application when we want to add a new dataset
-- we have a simple and straightforward way to create new datasets
-- its very easy to share datasets and to install them (independently from the application)
-- admin has full control of permissions: access to specific datasets can be managed by user groups
+By using this approach, the `taxprofiler` pipeline becomes more user-friendly and adaptable, enabling seamless integration of datasets for specialized use cases.
