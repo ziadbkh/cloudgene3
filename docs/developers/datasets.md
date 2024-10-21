@@ -1,4 +1,4 @@
-### Tutorial: Taxprofiler Pipeline with Dataset Integration Using Cloudgene
+### Taxprofiler Pipeline with Dataset Integration Using Cloudgene
 
 In this tutorial, we will adapt the `taxprofiler` pipeline for taxonomic classification and profiling of metagenomic data using Cloudgene. The pipeline will be configured to integrate with datasets, allowing users to select specific datasets for their analysis while reducing input complexity. The Cloudgene application will be tailored for this use case, simplifying the pipeline's input parameters and linking datasets dynamically.
 
@@ -77,7 +77,7 @@ name: Database 1
 version: 1.0
 category: taxprofiler_database
 properties:
-  database_url: ${CLOUDGENE_APP_LOCATION}/database_full_v1.2.csv
+  database_url: "${CLOUDGENE_APP_LOCATION}/database_full_v1.2.csv"
 ```
 
 Here, the `database_url` property points to the dataset file, allowing the main pipeline to retrieve this information when the user selects the dataset. The `category` field is used to group all dataset applications, making it easier to filter and display them within the `taxprofiler` pipeline interface.
