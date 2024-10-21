@@ -121,7 +121,7 @@ workflow:
       value: "SRR12696236"
       writeFile: "ids.csv"
       serialize: false
-    - id: selected_database
+    - id: database
       description: Database
       type: dataset
       category: taxprofiler_database
