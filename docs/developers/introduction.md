@@ -2,6 +2,9 @@
 
 This guide will walk you through creating a Cloudgene YAML file that acts as a bridge between the Nextflow pipeline and Cloudgene. We'll create a Cloudgene YAML file, define workflow steps, inputs, and outputs, and demonstrate how to set default parameters.
 
+The `nextflow_schema.json` and `cloudgene.yaml` files in Nextflow serve distinct purposes in managing pipeline parameters. `nextflow_schema.json` defines all possible parameters for a pipeline, including their types, default values, and validation rules, making it suitable for a broad range of use cases. It exposes all options and ensures proper configuration, which can sometimes be overwhelming for users. On the other hand, `cloudgene.yaml` is used when building a web service tailored to a specific use case. It simplifies the user experience by exposing only relevant parameters, setting defaults specific to the web service, and often combining multiple pipelines. This helps reduce the complexity for end-users by hiding unnecessary options and providing a focused, streamlined interface. While `nextflow_schema.json` maintains the pipeline’s flexibility, `cloudgene.yaml` adapts it for simplified, user-friendly execution through a web interface.
+
+
 ## Prerequisites
 
 Before you begin, ensure you have the following:
