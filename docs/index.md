@@ -17,13 +17,13 @@ Documentation of [Cloudgene 2](https://v2.cloudgene.io/)
 
 ---
 
-- **Build** your analysis pipeline in Nextflow
-- **Integrate** your analysis pipeline into Cloudgene by writing a simple configuration file
-- **Get** a powerful web application with user management, data transfer, error handling and more
-- **Deploy** your application with one click to in-house clusters or public Clouds like Amazon AWS
-- **Offer** your application as SaaS to other scientists, managing thousands of jobs
-- **Share** your application, enabling others to clone your service to their own hardware or private cloud instance
-
+[:material-check-circle:]() A DSL language **similar to Nextflow**  <br/>
+[:material-check-circle:]() Describes expected behavior using 'when' and 'then' blocks <br/>
+[:material-check-circle:]() Abundance of functions for writing **elegant and readable assertions** <br/>
+[:material-check-circle:]() Utilizes **snapshots** to write tests for complex data structures <br/>
+[:material-check-circle:]() Provides commands for **generating boilerplate** code <br/>
+[:material-check-circle:]() Includes a **test-runner** that executes these scripts <br/>
+[:material-check-circle:]() Easy installation on **CI systems** <br/>
 ---
 
 ## :octicons-package-16: Integrate Your Nextflow pipelines
