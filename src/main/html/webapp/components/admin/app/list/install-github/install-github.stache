@@ -2,5 +2,5 @@
 <form onsubmit="return false;">
   <p>Please enter the repository of the application.</p>
   <input class="form-control" id="url" name="url" placeholder="owner/repository" autocomplete="off"/>
-  <p><br><b>Examples:</b><br>lukfor/hello-cloudgene<br>lukfor/hello-cloudgene@latest<br>lukfor/hello-cloudgene@1.2.0-beta</p>
+  <p><br><b>Examples:</b><br>lukfor/cg-fetchngs<br>lukfor/cg-fetchngs@latest<br>lukfor/hcg-fetchngs@1.0.0</p>
 </form>
