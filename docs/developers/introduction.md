@@ -160,7 +160,6 @@ workflow:
       script: nf-core/taxprofiler
       revision: 1.1.8
       params:
-        input: "${input}"
         run_kraken2: ${{profiler == "kraken2"}}
         run_metaphlan: ${{profiler == "metaphlan"}}
         databases: "https://raw.githubusercontent.com/nf-core/test-datasets/taxprofiler/database_full_v1.2.csv"
@@ -181,7 +180,7 @@ workflow:
 
 Cloudgene supports the connection of multiple pipelines by allowing you to define workflows that consist of multiple steps. Each step can execute a separate pipeline, and the output of one pipeline can be passed as the input to the next.
 
-In this example, Cloudgene connects two Nextflow pipelines (nf-core/fetchngs and nf-core/taxprofiler) into a single workflow, making it easy to fetch data and then run a taxonomic profiler.
+In this example, Cloudgene connects two Nextflow pipelines (nf-core/fetchngs and nf-core/taxprofiler) into a single workflow, making it easy to fetch data and then run a taxonomic profiler using the created samplesheet file.
 
 ```yaml
 id: taxprofiler
