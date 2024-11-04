@@ -135,7 +135,7 @@ Combine your Nextflow pipeline with other pipelines and create use-case specific
 
 ## Citation
 
-Schönherr S, Forer L, Weißensteiner H, Kronenberg F, Specht G, Kloss-Brandstätter A. Cloudgene: a graphical execution platform for MapReduce programs on private and public clouds. BMC Bioinformatics. 2012 Aug 13;13:200. doi: 10.1186/1471-2105-13-200. PMID: 22888776; PMCID: PMC3532373.
+[Cloudgene 3: Transforming Nextflow Pipelines into Powerful Web Services](https://doi.org/10.1101/2024.10.27.620456). Forer L, Schoenherr S. bioRxiv 2024.10.27.620456; doi: https://doi.org/10.1101/2024.10.27.620456
 
 ---
 
