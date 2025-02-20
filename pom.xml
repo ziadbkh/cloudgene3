@@ -47,7 +47,7 @@
 		<jdk.version>17</jdk.version>
 		<release.version>17</release.version>
 		<java.version>17</java.version>
-		<micronaut.version>4.1.6</micronaut.version>
+		<micronaut.version>4.7.6</micronaut.version>
 		<micronaut.runtime>netty</micronaut.runtime>
 		<exec.mainClass>cloudgene.mapred.CommandLineInterface</exec.mainClass>
 		<micronaut.runtime>netty</micronaut.runtime>
