@@ -16,14 +16,12 @@ Documentation of [Cloudgene 2](https://v2.cloudgene.io/)
 </div>
 
 ---
-
-[:material-check-circle:]() A DSL language **similar to Nextflow**  <br/>
-[:material-check-circle:]() Describes expected behavior using 'when' and 'then' blocks <br/>
-[:material-check-circle:]() Abundance of functions for writing **elegant and readable assertions** <br/>
-[:material-check-circle:]() Utilizes **snapshots** to write tests for complex data structures <br/>
-[:material-check-circle:]() Provides commands for **generating boilerplate** code <br/>
-[:material-check-circle:]() Includes a **test-runner** that executes these scripts <br/>
-[:material-check-circle:]() Easy installation on **CI systems** <br/>
+[:material-check-circle:]() **Build** your analysis pipeline in Nextflow <br/>
+[:material-check-circle:]() **Integrate** your analysis pipeline into Cloudgene by writing a simple configuration file <br/>
+[:material-check-circle:]() **Get** a powerful web application with user management, data transfer, error handling and more <br/>
+[:material-check-circle:]() **Deploy** your application with one click to in-house clusters or public Clouds like Amazon AWS <br/>
+[:material-check-circle:]() **Offer** your application as SaaS to other scientists, managing thousands of jobs <br/>
+[:material-check-circle:]() **Share** your application, enabling others to clone your service to their own hardware or private cloud instance <br/>
 ---
 
 ## :octicons-package-16: Integrate Your Nextflow pipelines
@@ -137,7 +135,7 @@ Combine your Nextflow pipeline with other pipelines and create use-case specific
 
 ## Citation
 
-Schönherr S, Forer L, Weißensteiner H, Kronenberg F, Specht G, Kloss-Brandstätter A. Cloudgene: a graphical execution platform for MapReduce programs on private and public clouds. BMC Bioinformatics. 2012 Aug 13;13:200. doi: 10.1186/1471-2105-13-200. PMID: 22888776; PMCID: PMC3532373.
+[Cloudgene 3: Transforming Nextflow Pipelines into Powerful Web Services](https://doi.org/10.1101/2024.10.27.620456). Forer L, Schoenherr S. bioRxiv 2024.10.27.620456; doi: https://doi.org/10.1101/2024.10.27.620456
 
 ---
 
