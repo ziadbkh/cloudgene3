@@ -306,21 +306,19 @@ public class ApplicationRepository {
 		FileUtils.copyURLToFile(new URL(url), zipFile);
 
 		String zipFilename = zipFile.getAbsolutePath();
-		if (repository.getDirectory() != null) {
-			// extract only sub dir
-			Application application = installFromZipFile(zipFilename, "^.*/" + repository.getDirectory() + ".*");
-			zipFile.delete();
-			return application;
-
-		} else {
-			Application application = installFromZipFile(zipFilename);
-			zipFile.delete();
-			return application;
-		}
+		Application application = installFromZipFile(zipFilename, repository.getYaml());
+		zipFile.delete();
+		return application;
 
 	}
 
 	public Application installFromZipFile(String zipFilename) throws IOException {
+
+		return installFromZipFile(zipFilename, null);
+	}
+
+
+	public Application installFromZipFile(String zipFilename, String yamlFilename) throws IOException {
 
 		// extract in apps folder
 		String appPath = FileUtil.path(appsFolder, "archive");
@@ -335,71 +333,35 @@ public class ApplicationRepository {
 		}
 
 		try {
-			return installFromDirectory(appPath, true);
+			return installFromDirectory(appPath, true, yamlFilename);
 		} finally {
-			FileUtil.deleteDirectory(appPath);
-		}
-
-	}
-
-	public Application installFromZipFile(String zipFilename, String subFolder) throws IOException {
-
-		String appPath = FileUtil.path(appsFolder, "archive");
-		FileUtil.deleteDirectory(appPath);
-		FileUtil.createDirectory(appPath);
-		try {
-			ZipFile file = new ZipFile(zipFilename);
-			for (Object header : file.getFileHeaders()) {
-				FileHeader fileHeader = (FileHeader) header;
-				String name = fileHeader.getFileName();
-				if (name.matches(subFolder)) {
-					file.extractFile(fileHeader, appPath);
-				}
-			}
-			file.close();
-		} catch (ZipException e) {
-			throw new IOException(e);
-		}
-
-		try {
-			return installFromDirectory(appPath, true);
-		} finally {
-			FileUtil.deleteDirectory(appPath);
+			//FileUtil.deleteDirectory(appPath);
 		}
 
 	}
 
 	public Application installFromDirectory(String path, boolean moveToApps) throws IOException {
+		return installFromDirectory(path, moveToApps, null);
+	}
 
-		String cloudgeneFilename = FileUtil.path(path, "cloudgene.yaml");
-		if (new File(cloudgeneFilename).exists()) {
-			Application application = installFromYaml(cloudgeneFilename, moveToApps);
-			if (application != null) {
-				return application;
-			}
+	public Application installFromDirectory(String path, boolean moveToApps, String customYaml) throws IOException {
+
+		String name = "cloudgene.yaml";
+		if (customYaml != null) {
+			name = customYaml;
 		}
 
-		cloudgeneFilename = FileUtil.path(path, "cloudgene.yml");
+		String cloudgeneFilename = FileUtil.path(path, name);
 		if (new File(cloudgeneFilename).exists()) {
 			Application application = installFromYaml(cloudgeneFilename, moveToApps);
-			if (application != null) {
-				return application;
-			}
-		}
-
-		// find all cloudgene workflows (use filename as id)
-		String[] files = FileUtil.getFiles(path, "*.yaml");
-
-		for (String filename : files) {
-			Application application = installFromYaml(filename, moveToApps);
-			if (application != null) {
-				return application;
+				if (application != null) {
+					return application;
 			}
 		}
 
 		// search in subfolders
 		for (String directory : getDirectories(path)) {
-			Application application = installFromDirectory(directory, moveToApps);
+			Application application = installFromDirectory(directory, moveToApps, customYaml);
 			if (application != null) {
 				return application;
 			}
