@@ -311,7 +311,6 @@ public class DatabaseUpdater {
 		if (!cleanedSQL.isEmpty()) {
 			Connection connection;
 			connection = connector.getDataSource().getConnection();
-			System.out.println(sqlContent);
 			PreparedStatement ps = connection.prepareStatement(sqlContent);
 			ps.executeUpdate();
 			connection.close();
