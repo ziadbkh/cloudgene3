@@ -289,6 +289,7 @@ public class ApplicationRepository {
 		switch (type) {
 			case "application": {
 				String url = release.path("url").asText();
+				System.out.println("Installing application from " + url + "...");
 				return install(url);
 			}
 			case "pack": {
@@ -443,10 +444,6 @@ public class ApplicationRepository {
 				if (application != null) {
 					return application;
 			}
-		}
-
-		if (customYaml != null) {
-			throw new IOException("Yaml file " + customYaml + " not found.");
 		}
 
 		//No cloudgene.yaml found. try all other yaml files.
